@@ -1,0 +1,45 @@
+[
+  {
+    "id": "lot-90",
+    "name": "Lot 90",
+    "type": "Yellow",
+    "position":  [38.952263, -95.249959],
+    "restrictions": "Yellow permit required Mon–Fri 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit after 5:00 PM and on weekends."
+  },
+  {
+    "id": "lot-71",
+    "name": "Lot 71",
+    "type": "Yellow",
+    "position":  [38.953438, -95.252323],
+    "restrictions": "Yellow permit required Mon–Fri 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit after 5:00 PM and on weekends."
+  },
+  {
+    "id": "lot-72",
+    "name": "Lot 72",
+    "type": "Red",
+    "position":  [38.955310, -95.253781],
+    "restrictions": "Red permit required at all times. No parking without a Red permit."
+  },
+  {
+    "id": "lot-54",
+    "name": "Lot 54",
+    "type": "Red",
+    "position": [38.956395, -95.252804],
+    "restrictions": "Red permit required at all times. No parking without a Red permit."
+  },
+  {
+    "id": "lot-35",
+    "name": "Lot 35",
+    "type": "Blue",
+    "position":  [38.956433, -95.249978],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-41",
+    "name": "Lot 41",
+    "type": "Blue",
+    "position":  [38.958136, -95.254775],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  }
+  
+]

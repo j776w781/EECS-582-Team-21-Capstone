@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KU Parking - Sprint 1</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>KU Parking Map</h1>
+        </header>
+
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+            <div class="control-group">
+                <label for="permit-select">Parking Permit:</label>
+                <select id="permit-select">
+                    <option value="NONE" selected>No Permit</option>
+                    <option value="YELLOW">Yellow Permit</option>
+                    <option value="RED">Red Permit</option>
+                    <option value="BLUE">Blue Permit</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="day-select">Day of Week:</label>
+                <select id="day-select">
+                    <option value="Mon" selected>Monday</option>
+                    <option value="Tue">Tuesday</option>
+                    <option value="Wed">Wednesday</option>
+                    <option value="Thu">Thursday</option>
+                    <option value="Fri">Friday</option>
+                    <option value="Sat">Saturday</option>
+                    <option value="Sun">Sunday</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="time-input">Time (HH:MM):</label>
+                <input type="time" id="time-input" value="09:00">
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Lot List View -->
+            <aside class="lot-list-panel">
+                <h2>Parking Lots</h2>
+                <ul id="lot-list"></ul>
+            </aside>
+
+            <!-- Map Container -->
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <!-- Restrictions Details Panel -->
+        <div id="details-panel" class="details-panel hidden">
+            <div class="details-header">
+                <h3 id="details-name"></h3>
+                <button id="close-details" class="close-btn">&times;</button>
+            </div>
+            <div class="details-content">
+                <p><strong>Type:</strong> <span id="details-type"></span></p>
+                <p><strong>Restrictions:</strong></p>
+                <p id="details-restrictions"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='map.js') }}"></script>
+</body>
+</html>
