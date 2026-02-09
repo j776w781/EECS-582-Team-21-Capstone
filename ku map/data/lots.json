@@ -40,6 +40,104 @@
     "type": "Blue",
     "position":  [38.958136, -95.254775],
     "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-112",
+    "name": "Lot 112",
+    "type": "Red",
+    "position":  [38.951818, -95.252485],
+    "restrictions": "Red permit required at all times. No parking without a Red permit."
+  },
+  {
+    "id": "lot-127",
+    "name": "Lot 127",
+    "type": "Yellow",
+    "position":  [38.951852, -95.253451],
+    "restrictions": "Yellow permit required Mon–Fri 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit after 5:00 PM and on weekends."
+  },
+  {
+    "id": "lot-125",
+    "name": "Lot 125",
+    "type": "Yellow",
+    "position":  [38.952495, -95.253569],
+    "restrictions": "Yellow permit required Mon–Fri 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit after 5:00 PM and on weekends."
+  },
+  {
+    "id": "lot-70",
+    "name": "Lot 70",
+    "type": "Red",
+    "position":  [38.953686, -95.252635],
+    "restrictions": "Red permit required at all times. No parking without a Red permit."
+  },
+  {
+    "id": "lot-113",
+    "name": "Lot 113",
+    "type": "Red",
+    "position":  [38.950858, -95.254009],
+    "restrictions": "Red permit required at all times. No parking without a Red permit."
+  },
+  {
+    "id": "lot-1",
+    "name": "Lot 1",
+    "type": "Blue",
+    "position":  [38.961115, -95.250610],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-6",
+    "name": "Lot 6",
+    "type": "Blue",
+    "position":  [38.956199, -95.254373],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-8",
+    "name": "Lot 8",
+    "type": "Blue",
+    "position":  [38.955227, -95.248170],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-11",
+    "name": "Lot 11",
+    "type": "Blue",
+    "position":   [38.963119, -95.250747],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-15",
+    "name": "Lot 15",
+    "type": "Blue",
+    "position":   [38.956104, -95.243073],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-17",
+    "name": "Lot 17",
+    "type": "Blue",
+    "position":   [38.955852, -95.249940],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-19",
+    "name": "Lot 19",
+    "type": "Blue",
+    "position":   [38.955962, -95.244717],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-34b",
+    "name": "Lot 34",
+    "type": "Blue",
+    "position":   [38.955011, -95.245980],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+  {
+    "id": "lot-34r",
+    "name": "Lot 34",
+    "type": "Red",
+    "position":   [38.954541, -95.246050],
+    "restrictions": "Red permit required at all times. No parking without a Red permit."
   }
   
 ]
