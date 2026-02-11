@@ -16,7 +16,7 @@ const KU_CENTER = [38.9581, -95.2464];
 const MAP_ZOOM = 15;
 
 // Coordinate picker flag (set to false to disable)S
-const ENABLE_COORDINATE_PICKER = false;
+const ENABLE_COORDINATE_PICKER = true;
 
 /**
  * Initialize the map
