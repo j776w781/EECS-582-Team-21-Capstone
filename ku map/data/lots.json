@@ -208,6 +208,73 @@
     "type": "Central Housing",
     "position":     [38.952573, -95.256132],
     "restrictions": "Central Housing permit required 24 hours Monday 7:00 AM-Friday 5:00 PM. Any valid permit may park after 5:00 PM until 7:00 AM daily."
+    "restrictions": "Red permit required at all times. No parking without a Red permit."
+  },
+
+  {
+    "id": "lot-91",
+    "name": "Lot 91",
+    "type": "Yellow",
+    "position":   [38.960662, -95.244980],
+    "restrictions": "Yellow permit required Mon–Fri 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit after 5:00 PM and on weekends."
+  },
+
+  {
+    "id": "lot-91r",
+    "name": "Lot 91",
+    "type": "Red",
+    "position":   [38.960424, -95.244964],
+    "restrictions": 
+    "Red permit required at all times. No parking without a Red permit."
+  },
+
+  {
+    "id": "lot-117",
+    "name": "Lot 117",
+    "type": "Blue",
+    "position":   [38.954014, -95.247844],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+
+  {
+    "id": "lot-118",
+    "name": "Lot 118",
+    "type": "Blue",
+    "position":   [38.953502, -95.249108],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+
+  {
+    "id": "lot-126",
+    "name": "Lot 126",
+    "type": "Blue",
+    "position":   [38.956517, -95.245955],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+
+  {
+    "id": "lot-129",
+    "name": "Lot 129",
+    "type": "Blue",
+    "position":   [38.957720, -95.252448],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+
+  {
+    "id": "lot-216",
+    "name": "Lot 216",
+    "type": "Blue",
+    "position":   [38.946897, -95.261701],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+  },
+
+  {
+    "id": "lot-221",
+    "name": "Lot 221",
+    "type": "Blue",
+    "position":   [38.951773, -95.265309],
+    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
   }
   
+
 ]
