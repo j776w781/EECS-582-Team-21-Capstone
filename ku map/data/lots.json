@@ -1,142 +1,213 @@
 [
   {
-    "id": "lot-90",
+    "id": "lot-90y",
     "name": "Lot 90",
     "type": "Yellow",
     "position":  [38.952263, -95.249959],
-    "restrictions": "Yellow permit required Mon–Fri 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit after 5:00 PM and on weekends."
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
   },
   {
     "id": "lot-71",
     "name": "Lot 71",
     "type": "Yellow",
     "position":  [38.953438, -95.252323],
-    "restrictions": "Yellow permit required Mon–Fri 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit after 5:00 PM and on weekends."
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
   },
   {
     "id": "lot-72",
     "name": "Lot 72",
     "type": "Red",
     "position":  [38.955310, -95.253781],
-    "restrictions": "Red permit required at all times. No parking without a Red permit."
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
   },
   {
     "id": "lot-54",
     "name": "Lot 54",
     "type": "Red",
     "position": [38.956395, -95.252804],
-    "restrictions": "Red permit required at all times. No parking without a Red permit."
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
   },
   {
     "id": "lot-35",
     "name": "Lot 35",
     "type": "Blue",
     "position":  [38.956433, -95.249978],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long. Staff permits required 5:00 PM - 7:30 PM Monday-Friday."
   },
   {
     "id": "lot-41",
     "name": "Lot 41",
     "type": "Blue",
     "position":  [38.958136, -95.254775],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
     "id": "lot-112",
     "name": "Lot 112",
     "type": "Red",
     "position":  [38.951818, -95.252485],
-    "restrictions": "Red permit required at all times. No parking without a Red permit."
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
   },
   {
     "id": "lot-127",
     "name": "Lot 127",
     "type": "Yellow",
     "position":  [38.951852, -95.253451],
-    "restrictions": "Yellow permit required Mon–Fri 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit after 5:00 PM and on weekends."
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
   },
   {
     "id": "lot-125",
     "name": "Lot 125",
     "type": "Yellow",
     "position":  [38.952495, -95.253569],
-    "restrictions": "Yellow permit required Mon–Fri 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit after 5:00 PM and on weekends."
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
   },
   {
     "id": "lot-70",
     "name": "Lot 70",
     "type": "Red",
     "position":  [38.953686, -95.252635],
-    "restrictions": "Red permit required at all times. No parking without a Red permit."
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
   },
   {
     "id": "lot-113",
     "name": "Lot 113",
     "type": "Red",
     "position":  [38.950858, -95.254009],
-    "restrictions": "Red permit required at all times. No parking without a Red permit."
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
   },
   {
     "id": "lot-1",
     "name": "Lot 1",
     "type": "Blue",
     "position":  [38.961115, -95.250610],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
     "id": "lot-6",
     "name": "Lot 6",
     "type": "Blue",
     "position":  [38.956199, -95.254373],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
     "id": "lot-8",
     "name": "Lot 8",
     "type": "Blue",
     "position":  [38.955227, -95.248170],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
     "id": "lot-11",
     "name": "Lot 11",
     "type": "Blue",
     "position":   [38.963119, -95.250747],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
     "id": "lot-15",
     "name": "Lot 15",
     "type": "Blue",
     "position":   [38.956104, -95.243073],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
     "id": "lot-17",
     "name": "Lot 17",
     "type": "Blue",
     "position":   [38.955852, -95.249940],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
     "id": "lot-19",
     "name": "Lot 19",
     "type": "Blue",
     "position":   [38.955962, -95.244717],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
     "id": "lot-34b",
     "name": "Lot 34",
     "type": "Blue",
     "position":   [38.955011, -95.245980],
-    "restrictions": "Blue permit required at all times. No parking without a Blue permit."
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
     "id": "lot-34r",
     "name": "Lot 34",
     "type": "Red",
     "position":   [38.954541, -95.246050],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+  {
+    "id": "lot-36",
+    "name": "Lot 36",
+    "type": "Blue",
+    "position":   [38.958988, -95.249992],
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
+  },
+  {
+    "id": "lot-37",
+    "name": "Lot 37",
+    "type": "Blue",
+    "position":   [38.956050, -95.248040],
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long. Staff permits required 5:00 PM - 7:30 PM"
+  },
+  {
+    "id": "lot-38",
+    "name": "Lot 38",
+    "type": "Blue",
+    "position":   [38.955543, -95.244989],
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
+  },
+  {
+    "id": "lot-39",
+    "name": "Lot 39",
+    "type": "Blue",
+    "position":   [38.958966, -95.246860],
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
+  },
+  {
+    "id": "lot-54b",
+    "name": "Lot 54",
+    "type": "Blue",
+    "position":    [38.956882, -95.252570],
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
+  },
+  {
+    "id": "lot-54r",
+    "name": "Lot 54",
+    "type": "Red",
+    "position":    [38.956473, -95.252814],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+  {
+    "id": "lot-90b",
+    "name": "Lot 90",
+    "type": "Blue",
+    "position":    [38.953098, -95.250002],
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
+  },
+  {
+    "id": "lot-93b",
+    "name": "Lot 93",
+    "type": "Blue",
+    "position":    [38.953437, -95.256947],
+    "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
+  },
+  {
+    "id": "lot-93y",
+    "name": "Lot 93",
+    "type": "Yellow",
+    "position":     [38.952573, -95.256132],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+  {
+    "id": "lot-93h",
+    "name": "Lot 93",
+    "type": "Central Housing",
+    "position":     [38.952573, -95.256132],
+    "restrictions": "Central Housing permit required 24 hours Monday 7:00 AM-Friday 5:00 PM. Any valid permit may park after 5:00 PM until 7:00 AM daily."
     "restrictions": "Red permit required at all times. No parking without a Red permit."
   },
 
