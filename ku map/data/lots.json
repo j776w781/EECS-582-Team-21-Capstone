@@ -174,13 +174,7 @@
     "position":    [38.956882, -95.252570],
     "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
-  {
-    "id": "lot-54r",
-    "name": "Lot 54",
-    "type": "Red",
-    "position":    [38.956473, -95.252814],
-    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
-  },
+  
   {
     "id": "lot-90b",
     "name": "Lot 90",
@@ -484,7 +478,7 @@
     "id": "lot-202",
     "name": "Lot 202",
     "type": "Yellow",
-    "position":  [38.956821, -95.265348],
+    "position":  [38.956369, -95.268921],
     "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session.\nWARNING: This lot may not actually exist."
   },
 
@@ -679,9 +673,307 @@
     "type": "Yellow",
     "position":  [38.963811, -95.248199],
     "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
-  }
+  },
 
+
+  {
+    "id": "lot-7",
+    "name": "Lot 7",
+    "type": "Red",
+    "position":  [38.956781, -95.254437],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-9",
+    "name": "Lot 9",
+    "type": "Red",
+    "position":  [38.956289, -95.257626],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-36r",
+    "name": "Lot 36",
+    "type": "Red",
+    "position":  [38.959758, -95.250639],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-39r",
+    "name": "Lot 39",
+    "type": "Red",
+    "position":  [38.958116, -95.246025],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-41",
+    "name": "Lot 41",
+    "type": "Red",
+    "position":  [38.957332, -95.254729],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-51ra",
+    "name": "Lot 51",
+    "type": "Red",
+    "position":   [38.964040, -95.250821],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-51rb",
+    "name": "Lot 51",
+    "type": "Red",
+    "position":   [38.964776, -95.250472],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-52",
+    "name": "Lot 52",
+    "type": "Red",
+    "position": [38.962075, -95.250016],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-60r",
+    "name": "Lot 60",
+    "type": "Red",
+    "position":   [38.961742, -95.247898],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-62",
+    "name": "Lot 62",
+    "type": "Red",
+    "position":  [38.954976, -95.244818],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-90r",
+    "name": "Lot 90",
+    "type": "Red",
+    "position":  [38.951615, -95.248493],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-100r",
+    "name": "Lot 100",
+    "type": "Red",
+    "position": [38.957487, -95.241884],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-101a",
+    "name": "Lot 101",
+    "type": "Red",
+    "position":  [38.956627, -95.257899],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-101b",
+    "name": "Lot 101",
+    "type": "Red",
+    "position":  [38.956176, -95.258009],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-102",
+    "name": "Lot 102",
+    "type": "Red",
+    "position":  [38.954465, -95.258482],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-104",
+    "name": "Lot 104",
+    "type": "Red",
+    "position":  [38.952424, -95.258680],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-109ra",
+    "name": "Lot 109",
+    "type": "Red",
+    "position":  [38.956075, -95.256073],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-109rb",
+    "name": "Lot 109",
+    "type": "Red",
+    "position":  [38.955988, -95.256558],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-111ra",
+    "name": "Lot 111",
+    "type": "Red",
+    "position":  [38.965184, -95.242292],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-111rb",
+    "name": "Lot 111",
+    "type": "Red",
+    "position":  [38.964374, -95.242066],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-111rc",
+    "name": "Lot 111",
+    "type": "Red",
+    "position":  [38.964408, -95.241696],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
 
   
+  {
+    "id": "lot-117",
+    "name": "Lot 117",
+    "type": "Red",
+    "position":  [38.953503, -95.247442],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+
+  {
+    "id": "lot-124r",
+    "name": "Lot 124",
+    "type": "Red",
+    "position":  [38.958697, -95.241187],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-200",
+    "name": "Lot 200",
+    "type": "Red",
+    "position":  [38.956118, -95.269779],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-201",
+    "name": "Lot 201",
+    "type": "Red",
+    "position":  [38.956548, -95.267724],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-206",
+    "name": "Lot 206",
+    "type": "Red",
+    "position":  [38.952487, -95.263288],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-207",
+    "name": "Lot 207",
+    "type": "Red",
+    "position":  [38.952251, -95.264769],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-210",
+    "name": "Lot 210",
+    "type": "Red",
+    "position":  [38.949439, -95.261684],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-211",
+    "name": "Lot 211",
+    "type": "Red",
+    "position":  [38.948711, -95.261553],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-214r",
+    "name": "Lot 214",
+    "type": "Red",
+    "position":  [38.948020, -95.263132],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-213",
+    "name": "Lot 213 (Officially Lot 214)",
+    "type": "Red",
+    "position":  [38.948020, -95.263132],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+
+  {
+    "id": "lot-216r",
+    "name": "Lot 216",
+    "type": "Red",
+    "position":  [38.946878, -95.261518],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-303",
+    "name": "Lot 303",
+    "type": "Red",
+    "position":  [38.946282, -95.268459],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-400",
+    "name": "Lot 400",
+    "type": "Red",
+    "position":  [38.956200, -95.259195],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-300ar",
+    "name": "Lot 300A",
+    "type": "Red",
+    "position":  [38.955839, -95.264881],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-300er2",
+    "name": "Lot 300E",
+    "type": "Red",
+    "position":  [38.955051, -95.261416],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  },
+
+  {
+    "id": "lot-300er",
+    "name": "Lot 300E",
+    "type": "Red",
+    "position":  [38.955589, -95.262816],
+    "restrictions": "Red permit required Monday-Friday 8:00 AM-5:00 PM. Enforced year-round."
+  }
+
 
 ]
