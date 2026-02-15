@@ -675,6 +675,13 @@
     "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
   },
 
+  {
+    "id": "lot-203y",
+    "name": "Lot 203",
+    "type": "Other",
+    "position": [38.956758, -95.263386],
+    "restrictions": " Special restrictions may apply. "
+  },
 
   {
     "id": "lot-7",
@@ -1308,7 +1315,178 @@
     "type": "Fuchsia",
     "position": [38.965009, -95.249470],
     "restrictions": " Fuchsia permit required Monday-Friday 7:00 AM-5:00 PM. Enforced year-round. "
+  },
+
+
+  {
+    "id": "lot-2",
+    "name": "Lot 2",
+    "type": "Other",
+    "position": [38.958055, -95.249958],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+  {
+    "id": "lot-3",
+    "name": "Lot 3",
+    "type": "Other",
+    "position": [38.958849, -95.247628],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+  {
+    "id": "lot-3o",
+    "name": "Lot 3",
+    "type": "Other",
+    "position": [38.957991, -95.246545],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+  {
+    "id": "lot-5",
+    "name": "Lot 5",
+    "type": "Other",
+    "position": [38.958932, -95.243721],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+  {
+    "id": "lot-20",
+    "name": "Lot 20",
+    "type": "Other",
+    "position": [38.953909, -95.256510],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-21",
+    "name": "Lot 21",
+    "type": "Other",
+    "position": [38.957611, -95.250188],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-22",
+    "name": "Lot 22",
+    "type": "Other",
+    "position": [38.955825, -95.250587],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-31",
+    "name": "Lot 31",
+    "type": "Other",
+    "position": [38.953199, -95.254002],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-100",
+    "name": "Lot 100",
+    "type": "Other",
+    "position": [38.957826, -95.241367],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-118",
+    "name": "Lot 118",
+    "type": "Other",
+    "position": [38.954394, -95.249376],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-191",
+    "name": "Lot 191",
+    "type": "Other",
+    "position": [38.949323, -95.264521],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-201",
+    "name": "Lot 201",
+    "type": "Other",
+    "position": [38.956616, -95.267860],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-203o",
+    "name": "Lot 203",
+    "type": "Other",
+    "position": [38.956616, -95.264088],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-204",
+    "name": "Lot 204",
+    "type": "Other",
+    "position": [38.956753, -95.270696],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-211",
+    "name": "Lot 211",
+    "type": "Other",
+    "position": [38.948676, -95.261283],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-400",
+    "name": "Lot 400",
+    "type": "Other",
+    "position": [38.956024, -95.259348],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-503",
+    "name": "Lot 503",
+    "type": "Other",
+    "position": [38.954642, -95.280755],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-32",
+    "name": "Lot 32",
+    "type": "Other",
+    "position": [38.958208, -95.242628],
+    "restrictions": " Special restrictions may apply. "
+  },
+
+
+  {
+    "id": "lot-106",
+    "name": "Lot 106",
+    "type": "Green",
+    "position": [38.955523, -95.259927],
+    "restrictions": " Housing Green Zone permit required Monday-Friday 7:00 AM-5:00 PM. Enforced year-round. "
   }
+
+
+
+
 
 
 ]
