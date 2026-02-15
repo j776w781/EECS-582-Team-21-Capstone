@@ -429,6 +429,41 @@
   },
 
 
+  {
+    "id": "lot-121",
+    "name": "Lot 121",
+    "type": "Brown",
+    "position":   [38.959556, -95.241198],
+    "restrictions": "Brown permit required 24 hours Monday 7:00 AM-Friday 5:00 PM. Any valid permit may park after 5:00 PM until 7:00 AM daily."
+  },
+
+
+  {
+    "id": "lot-122",
+    "name": "Lot 122",
+    "type": "Brown",
+    "position":   [38.959201, -95.241767],
+    "restrictions": "Brown permit required 24 hours Monday 7:00 AM-Friday 5:00 PM. Any valid permit may park after 5:00 PM until 7:00 AM daily."
+  },
+
+
+  {
+    "id": "lot-123",
+    "name": "Lot 123",
+    "type": "Brown",
+    "position":   [38.959848, -95.241933],
+    "restrictions": "Brown permit required 24 hours Monday 7:00 AM-Friday 5:00 PM. Any valid permit may park after 5:00 PM until 7:00 AM daily."
+  },
+
+
+
+  {
+    "id": "lot-124",
+    "name": "Lot 124",
+    "type": "Brown",
+    "position":   [38.959623, -95.241542],
+    "restrictions": "Brown permit required 24 hours Monday 7:00 AM-Friday 5:00 PM. Any valid permit may park after 5:00 PM until 7:00 AM daily."
+  },
 
 
   {
