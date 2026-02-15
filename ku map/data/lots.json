@@ -432,6 +432,253 @@
     "type": "Brown",
     "position":   [38.956761, -95.240974],
     "restrictions": "Brown permit required 24 hours Monday 7:00 AM-Friday 5:00 PM. Any valid permit may park after 5:00 PM until 7:00 AM daily."
+  },
+
+
+
+
+  {
+    "id": "lot-50",
+    "name": "Lot 50",
+    "type": "Yellow",
+    "position":  [38.962083, -95.249744],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-51",
+    "name": "Lot 51",
+    "type": "Yellow",
+    "position":  [38.964129, -95.250280],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-53",
+    "name": "Lot 53",
+    "type": "Yellow",
+    "position":  [38.962587, -95.244175],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-61",
+    "name": "Lot 61",
+    "type": "Yellow",
+    "position":  [38.954616, -95.244470],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+ 
+  {
+    "id": "lot-117y",
+    "name": "Lot 117",
+    "type": "Yellow",
+    "position":  [38.953190, -95.248027],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-202",
+    "name": "Lot 202",
+    "type": "Yellow",
+    "position":  [38.956821, -95.265348],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session.\nWARNING: This lot may not actually exist."
+  },
+
+
+  {
+    "id": "lot-206",
+    "name": "Lot 206",
+    "type": "Yellow",
+    "position":  [38.952684, -95.263525],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-214a",
+    "name": "Lot 214",
+    "type": "Yellow",
+    "position":  [38.947942, -95.262710],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-214b",
+    "name": "Lot 214",
+    "type": "Yellow",
+    "position":  [38.947077, -95.263155],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-215",
+    "name": "Lot 215",
+    "type": "Yellow",
+    "position":  [38.947052, -95.261005],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-218",
+    "name": "Lot 218",
+    "type": "Yellow",
+    "position":  [38.942973, -95.262795],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-219",
+    "name": "Lot 219",
+    "type": "Yellow",
+    "position":  [38.953279, -95.273082],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+
+  {
+    "id": "lot-220",
+    "name": "Lot 220",
+    "type": "Yellow",
+    "position":  [38.956170, -95.272740],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+
+  {
+    "id": "lot-224",
+    "name": "Lot 224",
+    "type": "Yellow",
+    "position":  [38.946006, -95.262731],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-226a",
+    "name": "Lot 226",
+    "type": "Yellow",
+    "position":  [38.951368, -95.272539],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-226b",
+    "name": "Lot 226",
+    "type": "Yellow",
+    "position":  [38.950811, -95.272097],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+
+  {
+    "id": "lot-302",
+    "name": "Lot 302",
+    "type": "Yellow",
+    "position":  [38.946133, -95.267197],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-504",
+    "name": "Lot 504",
+    "type": "Yellow",
+    "position":  [38.954159, -95.281152],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-300A",
+    "name": "Lot 300A",
+    "type": "Yellow",
+    "position":  [38.955239, -95.264179],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-300B",
+    "name": "Lot 300B",
+    "type": "Yellow",
+    "position":  [38.954421, -95.264169],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-300C",
+    "name": "Lot 300C",
+    "type": "Yellow",
+    "position":  [38.953912, -95.263450],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-300D",
+    "name": "Lot 300D",
+    "type": "Yellow",
+    "position":  [38.954004, -95.262432],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+  {
+    "id": "lot-56",
+    "name": "Lot 56",
+    "type": "Yellow",
+    "position":  [38.961660, -95.249053],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-57",
+    "name": "Lot 57",
+    "type": "Yellow",
+    "position":  [38.961597, -95.248624],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-58",
+    "name": "Lot 58",
+    "type": "Yellow",
+    "position":  [38.963542, -95.247182],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-59",
+    "name": "Lot 59",
+    "type": "Yellow",
+    "position":  [38.962617, -95.247823],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-60",
+    "name": "Lot 60",
+    "type": "Yellow",
+    "position":  [38.961390, -95.248166],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
+  },
+
+
+  {
+    "id": "lot-65",
+    "name": "Lot 65",
+    "type": "Yellow",
+    "position":  [38.963811, -95.248199],
+    "restrictions": "Yellow permit required Monday-Friday 8:00 AM–4:00 PM during Fall, Spring, and Summer. Open to parking without a permit when classes are not in session."
   }
 
 
