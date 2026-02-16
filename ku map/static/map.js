@@ -1,6 +1,11 @@
 /**
  * KU Parking Map - Sprint 1
  * Handles map initialization, lot markers, availability logic, and interactions
+ * Authors: Li K, Kitchin Mark
+ * Created February 8th, 2026
+ * Revised February 15th, 2026
+ * No known errors or crashes
+ * Most of the logic done in this file will be moved to app.py in the next sprint
  */
 
 // Global state

@@ -1,5 +1,10 @@
 """
 KU Parking Web App - Sprint 1
+Authors: K Li
+Created February 8th, 2026
+Main driver behind Parking Lot app functionality.
+Follow the instructions below to run the app.
+In the next sprint, decision logic will be moved here, and there will be public accessibility for the app
 Run instructions:
     1. Install Flask: pip install flask
     2. Run: python app.py
