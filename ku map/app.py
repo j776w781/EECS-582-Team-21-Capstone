@@ -91,6 +91,16 @@ def index():
     return render_template('index.html', current_time=current_time)
 
 
+# 🔹 Helper function to add minutes to a time string
+def add_minutes_to_time(time_hhmm, minutes):
+    """Add minutes to a time in HH:MM format"""
+    hours, mins = map(int, time_hhmm.split(":"))
+    total_minutes = hours * 60 + mins + minutes
+    # Handle day wraparound
+    total_minutes = total_minutes % (24 * 60)
+    return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
+
+
 # 🔹 Now accepts permit/day/time and returns availability
 @app.route('/api/lots')
 def get_lots():
@@ -101,8 +111,12 @@ def get_lots():
         day = request.args.get("day", "Mon")
         time = request.args.get("time", "09:00")
 
+        # Compute availability at current time and in 1 hour
+        time_in_one_hour = add_minutes_to_time(time, 60)
+
         for lot in lots:
             lot["available"] = is_lot_available(lot, permit, day, time)
+            lot["available_in_one_hour"] = is_lot_available(lot, permit, day, time_in_one_hour)
 
         print(f"[DEBUG] Returning {len(lots)} lots to client")
         return jsonify(lots)

@@ -137,18 +137,29 @@ function isLotAvailable(lot, permit, day, timeHHMM) {
 
 /**
  * Get color for a lot based on availability
- * @param {boolean} available - Whether the lot is available
- * @returns {string} - Color code (green for available, gray for not available)
+ * @param {Object} lot - The parking lot object with available and available_in_one_hour properties
+ * @returns {string} - Color code (green for available, yellow for becoming unavailable, red for unavailable)
  */
-function getLotColor(available) {
-    return available ? '#28a745' : '#6c757d';
+function getLotColor(lot) {
+    // Red: currently unavailable
+    if (!lot.available) {
+        return '#dc3545';
+    }
+    
+    // Yellow: available now but will become unavailable in an hour
+    if (lot.available && !lot.available_in_one_hour) {
+        return '#ffc107';
+    }
+    
+    // Green: available and will remain available
+    return '#28a745';
 }
 
 /**
  * Create lot marker
  */
 function createLotMarker(lot) {
-    const color = getLotColor(lot.available);
+    const color = getLotColor(lot);
 
     const marker = L.circleMarker(lot.position, {
         radius: 7,
@@ -274,7 +285,7 @@ function greyOutMarker(marker) {
  * Restore marker to normal color based on availability
  */
 function restoreMarkerColor(lot, marker) {
-    const color = getLotColor(lot.available);
+    const color = getLotColor(lot);
     marker.setStyle({
         radius: 7,
         fillColor: color,
