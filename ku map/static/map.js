@@ -18,7 +18,7 @@ let selectedMarker = null;
 
 const KU_CENTER = [38.9581, -95.2464];
 const MAP_ZOOM = 15;
-const ENABLE_COORDINATE_PICKER = true;
+const ENABLE_COORDINATE_PICKER = false;
 
 /**
  * Initialize map
