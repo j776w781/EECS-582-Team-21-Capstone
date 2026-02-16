@@ -221,6 +221,10 @@ async function loadLots() {
  * Update markers by reloading from backend
  */
 function updateMarkers() {
+    // Close any open details when updating
+    if (selectedMarker) {
+        hideDetails();
+    }
     loadLots();
 }
 
@@ -254,6 +258,33 @@ function unhighlightMarker(marker) {
 }
 
 /**
+ * Grey out marker (when other lots are selected)
+ */
+function greyOutMarker(marker) {
+    marker.setStyle({
+        radius: 7,
+        fillColor: '#cccccc',
+        color: '#999999',
+        weight: 2,
+        fillOpacity: 0.5
+    });
+}
+
+/**
+ * Restore marker to normal color based on availability
+ */
+function restoreMarkerColor(lot, marker) {
+    const color = getLotColor(lot.available);
+    marker.setStyle({
+        radius: 7,
+        fillColor: color,
+        color: '#333',
+        weight: 2,
+        fillOpacity: 0.8
+    });
+}
+
+/**
  * Show lot details
  */
 function showLotDetails(lot) {
@@ -269,6 +300,13 @@ function showLotDetails(lot) {
         highlightMarker(marker);
         map.setView(lot.position, map.getZoom(), { animate: true, duration: 0.5 });
     }
+
+    // Grey out all other markers
+    markers.forEach(marker => {
+        if (marker.lotId !== lot.id) {
+            greyOutMarker(marker);
+        }
+    });
 
     document.getElementById('details-name').textContent = lot.name;
     document.getElementById('details-type').textContent = lot.type;
@@ -295,6 +333,14 @@ function hideDetails() {
         selectedMarker.closePopup();
         selectedMarker = null;
     }
+
+    // Restore all markers to normal colors
+    markers.forEach(marker => {
+        const lot = lots.find(l => l.id === marker.lotId);
+        if (lot) {
+            restoreMarkerColor(lot, marker);
+        }
+    });
 
     selectedLot = null;
 
