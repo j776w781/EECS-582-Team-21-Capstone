@@ -18,6 +18,7 @@ To stop the application:
 from flask import Flask, render_template, jsonify, request
 import json
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -85,7 +86,9 @@ def is_lot_available(lot, permit, day, time_hhmm):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Get current time in HH:MM format
+    current_time = datetime.now().strftime('%H:%M')
+    return render_template('index.html', current_time=current_time)
 
 
 # 🔹 Now accepts permit/day/time and returns availability
