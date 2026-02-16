@@ -1,11 +1,12 @@
 /**
  * KU Parking Map - Sprint 1
  * Handles map initialization, lot markers, availability logic, and interactions
- * Authors: Li K, Kitchin Mark
+ * Authors: Li K, Kitchin Mark, Welicky Joshua
  * Created February 8th, 2026
  * Revised February 15th, 2026
  * No known errors or crashes
- * Most of the logic done in this file will be moved to app.py in the next sprint
+ * Most of the logic done in this file will be moved to a python based backend in the next sprint
+ * RELIES ON Leaflet.js library.
  */
 
 // Global state
@@ -84,6 +85,12 @@ function enableCoordinatePicker() {
  * @param {string} timeHHMM - Time in HH:MM format (e.g., "09:00", "17:00")
  * @returns {boolean} - True if lot is available, false otherwise
  */
+
+/*
+NOTE: This function exists in the frontend JavaScript for prototyping purposes.
+It will be moved to a Python-based backend for consistent in SPRINT 2, centralized information
+and updates.
+*/
 function isLotAvailable(lot, permit, day, timeHHMM) {
     const lotType = lot.type.toUpperCase();
     
