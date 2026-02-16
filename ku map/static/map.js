@@ -1,11 +1,12 @@
 /**
  * KU Parking Map - Sprint 1
  * Handles map initialization, lot markers, availability logic, and interactions
- * Authors: Li K, Kitchin Mark
+ * Authors: Li K, Kitchin Mark, Welicky Joshua
  * Created February 8th, 2026
  * Revised February 15th, 2026
  * No known errors or crashes
- * Most of the logic done in this file will be moved to app.py in the next sprint
+ * Most of the logic done in this file will be moved to a python based backend in the next sprint
+ * RELIES ON Leaflet.js library.
  */
 // Global state
 let map;
@@ -38,6 +39,106 @@ function initMap() {
 
 /**
  * Get color based on backend-provided availability
+ * Enable coordinate picker: click map to get lat/lng coordinates
+ * Only works when ENABLE_COORDINATE_PICKER is true
+ */
+function enableCoordinatePicker() {
+    // Safety guard: exit if map is not initialized
+    if (!map) {
+        console.warn('Coordinate picker: map is not initialized');
+        return;
+    }
+    
+    // Create a temporary marker for displaying coordinates
+    let tempMarker = null;
+    
+    // Attach click handler to map
+    map.on('click', function(e) {
+        const lat = e.latlng.lat.toFixed(6);
+        const lng = e.latlng.lng.toFixed(6);
+        const coords = `[${lat}, ${lng}]`;
+        
+        // Log coordinates to console
+        console.log(coords);
+        
+        // Remove previous temporary marker if exists
+        if (tempMarker) {
+            map.removeLayer(tempMarker);
+        }
+        
+        // Create popup at clicked location
+        tempMarker = L.marker(e.latlng).addTo(map);
+        tempMarker.bindPopup(`Copy this: ${coords}`).openPopup();
+    });
+}
+
+/**
+ * Determine if a lot is available based on permit, day, and time
+ * @param {Object} lot - The parking lot object
+ * @param {string} permit - User's permit type (NONE, YELLOW, RED, BLUE)
+ * @param {string} day - Day of week (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
+ * @param {string} timeHHMM - Time in HH:MM format (e.g., "09:00", "17:00")
+ * @returns {boolean} - True if lot is available, false otherwise
+ */
+
+/*
+NOTE: This function exists in the frontend JavaScript for prototyping purposes.
+It will be moved to a Python-based backend for consistent in SPRINT 2, centralized information
+and updates.
+*/
+function isLotAvailable(lot, permit, day, timeHHMM) {
+    const lotType = lot.type.toUpperCase();
+    
+    // Parse time
+    const [hours, minutes] = timeHHMM.split(':').map(Number);
+    const timeInMinutes = hours * 60 + minutes;
+    
+    // Yellow lots logic
+    if (lotType === 'YELLOW') {
+        // If user has Yellow permit, lot is always available
+        if (permit === 'YELLOW') {
+            return true;
+        }
+        
+        // If user has no permit
+        if (permit === 'NONE') {
+            // Mon-Fri between 08:00-16:00 (8 AM - 4 PM) -> NOT available
+            // After 17:00 (5 PM) -> available
+            const isWeekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(day);
+            
+            if (isWeekday) {
+                // Restricted hours: 08:00 (480 min) to before 17:00 (1020 min)
+                if (timeInMinutes >= 480 && timeInMinutes < 1020) {
+                    return false; // NOT available
+                }
+            }
+            
+            // After 17:00 (5 PM) or weekends -> available
+            return true;
+        }
+        
+        // Other permits don't grant access to Yellow lots
+        return false;
+    }
+    
+    // Red lots require RED permit
+    if (lotType === 'RED') {
+        return permit === 'RED';
+    }
+    
+    // Blue lots require BLUE permit
+    if (lotType === 'BLUE') {
+        return permit === 'BLUE';
+    }
+    
+    // Default: not available
+    return false;
+}
+
+/**
+ * Get color for a lot based on availability
+ * @param {boolean} available - Whether the lot is available
+ * @returns {string} - Color code (green for available, gray for not available)
  */
 function getLotColor(available) {
     return available ? '#28a745' : '#6c757d';

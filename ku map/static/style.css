@@ -1,4 +1,18 @@
-/* KU Parking App - Sprint 1 Styles */
+/* KU Parking App - Sprint 1 Styles 
+Name: styles.css
+Description: A simple stylesheet for customized appearances
+of HTML elements.
+Programmer's name: K Li, Joshua Welicky
+Creation Date: 2/8/2026
+Revision: 2/15/2026
+    -- Added comments: Joshua Welicky
+Preconditions: No required inputs.
+Postconditions: Altered styles for index.html and map.js elements.
+Errors/Exceptions: No known errors.
+No known side effects.
+Invariants: N/A
+Faults: None identified.
+*/
 
 * {
     margin: 0;
