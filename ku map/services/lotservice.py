@@ -1,4 +1,4 @@
-from lot import Lot
+from .lot import Lot
 import json
 
 
