@@ -16,6 +16,6 @@ jobs:
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      - run: flyctl scale count 2 --min-count 2 --max-count 2
+      - run: flyctl scale count 2
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
