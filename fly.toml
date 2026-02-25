@@ -21,3 +21,7 @@ primary_region = 'dfw'
   cpu_kind = 'shared'
   cpus = 1
   memory_mb = 1024
+
+[scale]
+  min_count = 2
+  max_count = 2
