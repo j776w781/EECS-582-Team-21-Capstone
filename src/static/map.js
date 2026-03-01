@@ -73,83 +73,21 @@ function enableCoordinatePicker() {
 }
 
 /**
- * Determine if a lot is available based on permit, day, and time
- * @param {Object} lot - The parking lot object
- * @param {string} permit - User's permit type (NONE, YELLOW, RED, BLUE)
- * @param {string} day - Day of week (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
- * @param {string} timeHHMM - Time in HH:MM format (e.g., "09:00", "17:00")
- * @returns {boolean} - True if lot is available, false otherwise
- */
-
-/*
-NOTE: This function exists in the frontend JavaScript for prototyping purposes.
-It will be moved to a Python-based backend for consistent in SPRINT 2, centralized information
-and updates.
-*/
-function isLotAvailable(lot, permit, day, timeHHMM) {
-    const lotType = lot.type.toUpperCase();
-    
-    // Parse time
-    const [hours, minutes] = timeHHMM.split(':').map(Number);
-    const timeInMinutes = hours * 60 + minutes;
-    
-    // Yellow lots logic
-    if (lotType === 'YELLOW') {
-        // If user has Yellow permit, lot is always available
-        if (permit === 'YELLOW') {
-            return true;
-        }
-        
-        // If user has no permit
-        if (permit === 'NONE') {
-            // Mon-Fri between 08:00-16:00 (8 AM - 4 PM) -> NOT available
-            // After 17:00 (5 PM) -> available
-            const isWeekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(day);
-            
-            if (isWeekday) {
-                // Restricted hours: 08:00 (480 min) to before 17:00 (1020 min)
-                if (timeInMinutes >= 480 && timeInMinutes < 1020) {
-                    return false; // NOT available
-                }
-            }
-            
-            // After 17:00 (5 PM) or weekends -> available
-            return true;
-        }
-        
-        // Other permits don't grant access to Yellow lots
-        return false;
-    }
-    
-    // Red lots require RED permit
-    if (lotType === 'RED') {
-        return permit === 'RED';
-    }
-    
-    // Blue lots require BLUE permit
-    if (lotType === 'BLUE') {
-        return permit === 'BLUE';
-    }
-    
-    // Default: not available
-    return false;
-}
-
-/**
  * Get color for a lot based on availability
  * @param {Object} lot - The parking lot object with available and available_in_one_hour properties
  * @returns {string} - Color code (green for available, yellow for becoming unavailable, red for unavailable)
  */
 function getLotColor(lot) {
-    // Red: currently unavailable
+    // Yellow: available now but will become available in an hour
+    if (!lot.available && lot.available_in_one_hour) {
+        return '#ffc107';
+    }
+    
+    // Red: currently unavailable and will remain unavailable
     if (!lot.available) {
         return '#dc3545';
     }
     
-    // Yellow: available now but will become unavailable in an hour
-    if (lot.available && !lot.available_in_one_hour) {
-        return '#ffc107';
-    }
     
     // Green: available and will remain available
     return '#28a745';

@@ -1,14 +1,14 @@
 """
-KU Parking Web App - Sprint 1
+KU Parking Web App - Sprint 2
 Authors: K Li
 Created February 8th, 2026
 Main driver behind Parking Lot app functionality.
 Follow the instructions below to run the app.
-In the next sprint, decision logic will be moved here, and there will be public accessibility for the app
+Sprint 2: Decision logic moved to AvailabilityService for centralized availability decision making.
 Run instructions:
     1. Install Flask: pip install flask
     2. Run: python app.py
-    3. Open browser: http://127.0.0.1:5000/
+    3. Open browser: http://192.168.1.124:8080
 
 To stop the application:
     - In the terminal window where the app is running, press Ctrl + C
@@ -19,8 +19,12 @@ from flask import Flask, render_template, jsonify, request
 import json
 import os
 from datetime import datetime
+from services.availabilityservice import AvailabilityService
 
 app = Flask(__name__)
+
+# Initialize AvailabilityService for centralized decision making
+availability_service = AvailabilityService()
 
 # Get the absolute path to the app directory
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -45,50 +49,13 @@ def load_lots():
         raise
 
 
-# 🔹 Availability logic MOVED from map.js to backend
-def is_lot_available(lot, permit, day, time_hhmm):
-    lot_type = lot["type"].upper()
-
-    hours, minutes = map(int, time_hhmm.split(":"))
-    time_in_minutes = hours * 60 + minutes
-
-    # Yellow lot logic
-    if lot_type == "YELLOW":
-
-        if permit == "YELLOW":
-            return True
-
-        if permit == "NONE":
-            is_weekday = day in ["Mon", "Tue", "Wed", "Thu", "Fri"]
-
-            # Block 8:00–16:59 on weekdays
-            if is_weekday and 480 <= time_in_minutes < 1020:
-                return False
-
-            return True
-
-        return False
-
-    # Red lot logic
-    if lot_type == "RED":
-        return permit == "RED"
-
-    # Blue lot logic
-    if lot_type == "BLUE":
-        return permit == "BLUE"
-
-    # Green lot logic
-    if lot_type == "GREEN":
-        return permit == "GREEN"
-
-    return False
-
-
 @app.route('/')
 def index():
     # Get current time in HH:MM format
     current_time = datetime.now().strftime('%H:%M')
-    return render_template('index.html', current_time=current_time)
+    # Get current day of week (Mon, Tue, Wed, etc.)
+    current_day = datetime.now().strftime('%a')  # Returns Mon, Tue, Wed, etc.
+    return render_template('index.html', current_time=current_time, current_day=current_day)
 
 
 # 🔹 Helper function to add minutes to a time string
@@ -101,7 +68,7 @@ def add_minutes_to_time(time_hhmm, minutes):
     return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
 
 
-# 🔹 Now accepts permit/day/time and returns availability
+# 🔹 Now accepts permit/day/time and returns availability using AvailabilityService
 @app.route('/api/lots')
 def get_lots():
     try:
@@ -114,15 +81,21 @@ def get_lots():
         # Compute availability at current time and in 1 hour
         time_in_one_hour = add_minutes_to_time(time, 60)
 
+        # Use AvailabilityService for centralized decision making
         for lot in lots:
-            lot["available"] = is_lot_available(lot, permit, day, time)
-            lot["available_in_one_hour"] = is_lot_available(lot, permit, day, time_in_one_hour)
+            lot["available"] = availability_service.is_lot_available(lot, permit, day, time)
+            lot["available_in_one_hour"] = availability_service.is_lot_available(
+                lot, permit, day, time_in_one_hour
+            )
 
         print(f"[DEBUG] Returning {len(lots)} lots to client")
+        print(f"[DEBUG] Permit: {permit}, Day: {day}, Time: {time}, Time+1h: {time_in_one_hour}")
         return jsonify(lots)
     
     except Exception as e:
         print(f"[ERROR] Failed to get lots: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 

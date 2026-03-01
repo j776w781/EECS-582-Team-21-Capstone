@@ -50,13 +50,13 @@ Faults: None identified.
             <div class="control-group">
                 <label for="day-select">Day of Week:</label>
                 <select id="day-select">
-                    <option value="Mon" selected>Monday</option>
-                    <option value="Tue">Tuesday</option>
-                    <option value="Wed">Wednesday</option>
-                    <option value="Thu">Thursday</option>
-                    <option value="Fri">Friday</option>
-                    <option value="Sat">Saturday</option>
-                    <option value="Sun">Sunday</option>
+                    <option value="Mon" {% if current_day == 'Mon' %}selected{% endif %}>Monday</option>
+                    <option value="Tue" {% if current_day == 'Tue' %}selected{% endif %}>Tuesday</option>
+                    <option value="Wed" {% if current_day == 'Wed' %}selected{% endif %}>Wednesday</option>
+                    <option value="Thu" {% if current_day == 'Thu' %}selected{% endif %}>Thursday</option>
+                    <option value="Fri" {% if current_day == 'Fri' %}selected{% endif %}>Friday</option>
+                    <option value="Sat" {% if current_day == 'Sat' %}selected{% endif %}>Saturday</option>
+                    <option value="Sun" {% if current_day == 'Sun' %}selected{% endif %}>Sunday</option>
                 </select>
             </div>
 
