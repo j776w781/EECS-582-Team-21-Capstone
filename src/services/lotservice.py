@@ -1,9 +1,10 @@
 from .lot import Lot
 import json
+import os
 
 
 class LotService:
-    def __init__(self, data_path = "../data/lots.json"):
+    def __init__(self, data_path = "src/data/lots.json"):
         self.lots = []
         self.data_path = data_path
         self.startup()
@@ -22,7 +23,7 @@ class LotService:
 
 
         except FileNotFoundError:
-            print(f"Error: Could not find lot data file at {self.data_path}")
+            print(f"Error: Could not find lot data file at {self.data_path} because we're {os.getcwd()}")
         except json.JSONDecodeError:
             print("Error: Invalid JSON format in lot data file.")
 

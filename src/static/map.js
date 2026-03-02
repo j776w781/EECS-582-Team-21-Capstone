@@ -78,6 +78,7 @@ function enableCoordinatePicker() {
  * @returns {string} - Color code (green for available, yellow for becoming unavailable, red for unavailable)
  */
 function getLotColor(lot) {
+    /*
     // Yellow: available now but will become available in an hour
     if (!lot.available && lot.available_in_one_hour) {
         return '#ffc107';
@@ -91,6 +92,8 @@ function getLotColor(lot) {
     
     // Green: available and will remain available
     return '#28a745';
+    */
+   return lot.color;
 }
 
 /**
@@ -195,7 +198,8 @@ function highlightMarker(marker) {
  */
 function unhighlightMarker(marker) {
     const lot = lots.find(l => l.id === marker.lotId);
-    const color = getLotColor(lot.available);
+    //const color = getLotColor(lot.available);
+    const color = getLotColor(lot);
 
     marker.setStyle({
         radius: 7,
@@ -259,7 +263,7 @@ function showLotDetails(lot) {
 
     document.getElementById('details-name').textContent = lot.name;
     document.getElementById('details-type').textContent = lot.type;
-    document.getElementById('details-restrictions').textContent = lot.restrictions;
+    document.getElementById('details-restrictions').textContent = lot.description;
 
     document.getElementById('details-panel').classList.remove('hidden');
 

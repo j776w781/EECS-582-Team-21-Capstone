@@ -19,12 +19,19 @@ from flask import Flask, render_template, jsonify, request
 import json
 import os
 from datetime import datetime
-from services.availabilityservice import AvailabilityService
+#USE FOR LOCAL TESTING
+#from services.LotController import LotController
+
+#USE FOR DEPLOYMENT
+from src.services.LotController import LotController
+
+
+#from services.availabilityservice import AvailabilityService
 
 app = Flask(__name__)
 
 # Initialize AvailabilityService for centralized decision making
-availability_service = AvailabilityService()
+lot_control = LotController()
 
 # Get the absolute path to the app directory
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -68,19 +75,32 @@ def add_minutes_to_time(time_hhmm, minutes):
     return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
 
 
+
+
+
 # 🔹 Now accepts permit/day/time and returns availability using AvailabilityService
 @app.route('/api/lots')
 def get_lots():
     try:
-        lots = load_lots()
-
+        #lots = load_lots()
         permit = request.args.get("permit", "NONE")
         day = request.args.get("day", "Mon")
         time = request.args.get("time", "09:00")
 
         # Compute availability at current time and in 1 hour
-        time_in_one_hour = add_minutes_to_time(time, 60)
+        #time_in_one_hour = add_minutes_to_time(time, 60)
 
+        lots = lot_control.get_lots(permit, day, time)
+        print(f"LotController gave us: {len(lots)} lots!")
+        return jsonify([lot.json_dictionary() for lot in lots])
+
+
+
+
+
+
+
+        '''
         # Use AvailabilityService for centralized decision making
         for lot in lots:
             lot["available"] = availability_service.is_lot_available(lot, permit, day, time)
@@ -91,6 +111,7 @@ def get_lots():
         print(f"[DEBUG] Returning {len(lots)} lots to client")
         print(f"[DEBUG] Permit: {permit}, Day: {day}, Time: {time}, Time+1h: {time_in_one_hour}")
         return jsonify(lots)
+        '''
     
     except Exception as e:
         print(f"[ERROR] Failed to get lots: {e}")

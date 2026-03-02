@@ -35,7 +35,7 @@ class Lot:
         # Converts the Lot instance into a dictionary format suitabla for JSON and HTTPS responses
         return {"id": self.id,
                 "name": self.name, 
-                "permit type": self.permit_type, 
+                "type": self.permit_type, 
                 "position": self.loc,
                 "description": self.descript, 
                 "color": self.color}
