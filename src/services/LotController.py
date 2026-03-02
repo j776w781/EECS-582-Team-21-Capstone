@@ -1,3 +1,29 @@
+"""
+PROLOGUE COMMENT
+
+Name: lotservice.py
+Description: Defines the LotController class, which is the main backend entity. It interfaces with the web-server component to produce
+all lot information.
+Programmer: Evans Chigweshe, Joshua Welicky
+Created: March 1, 2026
+Revised: March 1, 2026 (Tweaks by Josh)
+
+Preconditions: Depends on the existence of the Lot class, Restriction class, LotService class, and AvailabilityService class.
+
+Input values/types: none
+
+Postconditions: The LotController is initialized and can be used to retrieve lot information.
+
+Return values: get_lots() --> returns an array of lots, all with their color attribute set based on a time and chosen permit.
+               add_minutes_to_time()-->helper function which returns a string representing an entered time plus one hour.
+
+Errors/exceptions: N/A
+
+Side effects: None
+"""
+
+
+
 from datetime import datetime
 from .lotservice import LotService
 from .availabilityservice import AvailabilityService
@@ -18,10 +44,11 @@ class LotController:
         total_minutes = total_minutes % (24 * 60)
         return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
 
-
-
-
-
+    '''
+    Obtains parameters from the web request. Obtains a list of lots from the LotService
+    and assigns colors to each lot using the AvailabilityService, returning the result to the
+    server to distribute.
+    '''
     def get_lots(self, user_permit: str, day: str, time_hhmm: str):
         # Compute availability at current time and in 1 hour
         time_in_one_hour = self.add_minutes_to_time(time_hhmm, 60)

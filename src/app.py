@@ -1,14 +1,19 @@
 """
 KU Parking Web App - Sprint 2
-Authors: K Li
+Authors: K Li, Joshua Welicky
 Created February 8th, 2026
 Main driver behind Parking Lot app functionality.
 Follow the instructions below to run the app.
 Sprint 2: Decision logic moved to AvailabilityService for centralized availability decision making.
-Run instructions:
+Sprint 2: Strip down server app to leverage the new Python backend. This listens for requests, passes parameters to the LotController, and sends the results.
+Run instructions (Local):
+    0. CHECK THE IN-LINE COMMENTS(import statement AND the if __name__ == 'main' segment)
     1. Install Flask: pip install flask
     2. Run: python app.py
     3. Open browser: http://192.168.1.124:8080
+Deploy instructions:
+    1. Install fly.io: powershell -Command "iwr https://fly.io/install.ps1 -useb | iex"   (for windows)
+    2. Run fly.deploy (and pray)
 
 To stop the application:
     - In the terminal window where the app is running, press Ctrl + C
@@ -21,12 +26,11 @@ import os
 from datetime import datetime
 #USE FOR LOCAL TESTING
 #from services.LotController import LotController
-
+'''
+READ ME READ ME DON'T SCROLL PAST OR YOU'LL BREAK SOMETHING!!!!!!!!!!!!!!!
+'''
 #USE FOR DEPLOYMENT
 from src.services.LotController import LotController
-
-
-#from services.availabilityservice import AvailabilityService
 
 app = Flask(__name__)
 
@@ -36,24 +40,6 @@ lot_control = LotController()
 # Get the absolute path to the app directory
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(APP_DIR, 'data', 'lots.json')
-
-# Load parking lots data
-def load_lots():
-    """Load parking lots from data/lots.json"""
-    print(f"[DEBUG] Loading lots from: {DATA_FILE}")
-    print(f"[DEBUG] File exists: {os.path.exists(DATA_FILE)}")
-    
-    try:
-        with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            lots_data = json.load(f)
-            print(f"[DEBUG] Successfully loaded {len(lots_data)} lots from JSON")
-            return lots_data
-    except FileNotFoundError:
-        print(f"[ERROR] File not found: {DATA_FILE}")
-        raise
-    except json.JSONDecodeError as e:
-        print(f"[ERROR] JSON decode error: {e}")
-        raise
 
 
 @app.route('/')
@@ -65,19 +51,6 @@ def index():
     return render_template('index.html', current_time=current_time, current_day=current_day)
 
 
-# 🔹 Helper function to add minutes to a time string
-def add_minutes_to_time(time_hhmm, minutes):
-    """Add minutes to a time in HH:MM format"""
-    hours, mins = map(int, time_hhmm.split(":"))
-    total_minutes = hours * 60 + mins + minutes
-    # Handle day wraparound
-    total_minutes = total_minutes % (24 * 60)
-    return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
-
-
-
-
-
 # 🔹 Now accepts permit/day/time and returns availability using AvailabilityService
 @app.route('/api/lots')
 def get_lots():
@@ -87,32 +60,12 @@ def get_lots():
         day = request.args.get("day", "Mon")
         time = request.args.get("time", "09:00")
 
-        # Compute availability at current time and in 1 hour
-        #time_in_one_hour = add_minutes_to_time(time, 60)
-
+        #Let the Backend do the work.
         lots = lot_control.get_lots(permit, day, time)
-        print(f"LotController gave us: {len(lots)} lots!")
+        
+        #JSONIFY works best if the Lot instances are actually dictionaries.
         return jsonify([lot.json_dictionary() for lot in lots])
 
-
-
-
-
-
-
-        '''
-        # Use AvailabilityService for centralized decision making
-        for lot in lots:
-            lot["available"] = availability_service.is_lot_available(lot, permit, day, time)
-            lot["available_in_one_hour"] = availability_service.is_lot_available(
-                lot, permit, day, time_in_one_hour
-            )
-
-        print(f"[DEBUG] Returning {len(lots)} lots to client")
-        print(f"[DEBUG] Permit: {permit}, Day: {day}, Time: {time}, Time+1h: {time_in_one_hour}")
-        return jsonify(lots)
-        '''
-    
     except Exception as e:
         print(f"[ERROR] Failed to get lots: {e}")
         import traceback

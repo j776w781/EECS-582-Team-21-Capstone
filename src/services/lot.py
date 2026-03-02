@@ -1,7 +1,30 @@
 """
-lot.py
-Purpose: Defines the Lot class, which represents a single KU parking lot. This class stores identifying information, permit requirements,
+PROLOGUE COMMENT
+
+Name: lot.py
+Description: Defines the Lot class, which represents a single KU parking lot. This class stores identifying information, permit requirements,
 location data, and the current display color used by the frontend map.
+Programmer: Joshua Welicky, Evans Chigweshe, Mark Kitchin
+Created: February 21st, 2026
+Revised: March 1, 2026 (Tweaks and added functions)
+
+Preconditions: None on its own.
+
+Input values/types:
+- id: string -- refers to a lot id (may not simply be an int, since several lots have different-colored components)
+- name: string -- what the user will actually see it as (may be same across Lot instances)
+- permit_type: The permit required to park in the lot.
+- log: coordinates for where the marker will actually end up.
+- color: the actual color that the JavaScript front-end will color the marker.
+- descript: A text description of the lot, including its restrictions.
+
+Postconditions: Instance initialized.
+
+Return values: .get() --> attribute value(varies); json_dictionary --> dictionary
+
+Errors/exceptions: N/A
+
+Side effects: None
 """
 
 class Lot:

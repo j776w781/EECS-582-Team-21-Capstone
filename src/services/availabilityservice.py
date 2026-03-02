@@ -5,7 +5,7 @@ Name: AvailabilityService.py
 Description: Centralized parking lot availability decision making based on permit type, day, and time.
 Programmer: Jenna Luong (initial), K Li (Sprint 2), Joshua Welicky (Sprint 2 final tweaks)
 Created: February 20th, 2026
-Revised: February 28th, 2026 (K Li: Complete availability logic, methods, Flask integration)
+Revised: February 28th, 2026 (K Li: Complete availability logic, methods; Josh: Put in remaining permits/restrictions, simplify is_lot_available)
 
 Preconditions: Restriction/LotService available, lot dict has 'type' key, valid day string, HH:MM format.
 
@@ -143,21 +143,6 @@ class AvailabilityService:
             else:
                 restriction = self.std_restricts.get("YELLOW")
                 return not (restriction and restriction.applies(current_dt))
-
-        '''
-        # Yellow: YELLOW permit always available; NONE permit restricted Mon-Fri 8AM-4:59PM
-        if lot_type == "YELLOW":
-            if permit == "YELLOW":
-                return True
-            if permit == "NONE":
-                restriction = self.std_restricts.get("YELLOW")
-                return not (restriction and restriction.applies(current_dt))
-            return False
-
-        # Red/Blue/Green/Gold: Require matching permit (year-round)
-        if lot_type in ["RED", "BLUE", "GREEN", "GOLD"]:
-            return permit == lot_type
-        '''
 
         # Garage: Require GARAGE permit
         if lot_type == "GARAGE":

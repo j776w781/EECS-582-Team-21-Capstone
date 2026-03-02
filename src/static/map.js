@@ -4,6 +4,7 @@
  * Authors: Li K, Kitchin Mark, Welicky Joshua
  * Created February 8th, 2026
  * Revised February 15th, 2026
+ * Revised March 1, 2026: Tweaks to initial JavaScript to account for updated Python Backend.
  * No known errors or crashes
  * Most of the logic done in this file will be moved to a python based backend in the next sprint
  * RELIES ON Leaflet.js library.
@@ -78,21 +79,7 @@ function enableCoordinatePicker() {
  * @returns {string} - Color code (green for available, yellow for becoming unavailable, red for unavailable)
  */
 function getLotColor(lot) {
-    /*
-    // Yellow: available now but will become available in an hour
-    if (!lot.available && lot.available_in_one_hour) {
-        return '#ffc107';
-    }
-    
-    // Red: currently unavailable and will remain unavailable
-    if (!lot.available) {
-        return '#dc3545';
-    }
-    
-    
-    // Green: available and will remain available
-    return '#28a745';
-    */
+    //This method is very simplified now that the backend decides the color, not JavaScript.
    return lot.color;
 }
 
