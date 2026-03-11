@@ -24,6 +24,7 @@ from flask import Flask, render_template, jsonify, request
 import json
 import os
 from datetime import datetime
+from zoneinfo import ZoneInfo
 #USE FOR LOCAL TESTING
 #from services.LotController import LotController
 '''
@@ -45,7 +46,7 @@ DATA_FILE = os.path.join(APP_DIR, 'data', 'lots.json')
 @app.route('/')
 def index():
     # Get current time in HH:MM format
-    current_time = datetime.now().strftime('%H:%M')
+    current_time = datetime.now(ZoneInfo("America/Chicago")).strftime('%H:%M')
     # Get current day of week (Mon, Tue, Wed, etc.)
     current_day = datetime.now().strftime('%a')  # Returns Mon, Tue, Wed, etc.
     return render_template('index.html', current_time=current_time, current_day=current_day)
