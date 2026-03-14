@@ -135,6 +135,18 @@ class LotController:
             'reported_at': now
         }
 
+        # Persist to disk for live deployment to show across server restarts
+        try:
+            self.lot_service.save_special_report(
+                lot_id=lot_id,
+                description=lot.special_restriction['description'],
+                start=start_datetime,
+                end=end_datetime,
+                reported_at=now
+            )
+        except Exception as e:
+            print(f"[WARN] Could not save special report: {e}")
+
         return lot
 
 

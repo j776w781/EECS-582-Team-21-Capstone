@@ -100,7 +100,8 @@ def report_special_restriction(lot_id):
             except ValueError:
                 return jsonify({'error': 'end must be ISO format datetime'}), 400
 
-        lot_control.report_special_restriction(lot_id, description, start_datetime, end_datetime)
+        report = lot_control.report_special_restriction(lot_id, description, start_datetime, end_datetime)
+        print(f"[INFO] special restriction reported for {lot_id}: {report.special_restriction}")
 
         return jsonify({'status': 'ok'}), 200
 

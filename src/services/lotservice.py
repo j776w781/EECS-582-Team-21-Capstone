@@ -25,13 +25,17 @@ Side effects: None
 from .lot import Lot
 import json
 import os
+from datetime import datetime
 
 
 class LotService:
-    def __init__(self, data_path = "src/data/lots.json"):
+    def __init__(self, data_path = "src/data/lots.json", reports_path="src/data/special_reports.json"):
         self.lots = []
         self.data_path = data_path
+        self.reports_path = reports_path
         self.startup()
+        self.load_special_reports()
+
 
     '''
     True initialization of the LotService. this loads in all the lots from the 
@@ -54,6 +58,57 @@ class LotService:
         except json.JSONDecodeError:
             print("Error: Invalid JSON format in lot data file.")
 
+    def load_special_reports(self):
+        if not os.path.exists(self.reports_path):
+            return
+
+        try:
+            with open(self.reports_path, 'r') as file:
+                data = json.load(file)
+        except Exception as e:
+            print(f"Error loading special reports: {e}")
+            return
+
+        for report in data:
+            lot_id = report.get('lot_id')
+            lot = self.get_lot(lot_id)
+            if not lot:
+                continue
+            try:
+                start = datetime.fromisoformat(report.get('start'))
+                end = datetime.fromisoformat(report.get('end'))
+            except Exception:
+                continue
+
+            lot.special_restriction = {
+                'description': report.get('description', ''),
+                'start': start,
+                'end': end,
+                'reported_at': datetime.fromisoformat(report.get('reported_at')) if report.get('reported_at') else datetime.now()
+            }
+
+    def save_special_report(self, lot_id, description, start, end, reported_at):
+        reports = []
+        if os.path.exists(self.reports_path):
+            try:
+                with open(self.reports_path, 'r') as file:
+                    reports = json.load(file)
+            except Exception:
+                reports = []
+
+        reports.append({
+            'lot_id': lot_id,
+            'description': description,
+            'start': start.isoformat(),
+            'end': end.isoformat(),
+            'reported_at': reported_at.isoformat()
+        })
+
+        try:
+            with open(self.reports_path, 'w') as file:
+                json.dump(reports, file, indent=2)
+        except Exception as e:
+            print(f"Error saving special report: {e}")
 
     def get_all(self):
         # Returns list of all Lot instances 
