@@ -49,16 +49,16 @@ class LotController:
     and assigns colors to each lot using the AvailabilityService, returning the result to the
     server to distribute.
     '''
-    def _purge_expired_special_restrictions(self, current_time):
+    def _purge_expired_special_restrictions(self, now):
         for lot in self.lot_service.get_all():
             sr = lot.special_restriction
             if sr is None:
                 continue
-            if sr.get('end') <= current_time:
+            if sr.get('end') <= now:
                 lot.special_restriction = None
                 lot.descript = lot.base_description
 
-    def _apply_special_restriction_to_lot(self, lot, current_time):
+    def _apply_special_restriction_to_lot(self, lot, compare_time):
         sr = lot.special_restriction
         if sr is None:
             lot.descript = lot.base_description
@@ -71,26 +71,34 @@ class LotController:
             lot.descript = lot.base_description
             return False
 
-        if start <= current_time < end:
+        active_text = f"Special restriction (reported): {sr.get('description')}\nFrom {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
+
+        if compare_time < start:
+            lot.descript = f"{lot.base_description}\n\n{active_text} (scheduled, starts {start.strftime('%Y-%m-%d %H:%M')})"
+            return False
+
+        if start <= compare_time < end:
             lot.color = '#FFA500'
-            lot.descript = f"{lot.base_description}\n\nSpecial restriction (reported): {sr.get('description')}\nActive from {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
+            lot.descript = f"{lot.base_description}\n\n{active_text} (active now)"
             return True
 
-        # Not active yet
         lot.descript = lot.base_description
         return False
 
     def get_lots(self, user_permit: str, day: str, time_hhmm: str):
-        # Compute availability at current time and in 1 hour
+        # compute availability at current time and in 1 hour for normal logic
         time_in_one_hour = self.add_minutes_to_time(time_hhmm, 60)
 
         lots = self.lot_service.get_all()
 
-        current_time = datetime.now()
-        self._purge_expired_special_restrictions(current_time)
+        now = datetime.now()
+        self._purge_expired_special_restrictions(now)
+
+        # For special restrictions, evaluate against selected query time to show users what they choose.
+        selected_time = self.availability_service._create_datetime_from_params(day, time_hhmm)
 
         for lot in lots:
-            if self._apply_special_restriction_to_lot(lot, current_time):
+            if self._apply_special_restriction_to_lot(lot, selected_time):
                 continue
 
             available = self.availability_service.is_lot_available(lot, user_permit, day, time_hhmm)
