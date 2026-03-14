@@ -24,7 +24,7 @@ Side effects: None
 
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from .lotservice import LotService
 from .availabilityservice import AvailabilityService
 
@@ -49,13 +49,50 @@ class LotController:
     and assigns colors to each lot using the AvailabilityService, returning the result to the
     server to distribute.
     '''
+    def _purge_expired_special_restrictions(self, current_time):
+        for lot in self.lot_service.get_all():
+            sr = lot.special_restriction
+            if sr is None:
+                continue
+            if sr.get('end') <= current_time:
+                lot.special_restriction = None
+                lot.descript = lot.base_description
+
+    def _apply_special_restriction_to_lot(self, lot, current_time):
+        sr = lot.special_restriction
+        if sr is None:
+            lot.descript = lot.base_description
+            return False
+
+        start = sr.get('start')
+        end = sr.get('end')
+        if start is None or end is None:
+            lot.special_restriction = None
+            lot.descript = lot.base_description
+            return False
+
+        if start <= current_time < end:
+            lot.color = '#FFA500'
+            lot.descript = f"{lot.base_description}\n\nSpecial restriction (reported): {sr.get('description')}\nActive from {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
+            return True
+
+        # Not active yet
+        lot.descript = lot.base_description
+        return False
+
     def get_lots(self, user_permit: str, day: str, time_hhmm: str):
         # Compute availability at current time and in 1 hour
         time_in_one_hour = self.add_minutes_to_time(time_hhmm, 60)
 
         lots = self.lot_service.get_all()
 
-        for lot in lots: 
+        current_time = datetime.now()
+        self._purge_expired_special_restrictions(current_time)
+
+        for lot in lots:
+            if self._apply_special_restriction_to_lot(lot, current_time):
+                continue
+
             available = self.availability_service.is_lot_available(lot, user_permit, day, time_hhmm)
             available_in_hour = self.availability_service.is_lot_available(lot, user_permit, day, time_in_one_hour)
 
@@ -65,8 +102,41 @@ class LotController:
                 lot.color = "#00FF00"
             else:
                 lot.color = "#FF0000"
+
         return lots
     
+    def report_special_restriction(self, lot_id: str, description: str, start_datetime: datetime = None, end_datetime: datetime = None):
+        lot = self.lot_service.get_lot(lot_id)
+        if lot is None:
+            raise ValueError(f"Lot with id {lot_id} does not exist")
+
+        if not description or not description.strip():
+            raise ValueError("Description is required")
+
+        now = datetime.now()
+
+        if start_datetime is None:
+            start_datetime = now
+
+        if end_datetime is None:
+            end_datetime = start_datetime + timedelta(hours=24)
+
+        if end_datetime <= start_datetime:
+            raise ValueError("End time must be after start time")
+
+        duration_hours = (end_datetime - start_datetime).total_seconds() / 3600
+        if duration_hours > 48:
+            end_datetime = start_datetime + timedelta(hours=24)
+
+        lot.special_restriction = {
+            'description': description.strip(),
+            'start': start_datetime,
+            'end': end_datetime,
+            'reported_at': now
+        }
+
+        return lot
+
 
 '''''
     def report(self, lot_id: int, description: str, start_datetime: datetime = None, end_datetime: datetime = None):

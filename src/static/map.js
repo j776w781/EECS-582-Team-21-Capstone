@@ -252,6 +252,12 @@ function showLotDetails(lot) {
     document.getElementById('details-type').textContent = lot.type;
     document.getElementById('details-restrictions').textContent = lot.description;
 
+    // Reset report form and status on selecting lot
+    document.getElementById('report-description').value = '';
+    document.getElementById('report-start').value = '';
+    document.getElementById('report-end').value = '';
+    document.getElementById('report-status').textContent = '';
+
     document.getElementById('details-panel').classList.remove('hidden');
 
     document.querySelectorAll('.lot-item').forEach(item => {
@@ -287,6 +293,64 @@ function hideDetails() {
     document.querySelectorAll('.lot-item').forEach(item => {
         item.classList.remove('selected');
     });
+
+    // Clear report form after closing
+    document.getElementById('report-description').value = '';
+    document.getElementById('report-start').value = '';
+    document.getElementById('report-end').value = '';
+    document.getElementById('report-status').textContent = '';
+}
+
+/**
+ * Submit special restriction report
+ */
+async function submitReport() {
+    if (!selectedLot) {
+        document.getElementById('report-status').textContent = 'Select a lot first.';
+        return;
+    }
+
+    const description = document.getElementById('report-description').value.trim();
+    const start = document.getElementById('report-start').value;
+    const end = document.getElementById('report-end').value;
+
+    if (!description) {
+        document.getElementById('report-status').textContent = 'Description is required.';
+        return;
+    }
+
+    const payload = { description };
+    if (start) payload.start = start;
+    if (end) payload.end = end;
+
+    try {
+        const response = await fetch(`/api/lots/${selectedLot.id}/report`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const body = await response.json();
+        if (!response.ok) {
+            document.getElementById('report-status').textContent = `Error: ${body.error || response.statusText}`;
+            return;
+        }
+
+        document.getElementById('report-status').textContent = 'Report submitted. Refreshing lots...';
+        await loadLots();
+
+        // Re-open details for this lot after refresh
+        const refreshedLot = lots.find(l => l.id === selectedLot.id);
+        if (refreshedLot) {
+            showLotDetails(refreshedLot);
+        }
+
+    } catch (err) {
+        console.error('Report request failed:', err);
+        document.getElementById('report-status').textContent = 'Failed to submit report. Try again.';
+    }
 }
 
 /**
@@ -330,6 +394,7 @@ function init() {
     document.getElementById('day-select').addEventListener('change', updateMarkers);
     document.getElementById('time-input').addEventListener('change', updateMarkers);
     document.getElementById('close-details').addEventListener('click', hideDetails);
+    document.getElementById('submit-report').addEventListener('click', submitReport);
     
     console.log('[DEBUG] Event listeners attached');
 }

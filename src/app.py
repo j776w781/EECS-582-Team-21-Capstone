@@ -74,6 +74,45 @@ def get_lots():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/lots/<lot_id>/report', methods=['POST'])
+def report_special_restriction(lot_id):
+    try:
+        data = request.get_json(force=True)
+        description = data.get('description', '').strip()
+        if not description:
+            return jsonify({'error': 'description is required'}), 400
+
+        start_str = data.get('start')
+        end_str = data.get('end')
+
+        start_datetime = None
+        end_datetime = None
+
+        if start_str:
+            try:
+                start_datetime = datetime.fromisoformat(start_str)
+            except ValueError:
+                return jsonify({'error': 'start must be ISO format datetime'}), 400
+
+        if end_str:
+            try:
+                end_datetime = datetime.fromisoformat(end_str)
+            except ValueError:
+                return jsonify({'error': 'end must be ISO format datetime'}), 400
+
+        lot_control.report_special_restriction(lot_id, description, start_datetime, end_datetime)
+
+        return jsonify({'status': 'ok'}), 200
+
+    except ValueError as ve:
+        return jsonify({'error': str(ve)}), 400
+    except Exception as e:
+        print(f"[ERROR] Failed to report restriction: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == '__main__':
     '''
     USE BOTTOM TWO LINES FOR PUBLIC DEPLOYMENT.

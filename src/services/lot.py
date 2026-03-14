@@ -36,7 +36,9 @@ class Lot:
         self.permit_type = permType                       # Permit required to park on a lot
         self.loc = coordinates                            # Geographical coodinates used to render the lot on the map[latitude, longitude]
         self.color = "#808080"                          # Current display color of the the lot on the map                      
-        self.descript = descript                          # S     
+        self.base_description = descript                  # Original standard restriction text
+        self.descript = descript                           # Current description (may include active special restriction)
+        self.special_restriction = None                    # Active reported special restriction data (or None)
 
 
     def get(self, key, default=None):

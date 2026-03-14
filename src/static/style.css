@@ -155,11 +155,12 @@ header h1 {
     right: 0;
     background-color: white;
     box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
-    max-height: 300px;
+    max-height: 380px;
     padding: 1.5rem;
     z-index: 1000;
     transform: translateY(0);
     transition: transform 0.3s ease;
+    overflow-y: auto;
 }
 
 .details-panel.hidden {
@@ -205,6 +206,54 @@ header h1 {
 .details-content p {
     margin-bottom: 0.75rem;
     line-height: 1.6;
+}
+
+.report-panel {
+    margin-top: 1rem;
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+}
+
+.report-panel h4 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.report-panel label {
+    display: block;
+    margin-top: 0.6rem;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.report-panel textarea,
+.report-panel input {
+    width: 100%;
+    padding: 0.45rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+}
+
+.report-panel button {
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.8rem;
+    background-color: #0051ba;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.report-panel button:hover {
+    background-color: #003f9a;
+}
+
+.report-status {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #222;
 }
 
 .details-content strong {
