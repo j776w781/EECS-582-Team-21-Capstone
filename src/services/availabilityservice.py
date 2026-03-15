@@ -6,6 +6,7 @@ Description: Centralized parking lot availability decision making based on permi
 Programmer: Jenna Luong (initial), K Li (Sprint 2), Joshua Welicky (Sprint 2 final tweaks)
 Created: February 20th, 2026
 Revised: February 28th, 2026 (K Li: Complete availability logic, methods; Josh: Put in remaining permits/restrictions, simplify is_lot_available)
+         March 14 (Josh: Tweaked the _create_datetime_from_params to something more sustainable)
 
 Preconditions: Restriction/LotService available, lot dict has 'type' key, valid day string, HH:MM format.
 
@@ -107,6 +108,7 @@ class AvailabilityService:
         
         # Use a reference date and adjust to the correct weekday
         # 2026-01-01 is a Friday (weekday 4)
+        #Just use datetime.now() instead of january 1. This lets us use it for special restriction comparisons.
         reference_date = datetime.now()
         reference_weekday = reference_date.weekday()
         days_offset = (weekday - reference_weekday) % 7
