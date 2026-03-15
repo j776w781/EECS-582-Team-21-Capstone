@@ -314,10 +314,13 @@ async function submitReport() {
     const start = document.getElementById('report-start').value;
     const end = document.getElementById('report-end').value;
 
+    //DESCRIPTION IS OPTIONAL
+    /*
     if (!description) {
         document.getElementById('report-status').textContent = 'Description is required.';
         return;
     }
+    */
 
     const payload = { description };
     if (start) payload.start = start;

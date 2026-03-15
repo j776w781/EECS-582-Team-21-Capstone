@@ -29,7 +29,8 @@ Invariants: std_restricts contains YELLOW/RED/BLUE/GREEN/GOLD/GARAGE. All Restri
 Known faults: Garage pay-per-space not implemented. Other lots default unavailable.
 """
 
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
+from zoneinfo import ZoneInfo
 from .restriction import Restriction
 
 class AvailabilityService:
@@ -106,18 +107,19 @@ class AvailabilityService:
         
         # Use a reference date and adjust to the correct weekday
         # 2026-01-01 is a Friday (weekday 4)
-        reference_date = datetime(2026, 1, 1)
+        reference_date = datetime.now()
         reference_weekday = reference_date.weekday()
         days_offset = (weekday - reference_weekday) % 7
-        
-        target_date = reference_date.replace(
-            day=reference_date.day + days_offset,
+
+        target_date = reference_date + timedelta(days=days_offset)
+
+
+        return target_date.replace(
             hour=time_obj.hour,
             minute=time_obj.minute,
             second=0,
             microsecond=0
         )
-        return target_date
 
     def is_lot_available(self, lot: dict, permit: str, day: str, time_hhmm: str) -> bool:
         """

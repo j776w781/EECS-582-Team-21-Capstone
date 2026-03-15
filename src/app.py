@@ -79,8 +79,11 @@ def report_special_restriction(lot_id):
     try:
         data = request.get_json(force=True)
         description = data.get('description', '').strip()
+
+        '''
         if not description:
             return jsonify({'error': 'description is required'}), 400
+        '''
 
         start_str = data.get('start')
         end_str = data.get('end')

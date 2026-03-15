@@ -119,7 +119,9 @@ class LotController:
             raise ValueError(f"Lot with id {lot_id} does not exist")
 
         if not description or not description.strip():
-            raise ValueError("Description is required")
+            #Description is OPTIONAL
+            description = "No description provided."
+            #raise ValueError("Description is required")
 
         now = datetime.now()
 
