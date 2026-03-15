@@ -4,9 +4,10 @@ PROLOGUE COMMENT
 Name: lotservice.py
 Description: Defines the LotController class, which is the main backend entity. It interfaces with the web-server component to produce
 all lot information.
-Programmer: Evans Chigweshe, Joshua Welicky
+Programmer: Evans Chigweshe, Joshua Welicky, Mark Kitchin
 Created: March 1, 2026
 Revised: March 1, 2026 (Tweaks by Josh)
+         March 14 (Addition of special restriction reporting.)
 
 Preconditions: Depends on the existence of the Lot class, Restriction class, LotService class, and AvailabilityService class.
 
@@ -84,6 +85,10 @@ class LotController:
                 lot.special_restriction = None
                 lot.descript = lot.base_description
 
+
+    '''
+    Updates lot instances based on if a special restriction is currently active.
+    '''
     def _apply_special_restriction_to_lot(self, lot, compare_time):
         sr = lot.special_restriction
         if sr is None:
@@ -124,6 +129,7 @@ class LotController:
         selected_time = self._selected_datetime(day, time_hhmm)
 
         for lot in lots:
+            #This line will automatically color the lot orange if there is an active special restriction.
             if self._apply_special_restriction_to_lot(lot, selected_time):
                 continue
 
@@ -139,6 +145,9 @@ class LotController:
 
         return lots
     
+    '''
+    Handles creating a special restriction. Also applies some business rules (no restriction over 48 hours, etc).
+    '''
     def report_special_restriction(self, lot_id: str, description: str, start_datetime: datetime = None, end_datetime: datetime = None):
         lot = self.lot_service.get_lot(lot_id)
         if lot is None:

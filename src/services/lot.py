@@ -7,6 +7,7 @@ location data, and the current display color used by the frontend map.
 Programmer: Joshua Welicky, Evans Chigweshe, Mark Kitchin
 Created: February 21st, 2026
 Revised: March 1, 2026 (Tweaks and added functions)
+         March 14 (new descript attribute for special restrictions)
 
 Preconditions: None on its own.
 

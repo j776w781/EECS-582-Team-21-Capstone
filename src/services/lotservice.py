@@ -6,6 +6,7 @@ Description: Defines the LotService class, which manages all Lot instances. It i
 Programmer: Joshua Welicky, Evans Chigweshe, Mark Kitchin
 Created: February 21st, 2026
 Revised: March 1, 2026 (Tweaks and added functions)
+         March 14 (Added functionality to load and save special restrictions.)
 
 Preconditions: Depends on the existence of the Lot class.
 
@@ -58,6 +59,10 @@ class LotService:
         except json.JSONDecodeError:
             print("Error: Invalid JSON format in lot data file.")
 
+
+    '''
+    Saved special restrictions are stored in a special_reports.json file for now. 
+    '''
     def load_special_reports(self):
         if not os.path.exists(self.reports_path):
             return
@@ -69,6 +74,7 @@ class LotService:
             print(f"Error loading special reports: {e}")
             return
 
+        #read each record in the JSON file.
         for report in data:
             lot_id = report.get('lot_id')
             lot = self.get_lot(lot_id)
@@ -80,6 +86,7 @@ class LotService:
             except Exception:
                 continue
 
+            #apply it to the corresponding lot instance
             lot.special_restriction = {
                 'description': report.get('description', ''),
                 'start': start,
@@ -87,6 +94,7 @@ class LotService:
                 'reported_at': datetime.fromisoformat(report.get('reported_at')) if report.get('reported_at') else datetime.now()
             }
 
+    #This saves the special restriction to the JSON file.
     def save_special_report(self, lot_id, description, start, end, reported_at):
         reports = []
         if os.path.exists(self.reports_path):
@@ -95,7 +103,7 @@ class LotService:
                     reports = json.load(file)
             except Exception:
                 reports = []
-
+        #Load all the reports, add the new one, then just rewrite the whole file.
         reports.append({
             'lot_id': lot_id,
             'description': description,

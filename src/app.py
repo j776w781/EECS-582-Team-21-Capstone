@@ -1,11 +1,12 @@
 """
 KU Parking Web App - Sprint 2
-Authors: K Li, Joshua Welicky
+Authors: K Li, Joshua Welicky, Mark Kitchin
 Created February 8th, 2026
 Main driver behind Parking Lot app functionality.
 Follow the instructions below to run the app.
 Sprint 2: Decision logic moved to AvailabilityService for centralized availability decision making.
 Sprint 2: Strip down server app to leverage the new Python backend. This listens for requests, passes parameters to the LotController, and sends the results.
+Sprint 3: Add functionality to receive special reports (Mark). Tweak to suit the requirements(Josh).
 Run instructions (Local):
     0. CHECK THE IN-LINE COMMENTS(import statement AND the if __name__ == 'main' segment)
     1. Install Flask: pip install flask
@@ -73,7 +74,7 @@ def get_lots():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
-
+# Accepts HTTP POST messages reporting a special restriction. Passes information to LotController
 @app.route('/api/lots/<lot_id>/report', methods=['POST'])
 def report_special_restriction(lot_id):
     try:
@@ -81,6 +82,7 @@ def report_special_restriction(lot_id):
         description = data.get('description', '').strip()
 
         '''
+        DESCRIPTION OPTIONAL
         if not description:
             return jsonify({'error': 'description is required'}), 400
         '''
