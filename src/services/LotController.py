@@ -25,10 +25,12 @@ Side effects: None
 
 
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from .lotservice import LotService
 from .availabilityservice import AvailabilityService
 
 class LotController:
+    CHICAGO = ZoneInfo('America/Chicago')
 
     def __init__(self):
         self.lot_service = LotService()
@@ -44,6 +46,25 @@ class LotController:
         total_minutes = total_minutes % (24 * 60)
         return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
 
+    def _local_now(self):
+        return datetime.now(self.CHICAGO)
+
+    def _to_chicago(self, dt):
+        if dt is None:
+            return None
+        if dt.tzinfo is None:
+            return dt.replace(tzinfo=self.CHICAGO)
+        return dt.astimezone(self.CHICAGO)
+
+    def _selected_datetime(self, day: str, time_hhmm: str):
+        now = self._local_now()
+        day_index = self.availability_service._day_string_to_weekday(day)
+        days_offset = (day_index - now.weekday()) % 7
+        target_date = now + timedelta(days=days_offset)
+        hour, minute = map(int, time_hhmm.split(':'))
+        return datetime(year=target_date.year, month=target_date.month, day=target_date.day,
+                        hour=hour, minute=minute, second=0, microsecond=0, tzinfo=self.CHICAGO)
+
     '''
     Obtains parameters from the web request. Obtains a list of lots from the LotService
     and assigns colors to each lot using the AvailabilityService, returning the result to the
@@ -54,7 +75,12 @@ class LotController:
             sr = lot.special_restriction
             if sr is None:
                 continue
-            if sr.get('end') <= now:
+
+            end = self._to_chicago(sr.get('end'))
+            if end is None:
+                continue
+
+            if end <= now:
                 lot.special_restriction = None
                 lot.descript = lot.base_description
 
@@ -64,8 +90,8 @@ class LotController:
             lot.descript = lot.base_description
             return False
 
-        start = sr.get('start')
-        end = sr.get('end')
+        start = self._to_chicago(sr.get('start'))
+        end = self._to_chicago(sr.get('end'))
         if start is None or end is None:
             lot.special_restriction = None
             lot.descript = lot.base_description
@@ -91,11 +117,11 @@ class LotController:
 
         lots = self.lot_service.get_all()
 
-        now = datetime.now()
+        now = self._local_now()
         self._purge_expired_special_restrictions(now)
 
         # For special restrictions, evaluate against selected query time to show users what they choose.
-        selected_time = self.availability_service._create_datetime_from_params(day, time_hhmm)
+        selected_time = self._selected_datetime(day, time_hhmm)
 
         for lot in lots:
             if self._apply_special_restriction_to_lot(lot, selected_time):
@@ -123,13 +149,17 @@ class LotController:
             description = "No description provided."
             #raise ValueError("Description is required")
 
-        now = datetime.now()
+        now = self._local_now()
 
         if start_datetime is None:
             start_datetime = now
+        else:
+            start_datetime = self._to_chicago(start_datetime)
 
         if end_datetime is None:
             end_datetime = start_datetime + timedelta(hours=24)
+        else:
+            end_datetime = self._to_chicago(end_datetime)
 
         if end_datetime <= start_datetime:
             raise ValueError("End time must be after start time")
@@ -137,6 +167,10 @@ class LotController:
         duration_hours = (end_datetime - start_datetime).total_seconds() / 3600
         if duration_hours > 48:
             end_datetime = start_datetime + timedelta(hours=24)
+
+        # sanitize if negative or identical timeframe by imposing at least 1 minute interval
+        if end_datetime <= start_datetime:
+            end_datetime = start_datetime + timedelta(minutes=1)
 
         lot.special_restriction = {
             'description': description.strip(),
