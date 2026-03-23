@@ -208,52 +208,149 @@ header h1 {
     line-height: 1.6;
 }
 
-.report-panel {
+/* Report button in details panel */
+.report-btn {
     margin-top: 1rem;
-    border-top: 1px solid #ddd;
-    padding-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #0051ba;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.report-panel h4 {
-    margin-bottom: 0.5rem;
+.report-btn:hover {
+    background-color: #003f9a;
+}
+
+/* Report modal overlay */
+.report-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    transition: opacity 0.2s ease;
+}
+
+.report-modal-overlay.hidden {
+    display: none;
+}
+
+.report-modal {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    max-width: 420px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.report-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.report-modal-header h3 {
+    font-size: 1.1rem;
     color: #333;
+    margin: 0;
 }
 
-.report-panel label {
+.report-modal-body {
+    padding: 1.25rem;
+}
+
+.report-modal-body label {
     display: block;
-    margin-top: 0.6rem;
+    margin-top: 1rem;
+    margin-bottom: 0.35rem;
+    font-weight: 500;
     font-size: 0.9rem;
     color: #333;
 }
 
-.report-panel textarea,
-.report-panel input {
+.report-modal-body label:first-of-type {
+    margin-top: 0;
+}
+
+.report-modal-body textarea,
+.report-modal-body input[type="datetime-local"] {
     width: 100%;
-    padding: 0.45rem;
+    padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 0.9rem;
+    font-family: inherit;
     margin-top: 0.2rem;
 }
 
-.report-panel button {
-    margin-top: 0.75rem;
-    padding: 0.5rem 0.8rem;
-    background-color: #0051ba;
-    border: none;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
+.report-modal-body textarea:focus,
+.report-modal-body input:focus {
+    outline: none;
+    border-color: #0051ba;
 }
 
-.report-panel button:hover {
-    background-color: #003f9a;
+.report-modal-body textarea {
+    resize: vertical;
+    min-height: 60px;
 }
 
 .report-status {
     margin-top: 0.5rem;
     font-size: 0.85rem;
     color: #222;
+}
+
+.report-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.report-cancel-btn {
+    padding: 0.5rem 1rem;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.report-cancel-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.report-submit-btn {
+    padding: 0.5rem 1rem;
+    background-color: #0051ba;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.report-submit-btn:hover {
+    background-color: #003f9a;
 }
 
 .details-content strong {

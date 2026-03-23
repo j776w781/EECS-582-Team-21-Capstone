@@ -26,13 +26,11 @@ import json
 import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
-#USE FOR LOCAL TESTING
-#from services.LotController import LotController
-'''
-READ ME READ ME DON'T SCROLL PAST OR YOU'LL BREAK SOMETHING!!!!!!!!!!!!!!!
-'''
-#USE FOR DEPLOYMENT
-from src.services.LotController import LotController
+# Support both: run from repo root (e.g. deploy) or from src/ (local: cd src && python app.py)
+try:
+    from src.services.LotController import LotController
+except ModuleNotFoundError:
+    from services.LotController import LotController
 
 app = Flask(__name__)
 
@@ -105,6 +103,11 @@ def report_special_restriction(lot_id):
             except ValueError:
                 return jsonify({'error': 'end must be ISO format datetime'}), 400
 
+        # Default logic when user omits Description / Start / End (implement here or in lot_control):
+        # - No start/end (both None) → restriction expires after 24 hours (Req 19).
+        # - Start/end span > 48 hours → treat as 24-hour restriction from report time (Req 20).
+        # - Empty description → use e.g. default text like "Special restriction reported" or leave empty.
+       
         report = lot_control.report_special_restriction(lot_id, description, start_datetime, end_datetime)
         print(f"[INFO] special restriction reported for {lot_id}: {report.special_restriction}")
 

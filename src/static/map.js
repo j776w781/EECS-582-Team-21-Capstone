@@ -294,7 +294,26 @@ function hideDetails() {
         item.classList.remove('selected');
     });
 
-    // Clear report form after closing
+    closeReportModal();
+}
+
+/**
+ * Show report modal (only when a lot is selected)
+ */
+function openReportModal() {
+    if (!selectedLot) return;
+    document.getElementById('report-modal-overlay').classList.remove('hidden');
+    document.getElementById('report-description').value = '';
+    document.getElementById('report-start').value = '';
+    document.getElementById('report-end').value = '';
+    document.getElementById('report-status').textContent = '';
+}
+
+/**
+ * Hide report modal and clear form
+ */
+function closeReportModal() {
+    document.getElementById('report-modal-overlay').classList.add('hidden');
     document.getElementById('report-description').value = '';
     document.getElementById('report-start').value = '';
     document.getElementById('report-end').value = '';
@@ -314,15 +333,11 @@ async function submitReport() {
     const start = document.getElementById('report-start').value;
     const end = document.getElementById('report-end').value;
 
-    //DESCRIPTION IS OPTIONAL
-    /*
-    if (!description) {
-        document.getElementById('report-status').textContent = 'Description is required.';
-        return;
-    }
-    */
-
-    const payload = { description };
+    // Frontend allows empty Description, Start, and End. Backend should implement default logic when any are missing, e.g.:
+    // - No time (start/end) → restriction expires after 24 hours (Req 19).
+    // - Time span > 48 hours → treat as 24 hours (Req 20).
+    // - Empty description → backend may use a default label or still accept the report.
+    const payload = { description: description || '' };
     if (start) payload.start = start;
     if (end) payload.end = end;
 
@@ -343,6 +358,8 @@ async function submitReport() {
 
         document.getElementById('report-status').textContent = 'Report submitted. Refreshing lots...';
         await loadLots();
+
+        closeReportModal();
 
         // Re-open details for this lot after refresh
         const refreshedLot = lots.find(l => l.id === selectedLot.id);
@@ -397,8 +414,15 @@ function init() {
     document.getElementById('day-select').addEventListener('change', updateMarkers);
     document.getElementById('time-input').addEventListener('change', updateMarkers);
     document.getElementById('close-details').addEventListener('click', hideDetails);
+    document.getElementById('report-btn').addEventListener('click', openReportModal);
+    document.getElementById('report-modal-close').addEventListener('click', closeReportModal);
+    document.getElementById('report-cancel').addEventListener('click', closeReportModal);
     document.getElementById('submit-report').addEventListener('click', submitReport);
-    
+
+    document.getElementById('report-modal-overlay').addEventListener('click', function (e) {
+        if (e.target === this) closeReportModal();
+    });
+
     console.log('[DEBUG] Event listeners attached');
 }
 
