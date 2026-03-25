@@ -7,6 +7,8 @@ Programmer: Jenna Luong (initial), K Li (Sprint 2), Joshua Welicky (Sprint 2 fin
 Created: February 20th, 2026
 Revised: February 28th, 2026 (K Li: Complete availability logic, methods; Josh: Put in remaining permits/restrictions, simplify is_lot_available)
          March 14 (Josh: Tweaked the _create_datetime_from_params to something more sustainable)
+Revised: 3/24/2026
+    -- Added permit hierarchy: Jenna Luong
 
 Preconditions: Restriction/LotService available, lot dict has 'type' key, valid day string, HH:MM format.
 
@@ -34,6 +36,38 @@ from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
 from .restriction import Restriction
 
+# Summer semester months for housing permit -> Yellow zone exception
+SUMMER_MONTHS = {5, 6, 7, 8} # May-Aug
+
+# Garage enforcement window: Mon-Fri 7AM-5PM
+# Outside of these hours any valid permit may park; pay to park if no permit
+GARAGE_ENFORCE_START = time(7, 0)
+GARAGE_ENFORCE_END = time(17, 0)
+
+# Maps each permit type to the lot types it's allowed to park in
+# Garage permits are lot-specific, only valid at its own garage
+PERMIT_HIERARCHY = {
+    "GOLD":     ["GOLD", "BLUE", "RED", "YELLOW"],
+    "BLUE":     ["BLUE", "RED", "YELLOW"],
+    "RED":      ["RED", "YELLOW"],
+    "YELLOW":   ["YELLOW"],
+    # Housing: GREEN permit valid in all housing lots (DH, GC, JT, CH)
+    "GREEN":    ["GREEN"],
+    # Scholarship Halls (Alumni Place): Valid in GREEN + MSPK + ORANGE + FUCHSIA
+    "BROWN":    ["BROWN", "GREEN", "ORANGE", "FUCHSIA", "MSPK"],
+    # Naismith Hall
+    "ORANGE":   ["ORANGE", "GREEN"],
+    # Hawker Apartments
+    "FUCHSIA":  ["FUCHSIA", "GREEN"],
+    # Garage permits are lot-specific
+    "AFPK":     ["AFPK"],
+    "CDPG":     ["CDPG"],
+    "MSPK":     ["MSPK"],
+}
+
+GARAGE_TYPES = {"AFPK", "CDPG", "MSPK"}
+HOUSING_PERMITS = {"GREEN", "ORANGE", "FUCHSIA", "BROWN"}
+
 class AvailabilityService:
     def __init__(self):
         self.std_restricts = {}
@@ -56,10 +90,6 @@ class AvailabilityService:
         # Red: Mon-Fri (0-4), 7AM-5PM
         self.std_restricts["RED"] = Restriction("RED", 0, 4, time(7,0), time(17,0))
 
-        # Garage: 24/7 enforcement (using None for start_day to indicate always enforced)
-        # Note: Garage lots require special permits or pay-per-space
-        self.std_restricts["GARAGE"] = Restriction("GARAGE", None, None, time(0,0), time(23,59))
-
         # Green (Housing): Mon 7AM - Fri 5PM (continuous enforcement)
         self.std_restricts["GREEN"] = Restriction("GREEN", 0, 4, time(7,0), time(17,0), is_continuous=True)
 
@@ -72,7 +102,10 @@ class AvailabilityService:
         # Fuschia: Mon 7AM - Fri 5PM (continuous enforcement (i think, descriptions unclear?))
         self.std_restricts["FUCHSIA"] = Restriction("FUCHSIA", 0, 4, time(7,0), time(17,0), is_continuous=True)
 
-
+        # Garage: 24/7 enforcement (using None for start_day to indicate always enforced)
+        # Note: Garage lots require special permits or pay-per-space
+        for g in GARAGE_TYPES:
+            self.std_restricts[g] = Restriction(g, None, None, time(0,0), time(23,59))
 
 
 
@@ -122,14 +155,43 @@ class AvailabilityService:
             second=0,
             microsecond=0
         )
+    
+    def _is_summer(self, current_dt: datetime) -> bool:
+        """Returns true if datetime falls in the summer semester (May-August)"""
+        return current_dt.month in SUMMER_MONTHS
+    
+    def _is_garage_open_hours(self, current_dt: datetime) -> bool:
+        """
+        Returns true if garage is in its open (any-permit) window:
+            - Mon-Fri: 5PM to 7AM (i.e., outside 7AM-5PM enforcement)
+            - Sat-Sun: all day
+        Note: posted event restrictions override this and are handled via special restrictions.
+        """
+        weekday = current_dt.weekday()
+        current_t = current_dt.time()
+
+        # Weekend: always open
+        if weekday >= 5:
+            return True
+        
+        # Weekday: open between 5PM - 7AM
+        return current_t < GARAGE_ENFORCE_START or current_t >= GARAGE_ENFORCE_END
 
     def is_lot_available(self, lot: dict, permit: str, day: str, time_hhmm: str) -> bool:
         """
         Determine if a parking lot is available based on permit type, day, and time.
+
+        Garage rules:
+            - Any permit may use any garage during open hours listed in _is_garage_open_hours
+            - During enforcement hours only matching garage permit works
+
+        Housing rules:
+            - All housing lots use GREEN lot type and GREEN permit
+            - Housing permits valid in YELLOW zones during Summer
         
         Args:
             lot: Dictionary with 'type' key
-            permit: Permit type (NONE, YELLOW, RED, BLUE, GREEN, GOLD, GARAGE)
+            permit: Permit type (NONE, YELLOW, RED, BLUE, GREEN, GOLD, AFPK, CDPG, MSPK)
             day: Day string (Mon-Sun)
             time_hhmm: Time in HH:MM format
         
@@ -140,17 +202,38 @@ class AvailabilityService:
         permit = permit.upper()
         current_dt = self._create_datetime_from_params(day, time_hhmm)
 
-
-        if lot_type not in ["GARAGE", "OTHER"]:
-            if permit == lot_type:
+        # --- Garage logic ---
+        if lot_type in GARAGE_TYPES:
+            # NONE permit: must pay, show as unavailable (red)
+            if permit == 'NONE':
+                return False
+            # Open hours for any permit holders
+            if self._is_garage_open_hours(current_dt):
                 return True
-            else:
-                restriction = self.std_restricts.get("YELLOW")
-                return not (restriction and restriction.applies(current_dt))
+            # During enforcement hours only matching garage permit is valid
+            allowed_zones = PERMIT_HIERARCHY.get(permit, [])
+            return lot_type in allowed_zones
 
-        # Garage: Require GARAGE permit
-        if lot_type == "GARAGE":
-            return permit == "GARAGE"
+        # --- All other lots ---
 
-        # Other/Unknown: Unavailable
-        return False
+        # check if enforcement is currently active
+        restriction = self.std_restricts.get(lot_type)
+        enforcement_active = restriction and restriction.applies(current_dt)
+
+        # outside enforcement hours - anyone can park
+        if not enforcement_active:
+            return True
+        
+        # during enforcement hours - NONE can't park
+        if permit == "NONE":
+            return False
+
+        allowed_zones = list(PERMIT_HIERARCHY.get(permit, []))
+
+        # Summer exception for housing permits
+        if permit in HOUSING_PERMITS and self._is_summer(current_dt):
+            if "YELLOW" not in allowed_zones:
+                allowed_zones.append("YELLOW")
+        
+        # during enforcement permit must be valid for lot type
+        return lot_type in allowed_zones

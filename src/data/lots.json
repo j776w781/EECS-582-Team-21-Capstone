@@ -1321,7 +1321,7 @@
   {
     "id": "AFPK",
     "name": "Allen Fieldhouse Parking Garage",
-    "type": "Garage",
+    "type": "AFPK",
     "position":  [38.955347, -95.252952],
     "restrictions": " AFPK Permit or Pay per Space. Enforced 24 Hours/Day, Year Round. "
   },
@@ -1330,7 +1330,7 @@
   {
     "id": "CDPG",
     "name": "Central District Parking Garage",
-    "type": "Garage",
+    "type": "CDPG",
     "position":  [38.954537, -95.256165],
     "restrictions": " CDPG Permit or Pay per Space. Enforced 24 Hours/Day, Year Round. "
   },
@@ -1339,7 +1339,7 @@
   {
     "id": "MSPK",
     "name": "Mississippi Street Parking Garage",
-    "type": "Garage",
+    "type": "MSPK",
     "position": [38.960616, -95.243473],
     "restrictions": " MSPK Permit or Pay per Space. Enforced 24 Hours/Day, Year Round. "
   },
