@@ -102,20 +102,30 @@ Faults: None identified.
                 <p><strong>Type:</strong> <span id="details-type"></span></p>
                 <p><strong>Restrictions:</strong></p>
                 <p id="details-restrictions"></p>
+                <button type="button" id="report-btn" class="report-btn">Report</button>
             </div>
-            <div class="report-panel">
-                <h4>Report special restriction</h4>
-                <label for="report-description">Description:</label>
-                <textarea id="report-description" rows="3" placeholder="e.g., Lot closed for construction" required></textarea>
+        </div>
 
-                <label for="report-start">Start (optional):</label>
-                <input type="datetime-local" id="report-start">
-
-                <label for="report-end">End (optional):</label>
-                <input type="datetime-local" id="report-end">
-
-                <button id="submit-report" type="button">Submit Report</button>
-                <p id="report-status" class="report-status"></p>
+        <!-- Report restriction modal (popup) -->
+        <div id="report-modal-overlay" class="report-modal-overlay hidden">
+            <div class="report-modal">
+                <div class="report-modal-header">
+                    <h3>Report special restriction</h3>
+                    <button type="button" id="report-modal-close" class="close-btn" aria-label="Close">&times;</button>
+                </div>
+                <div class="report-modal-body">
+                    <label for="report-description">Description:</label>
+                    <textarea id="report-description" name="description" rows="3" placeholder="e.g., Lot closed for construction."></textarea>
+                    <label for="report-start">Start (optional):</label>
+                    <input type="datetime-local" id="report-start" name="start" />
+                    <label for="report-end">End (optional):</label>
+                    <input type="datetime-local" id="report-end" name="end" />
+                    <p id="report-status" class="report-status"></p>
+                    <div class="report-modal-actions">
+                        <button type="button" id="report-cancel" class="report-cancel-btn">Cancel</button>
+                        <button type="button" id="submit-report" class="report-submit-btn">Submit Report</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
