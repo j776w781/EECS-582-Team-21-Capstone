@@ -2,10 +2,12 @@
 Name: styles.css
 Description: A simple stylesheet for customized appearances
 of HTML elements.
-Programmer's name: K Li, Joshua Welicky
+Programmer's name: K Li, Joshua Welicky, Jenna Luong
 Creation Date: 2/8/2026
 Revision: 2/15/2026
     -- Added comments: Joshua Welicky
+Revision: 3/24/2026
+    -- Added buy parking permit button style: Jenna Luong
 Preconditions: No required inputs.
 Postconditions: Altered styles for index.html and map.js elements.
 Errors/Exceptions: No known errors.
@@ -272,4 +274,21 @@ header h1 {
         border-right: none;
         border-bottom: 1px solid #ddd;
     }
+}
+
+/* Buy permit button */
+.permit-buy-btn {
+    padding: 0.5rem 1rem;
+    background-color: #0051ba;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+}
+
+.permit-buy-btn:hover {
+    background-color: #003f9a;
 }

@@ -2,12 +2,14 @@
 <!--
 Name: styles.css
 Description: Main 
-Programmer's name: K Li, Joshua Welicky
+Programmer's name: K Li, Joshua Welicky, Jenna Luong
 Creation Date: 2/8/2026
 Revision: 2/15/2026
     -- Added comments: Joshua Welicky
 Revision: 3/1/2026
     -- Added the remaining permit types to the selector: Joshua Welicky
+Revision: 3/24/2026
+    -- Added button to redirect to buy permits: Jenna Luong
 Preconditions: Requires access to Leaflet.js stylesheet and JavaScript libraries.
                Requries access to styles.css and map.js to function properly.
 Postconditions: Renders the interactive webpage for the map.
@@ -53,6 +55,7 @@ Faults: None identified.
                     <option value="Brown">Brown Permit</option>
                     <option value="Garage">Garage Permit</option>
                 </select>
+                <button class="permit-buy-btn" onclick="window.open('https://parking.ku.edu/student-permits', '_blank')">Buy Parking Permit</button>
             </div>
 
             <div class="control-group">
