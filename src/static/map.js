@@ -398,6 +398,8 @@ function renderLotList() {
     });
 }
 
+
+
 /**
  * Initialize app
  */
@@ -421,6 +423,29 @@ function init() {
 
     document.getElementById('report-modal-overlay').addEventListener('click', function (e) {
         if (e.target === this) closeReportModal();
+    });
+
+
+    /*
+    This makes it possible to actually close the disclaimer.
+    */
+    window.addEventListener("load", function () {
+        if (!localStorage.getItem("welcomeShown")) {
+                const modal = document.getElementById("intro-modal");
+                const closeBtn = document.getElementById("intro-close");
+
+                // Show disclaimer
+                setTimeout(() => {
+                    modal.classList.remove("hidden");
+                }, 500);
+
+                // Remove disclaimer on button click
+                closeBtn.addEventListener("click", () => {
+                    modal.classList.add("hidden");
+                });
+
+                localStorage.setItem("welcomeShown", "true");
+            }  
     });
 
     console.log('[DEBUG] Event listeners attached');
