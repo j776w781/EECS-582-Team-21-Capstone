@@ -430,7 +430,8 @@ function init() {
     This makes it possible to actually close the disclaimer.
     */
     window.addEventListener("load", function () {
-        if (!localStorage.getItem("welcomeShown")) {
+        //This if statement stops the disclaimer for repeatedly being displayed after refreshes.
+        if (!localStorage.getItem("disclaimerShown")) {
                 const modal = document.getElementById("intro-modal");
                 const closeBtn = document.getElementById("intro-close");
 
@@ -443,8 +444,9 @@ function init() {
                 closeBtn.addEventListener("click", () => {
                     modal.classList.add("hidden");
                 });
-
-                localStorage.setItem("welcomeShown", "true");
+                
+                //After seeing it once, the browser can "remember" not to show it again.
+                localStorage.setItem("disclaimerShown", "true");
             }  
     });
 
