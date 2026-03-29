@@ -10,6 +10,9 @@ Revision: 3/1/2026
     -- Added the remaining permit types to the selector: Joshua Welicky
 Revision: 3/24/2026
     -- Added button to redirect to buy permits: Jenna Luong
+Revision: 3/28/2026
+    -- Added a link to redirect to permit description: Evans Chigweshe
+    -- Added the webpage icon: Evans Chigweshe
 Preconditions: Requires access to Leaflet.js stylesheet and JavaScript libraries.
                Requries access to styles.css and map.js to function properly.
 Postconditions: Renders the interactive webpage for the map.
@@ -19,12 +22,11 @@ Invariants: N/A
 Faults: None identified.
 -->
 
-
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/jaypark_icon.png') }}">
     <title>JayPark -- KU Parking</title>
     
     <!-- Leaflet CSS -->
@@ -77,6 +79,7 @@ Faults: None identified.
                 <label for="time-input">Time (HH:MM):</label>
                 <input type="time" id="time-input" value="{{ current_time }}">
             </div>
+            <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description →</a>
         </div>
 
         <div class="main-content">

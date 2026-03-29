@@ -1,0 +1,89 @@
+<!-- =========================================================
+Name: permit_description.html
+Description: Displays detailed information about KU parking permits.
+Programmers: Evans Chigweshe
+Creation Date: 03/28/2026
+Revisions:
+03/28/2026 
+      -- Initial implementation of permit description page, added permit cards and modal functionality, and integrated navigation back to main map page: Evans Chigweshe
+
+Preconditions:
+- Flask application is running
+- Static files (CSS, JS, images) are correctly located in /static
+- permit_description route is properly defined in app.py
+
+Postconditions:
+- Users can view permit categories and details
+- Modal displays correct information based on selection
+
+Errors/Exceptions:
+- Modal may not display if JavaScript fails to load
+- Missing static files may cause styling or functionality issues
+Side Effects: None
+
+Invariants:
+- Permit data keys must match those used in JavaScript
+- Layout structure remains consistent across devices
+
+Faults:
+- None identified
+========================================================= -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+   <!-- browser tab icon) -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/jaypark_icon.png') }}">
+
+  <!-- Page Title -->
+  <title>JayPark - KU Parking Permits</title>
+
+   <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_permitDescript.css') }}">
+</head>
+
+<body>
+<header>
+  <!-- Back button to return to main index page -->
+  <a href="{{ url_for('index') }}" class="back-button">Back</a>
+  <!-- Application title -->
+  <h1>Jay<span class="highlight">Park</span></h1>
+  <p>KU Parking Permit Information</p>
+</header>
+
+<div class="container">
+  <!-- Standard Permits -->
+  <div class="card"><h3>Red Permit</h3><p>Faculty/Staff Parking</p><button onclick="openModal('red')">View Details</button></div>
+  <div class="card"><h3>Blue Permit</h3><p>Faculty/Staff Parking</p><button onclick="openModal('blue')">View Details</button></div>
+  <div class="card"><h3>Yellow Permit</h3><p>Student/Faculty/Staff/Visitor Parking</p><button onclick="openModal('yellow')">View Details</button></div>
+  <div class="card"><h3>Green Permit</h3><p>Housing Parking</p><button onclick="openModal('green')">View Details</button></div>
+  <div class="card"><h3>Gold Permit</h3><p>Premium Faculty/Staff Parking</p><button onclick="openModal('gold')">View Details</button></div>
+
+   <!-- Housing Permits -->
+  <div class="card"><h3>Orange Permit</h3><p>Housing Parking: Naismith Hall</p><button onclick="openModal('orange')">View Details</button></div>
+  <div class="card"><h3>Fuchsia Permit</h3><p>Housing Parking: Hawker Apartments</p><button onclick="openModal('fuchsia')">View Details</button></div>
+  <div class="card"><h3>Brown Permit</h3><p>Housing Parking: Scholarship Halls</p><button onclick="openModal('brown')">View Details</button></div>
+
+
+  <!-- Garage Parking -->
+  <div class="card"><h3>Allen Fieldhouse Garage</h3><p>Student/Visitor Parking</p><button onclick="openModal('allen')">View Details</button></div>
+  <div class="card"><h3>Central District Garage</h3><p>Student/Visitor Parking</p><button onclick="openModal('central')">View Details</button></div>
+  <div class="card"><h3>Mississippi Street Garage</h3><p>Student/Visitor Parking</p><button onclick="openModal('mississippi')">View Details</button></div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2 id="modal-title"></h2>
+    <p id="modal-description"></p>
+  </div>
+</div>
+
+ <!-- Custom JS -->
+<script src="{{ url_for('static', filename='script_permitDescript.js') }}"></script>
+</body>
+</html>

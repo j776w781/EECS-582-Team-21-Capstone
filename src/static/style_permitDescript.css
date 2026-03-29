@@ -1,0 +1,144 @@
+/* 
+   Name: style_permitDescript.css
+   Description: Stylesheet for the permit description page. Controls layout, card design, modal display, and responsiveness for viewing KU parking permit information.
+   Programmers: Evans Chigweshe
+   Creation Date: 03/28/2026
+   Preconditions: HTML structure must include header, container,
+                  card elements, and modal components.
+   Postconditions: Provides styled UI for permit cards and modal popups.
+   Errors/Exceptions: No known errors.
+   Side Effects: Affects visual layout and responsiveness only.
+   Invariants: Layout remains grid-based with responsive behavior.
+   */
+
+
+
+/* GLOBAL STYLES: Applies base font, removes default margins, and sets background */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f6f9;
+}
+
+/* HEADER STYLING: Styles top banner and enables positioning for back button */
+header {
+  background: #0051ba;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+
+
+/* BACK BUTTON: Positioned at top-right for navigation to previous page */
+.back-button {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  color: rgb(247, 245, 245);
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: opacity 0.2s ease;
+}
+
+.back-button:hover {
+  opacity: 0.7;
+}
+
+/* GRID LAYOUT */
+.container {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 per row */
+  gap: 20px;
+}
+
+/* CENTER LAST CARD */
+.container .card:last-child {
+  grid-column: 3; /* middle column */
+}
+
+/* CARD STYLE */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+button {
+  background: #790309;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #c4000a;
+}
+
+/* MODAL (POPUP): Overlay that displays permit details when selected */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+  background: white;
+  margin: 10% auto;
+  padding: 20px;
+  width: 50%;
+  border-radius: 10px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+.highlight {
+  color: #ffd700;
+}
+
+/* OPTIONAL RESPONSIVENESS */
+@media (max-width: 1200px) {
+  .container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .container .card:last-child {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .container .card:last-child {
+    grid-column: auto;
+  }
+}

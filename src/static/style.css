@@ -8,6 +8,8 @@ Revision: 2/15/2026
     -- Added comments: Joshua Welicky
 Revision: 3/24/2026
     -- Added buy parking permit button style: Jenna Luong
+Revision: 3/28/2026
+     -- Added a permit description link style: Evans Chigweshe
 Preconditions: No required inputs.
 Postconditions: Altered styles for index.html and map.js elements.
 Errors/Exceptions: No known errors.
@@ -388,4 +390,16 @@ header h1 {
 
 .permit-buy-btn:hover {
     background-color: #003f9a;
+}
+
+/*Permit Description link */
+.permit-desc-link {
+  margin-left: auto; 
+  text-decoration: none;
+  font-weight: bold;
+  color: #0051ba;
+}
+
+.permit-desc-link:hover {
+  opacity: 0.8;
 }

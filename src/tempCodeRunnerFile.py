@@ -1,26 +1,3 @@
-"""
-KU Parking Web App - Sprint 2
-Authors: K Li, Joshua Welicky, Mark Kitchin, Evans Chigweshe
-Created February 8th, 2026
-Main driver behind Parking Lot app functionality.
-Follow the instructions below to run the app.
-Sprint 2: Decision logic moved to AvailabilityService for centralized availability decision making.
-Sprint 2: Strip down server app to leverage the new Python backend. This listens for requests, passes parameters to the LotController, and sends the results.
-Sprint 3: Add functionality to receive special reports (Mark). Tweak to suit the requirements(Josh).
-sprint 4: added permit_description route to handle the  nativation to the Permit Description page(Evans).
-Run instructions (Local):
-    0. CHECK THE IN-LINE COMMENTS(import statement AND the if __name__ == 'main' segment)
-    1. Install Flask: pip install flask
-    2. Run: python app.py
-    3. Open browser: http://192.168.1.124:8080
-Deploy instructions:
-    1. Install fly.io: powershell -Command "iwr https://fly.io/install.ps1 -useb | iex"   (for windows)
-    2. Run fly.deploy (and pray)
-
-To stop the application:
-    - In the terminal window where the app is running, press Ctrl + C
-    - If the terminal window is closed, use PowerShell: Get-Process python* | Stop-Process -Force
-"""
 
 from flask import Flask, render_template, jsonify, request
 import json
@@ -51,7 +28,7 @@ def index():
     current_day = datetime.now().strftime('%a')  # Returns Mon, Tue, Wed, etc.
     return render_template('index.html', current_time=current_time, current_day=current_day)
 
-# Route to display the parking permit description page
+
 @app.route('/permit_description')
 def permit_description():
     return render_template('permit_description.html')
