@@ -17,6 +17,7 @@ let lotToMarkerMap = {};
 let selectedLot = null;
 let selectedMarker = null;
 let filteredLots = [];
+filteredLots = getSortedLots(lots);
 
 const KU_CENTER = [38.9581, -95.2464];
 const MAP_ZOOM = 15;
@@ -138,7 +139,7 @@ async function loadLots() {
         if (!Array.isArray(lots)) {
             throw new Error('Expected lots to be an array, got: ' + typeof lots);
         }
-        filteredLots = getSortedLots(lots);
+
         renderLotList();
 
         // Remove old markers
