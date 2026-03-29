@@ -19,9 +19,7 @@ let selectedLot = null;
 let selectedMarker = null;
 
 let lotSearchBlurTimer = null;
-let filteredLots = [];
-filteredLots = getSortedLots(lots);
-
+let filteredLots = getSortedLots(lots);
 const KU_CENTER = [38.9581, -95.2464];
 const MAP_ZOOM = 15;
 const ENABLE_COORDINATE_PICKER = false;
@@ -433,7 +431,7 @@ function renderLotList() {
     const lotList = document.getElementById('lot-list');
     lotList.innerHTML = '';
 
-    filteredLots = getSortedLots(lots);
+    filteredLots = filteredLots
     filteredLots.forEach(lot => {
         const listItem = document.createElement('li');
         listItem.className = 'lot-item';
@@ -458,18 +456,21 @@ function renderLotList() {
 /**
  * Search function
  */
-document.getElementById('lot-search').addEventListener('input', () => {
-    const query = searchInput.value.toLowerCase();
-
-    filteredLots = getSortedLots(lots).filter(lot =>
-        lot.name.toLowerCase().includes(query) ||
-        lot.type.toLowerCase().includes(query)
-    );
-
+document.getElementById('lot-search').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        const query = document.getElementById('lot-search').value.toLowerCase();
+        
+        filteredLots = getSortedLots(lots).filter(lot =>
+            lot.name.toLowerCase().includes(query) ||
+            lot.type.toLowerCase().includes(query)
+        );
+    } else {
+        filteredLots = getSortedLots(lots);
+    }
     renderLotList();
 });
 /**
- * Initialize app
+ * Initial`ize app
  */
 function init() {
     console.log('[DEBUG] App initialization starting');
@@ -507,7 +508,11 @@ function init() {
                 closeMobileLotPicker();
             }, 220);
         });
-        lotSearch.addEventListener('input', applyLotSearchFilter);
+        lotSearch.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                applyLotSearchFilter();
+            }
+        });
     }
     if (lotListPanel) {
         lotListPanel.addEventListener('mousedown', function () {
