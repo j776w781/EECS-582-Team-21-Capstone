@@ -13,6 +13,9 @@ Revision: 3/24/2026
 Revision: 3/28/2026
     -- Added a link to redirect to permit description: Evans Chigweshe
     -- Added the webpage icon: Evans Chigweshe
+Revision: 3/29/2026
+    -- Mobile UI: viewport-fit=cover; mobile-top-chrome; #lot-search; filter-card layout;
+       desktop vs mobile-bottom-bar for permit link + buy; buy uses type="button".
 Preconditions: Requires access to Leaflet.js stylesheet and JavaScript libraries.
                Requries access to styles.css and map.js to function properly.
 Postconditions: Renders the interactive webpage for the map.
@@ -25,7 +28,7 @@ Faults: None identified.
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/jaypark_icon.png') }}">
     <title>JayPark -- KU Parking</title>
     
@@ -37,49 +40,63 @@ Faults: None identified.
 </head>
 <body>
     <div class="container">
+        <div class="mobile-top-chrome">
         <header>
             <h1>KU Parking Map</h1>
         </header>
 
-        <!-- Controls Panel -->
-        <div class="controls-panel">
-            <div class="control-group">
-                <label for="permit-select">Parking Permit:</label>
-                <select id="permit-select">
-                    <option value="NONE" selected>No Permit</option>
-                    <option value="Yellow">Yellow Permit</option>
-                    <option value="Red">Red Permit</option>
-                    <option value="Blue">Blue Permit</option>
-                    <option value="Green">Green Permit</option>
-                    <option value="Gold">Gold Permit</option>
-                    <option value="Orange">Orange Permit</option>
-                    <option value="Fuchsia">Fuchsia Permit</option>
-                    <option value="Brown">Brown Permit</option>
-                    <option value="AFPK">AFPK Garage Permit</option>
-                    <option value="CDPG">CDPG Garage Permit</option>
-                    <option value="MSPK">MSPK Garage Permit</option>
-                </select>
-                <button class="permit-buy-btn" onclick="window.open('https://parking.ku.edu/student-permits', '_blank')">Buy Parking Permit</button>
+        <!-- Controls: mobile = search + 3 filters + fixed bottom bar; desktop = classic bar -->
+        <div class="controls-panel filter-card">
+            <div class="lot-search-row">
+                <input type="search" id="lot-search" name="lot-search" placeholder="Search lots…" autocomplete="off" aria-label="Search parking lots by name">
             </div>
+            <div class="filter-card__fields">
+                <div class="control-group">
+                    <label for="permit-select">Parking Permit:</label>
+                    <select id="permit-select">
+                        <option value="NONE" selected>No Permit</option>
+                        <option value="Yellow">Yellow Permit</option>
+                        <option value="Red">Red Permit</option>
+                        <option value="Blue">Blue Permit</option>
+                        <option value="Green">Green Permit</option>
+                        <option value="Gold">Gold Permit</option>
+                        <option value="Orange">Orange Permit</option>
+                        <option value="Fuchsia">Fuchsia Permit</option>
+                        <option value="Brown">Brown Permit</option>
+                        <option value="AFPK">AFPK Garage Permit</option>
+                        <option value="CDPG">CDPG Garage Permit</option>
+                        <option value="MSPK">MSPK Garage Permit</option>
+                    </select>
+                </div>
 
-            <div class="control-group">
-                <label for="day-select">Day of Week:</label>
-                <select id="day-select">
-                    <option value="Mon" {% if current_day == 'Mon' %}selected{% endif %}>Monday</option>
-                    <option value="Tue" {% if current_day == 'Tue' %}selected{% endif %}>Tuesday</option>
-                    <option value="Wed" {% if current_day == 'Wed' %}selected{% endif %}>Wednesday</option>
-                    <option value="Thu" {% if current_day == 'Thu' %}selected{% endif %}>Thursday</option>
-                    <option value="Fri" {% if current_day == 'Fri' %}selected{% endif %}>Friday</option>
-                    <option value="Sat" {% if current_day == 'Sat' %}selected{% endif %}>Saturday</option>
-                    <option value="Sun" {% if current_day == 'Sun' %}selected{% endif %}>Sunday</option>
-                </select>
-            </div>
+                <div class="control-group">
+                    <label for="day-select">Day of Week:</label>
+                    <select id="day-select">
+                        <option value="Mon" {% if current_day == 'Mon' %}selected{% endif %}>Monday</option>
+                        <option value="Tue" {% if current_day == 'Tue' %}selected{% endif %}>Tuesday</option>
+                        <option value="Wed" {% if current_day == 'Wed' %}selected{% endif %}>Wednesday</option>
+                        <option value="Thu" {% if current_day == 'Thu' %}selected{% endif %}>Thursday</option>
+                        <option value="Fri" {% if current_day == 'Fri' %}selected{% endif %}>Friday</option>
+                        <option value="Sat" {% if current_day == 'Sat' %}selected{% endif %}>Saturday</option>
+                        <option value="Sun" {% if current_day == 'Sun' %}selected{% endif %}>Sunday</option>
+                    </select>
+                </div>
 
-            <div class="control-group">
-                <label for="time-input">Time (HH:MM):</label>
-                <input type="time" id="time-input" value="{{ current_time }}">
+                <div class="control-group">
+                    <label for="time-input">Time (HH:MM):</label>
+                    <input type="time" id="time-input" value="{{ current_time }}">
+                </div>
             </div>
-            <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description →</a>
+            <div class="filter-card__secondary filter-card__secondary--desktop">
+                <button type="button" class="permit-buy-btn" onclick="window.open('https://parking.ku.edu/student-permits', '_blank')">Buy Parking Permit</button>
+                <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description →</a>
+            </div>
+        </div>
+        </div>
+
+        <div class="mobile-bottom-bar" aria-label="Permit links">
+            <a href="{{ url_for('permit_description') }}" class="permit-desc-link mobile-bottom-bar__link">Permit Description →</a>
+            <button type="button" class="permit-buy-btn mobile-bottom-bar__buy" onclick="window.open('https://parking.ku.edu/student-permits', '_blank')">Buy Parking Permit</button>
         </div>
 
         <div class="main-content">

@@ -10,6 +10,10 @@ Revision: 3/24/2026
     -- Added buy parking permit button style: Jenna Luong
 Revision: 3/28/2026
      -- Added a permit description link style: Evans Chigweshe
+Revision: 3/29/2026
+     -- Req 15 mobile: filter card, touch targets, map height, no horizontal scroll;
+        map-first UI (search, lot picker hides map, fixed permit/buy bar); full-bleed map
+        under fixed top chrome + bottom bar (Google Maps–style)
 Preconditions: No required inputs.
 Postconditions: Altered styles for index.html and map.js elements.
 Errors/Exceptions: No known errors.
@@ -24,15 +28,21 @@ Faults: None identified.
     box-sizing: border-box;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background-color: #f5f5f5;
+    overflow-x: hidden;
 }
 
 .container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 header {
@@ -40,6 +50,7 @@ header {
     color: white;
     padding: 1rem 2rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex-shrink: 0;
 }
 
 header h1 {
@@ -47,15 +58,36 @@ header h1 {
     font-weight: 600;
 }
 
-/* Controls Panel */
+/* Controls Panel + filter card shell */
+.controls-panel.filter-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem 2rem;
+}
+
+.filter-card__fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem 2rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.filter-card__secondary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-left: auto;
+}
+
 .controls-panel {
     background-color: white;
     padding: 1rem 2rem;
-    display: flex;
-    gap: 2rem;
-    align-items: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    flex-wrap: wrap;
+    flex-shrink: 0;
 }
 
 .control-group {
@@ -83,10 +115,42 @@ header h1 {
     border-color: #0051ba;
 }
 
+/* Search row (mobile only; hidden on desktop) */
+.lot-search-row {
+    display: none;
+    width: 100%;
+}
+
+.lot-search-row input[type="search"] {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    font-size: 1rem;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.lot-search-row input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}
+
+.lot-search-row input[type="search"]:focus {
+    outline: none;
+    border-color: #0051ba;
+    box-shadow: 0 0 0 2px rgba(0, 81, 186, 0.2);
+}
+
+/* Fixed bottom bar (mobile only) */
+.mobile-bottom-bar {
+    display: none;
+}
+
 /* Main Content Layout */
 .main-content {
     display: flex;
     flex: 1;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -144,11 +208,13 @@ header h1 {
 .map-container {
     flex: 1;
     position: relative;
+    min-width: 0;
 }
 
 #map {
     width: 100%;
     height: 100%;
+    min-height: 200px;
 }
 
 /* Details Panel */
@@ -238,7 +304,8 @@ header h1 {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1100;
+    /* Above .details-panel (1000 desktop / 1200 mobile) */
+    z-index: 1300;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -294,12 +361,15 @@ header h1 {
 .report-modal-body textarea,
 .report-modal-body input[type="datetime-local"] {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 0.9rem;
     font-family: inherit;
     margin-top: 0.2rem;
+    background-color: #fff;
+    color: #333;
+    box-sizing: border-box;
 }
 
 .report-modal-body textarea:focus,
@@ -361,17 +431,393 @@ header h1 {
     color: #333;
 }
 
-/* Responsive adjustments */
+/* Report modal: hide floating chrome, slide lot details away; avoids overlap (mobile + stacking) */
+body.report-modal-active .details-panel:not(.hidden) {
+    transform: translateY(100%);
+    pointer-events: none;
+}
+
 @media (max-width: 768px) {
+    body.report-modal-active .mobile-top-chrome,
+    body.report-modal-active .mobile-bottom-bar {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.15s ease, visibility 0.15s;
+    }
+}
+
+/* Wrapper: on desktop children flow in .container; on mobile becomes fixed top stack */
+.mobile-top-chrome {
+    display: contents;
+}
+
+/* Desktop: no mobile search row / bottom duplicate bar */
+@media (min-width: 769px) {
+    .lot-search-row {
+        display: none !important;
+    }
+
+    .mobile-bottom-bar {
+        display: none !important;
+    }
+
     .main-content {
-        flex-direction: column;
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        z-index: auto;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .map-container {
+        position: relative;
+        flex: 1;
+        width: auto;
+        height: auto;
+        min-height: 0;
+        max-height: none;
+    }
+
+    #map {
+        min-height: 200px;
     }
 
     .lot-list-panel {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+    }
+
+    .map-container .leaflet-top.leaflet-left {
+        top: auto;
+        margin-top: inherit;
+    }
+
+    .map-container .leaflet-bottom.leaflet-right {
+        bottom: auto;
+        margin-right: auto;
+    }
+}
+
+/* Responsive adjustments — Req 15 + map-first mobile (full-bleed map under UI) */
+@media (max-width: 768px) {
+    .container {
+        min-height: 100dvh;
+        min-height: 100vh;
+        display: block;
+        position: relative;
+    }
+
+    .mobile-top-chrome {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 500;
+        padding-top: env(safe-area-inset-top, 0px);
+        pointer-events: none;
+        box-shadow: 0 2px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .mobile-top-chrome > header,
+    .mobile-top-chrome > .controls-panel {
+        pointer-events: auto;
+    }
+
+    header {
+        padding: 0.45rem 0.75rem;
+    }
+
+    header h1 {
+        font-size: 1.05rem;
+    }
+
+    .lot-search-row {
+        display: block;
+        order: -1;
+    }
+
+    .filter-card__secondary--desktop {
+        display: none !important;
+    }
+
+    .mobile-bottom-bar {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 600;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-top: 1px solid #e0e0e0;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .mobile-bottom-bar__link {
+        flex: 1;
+        text-align: center;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #0051ba;
+    }
+
+    .mobile-bottom-bar__buy {
+        flex: 1;
+        min-height: 44px;
+        font-size: 0.85rem;
+        white-space: normal;
+    }
+
+    .controls-panel {
+        padding: 0.5rem 0.75rem 0.6rem;
+        padding-left: max(0.75rem, env(safe-area-inset-left));
+        padding-right: max(0.75rem, env(safe-area-inset-right));
+        background: #eef1f5;
+    }
+
+    .controls-panel.filter-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .filter-card__fields {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-end;
+        gap: 0.35rem;
+        background: #fff;
+        border: 1px solid #e0e4ea;
+        border-radius: 10px;
+        padding: 0.5rem 0.45rem;
+    }
+
+    .filter-card__fields .control-group {
+        flex: 1 1 0;
+        min-width: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.2rem;
+    }
+
+    .filter-card__fields .control-group label {
+        font-size: 0.62rem;
+        font-weight: 600;
+        color: #555;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .filter-card__fields .control-group select,
+    .filter-card__fields .control-group input[type="time"] {
         width: 100%;
-        max-height: 200px;
+        min-height: 40px;
+        font-size: 14px;
+        padding: 0.35rem 0.35rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        box-sizing: border-box;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .filter-card__fields .control-group select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.35rem center;
+        padding-right: 1.5rem;
+    }
+
+    .filter-card__fields .control-group input[type="time"] {
+        padding-right: 0.35rem;
+    }
+
+    .filter-card__fields .control-group input[type="time"]::-webkit-calendar-picker-indicator {
+        opacity: 0.85;
+        cursor: pointer;
+    }
+
+    /* Full-viewport map layer under fixed top/bottom UI (Google Maps–style) */
+    .main-content {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+        flex-direction: column;
+        flex: none;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .lot-list-panel {
+        display: none !important;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 40;
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+        min-height: 0;
         border-right: none;
-        border-bottom: 1px solid #ddd;
+        border-bottom: none;
+        padding: 0.5rem 0.75rem;
+        padding-bottom: calc(0.5rem + 52px + env(safe-area-inset-bottom));
+        background: #f5f5f7;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .container.mobile-lot-picker-open .lot-list-panel {
+        display: flex !important;
+        flex-direction: column;
+    }
+
+    .container.mobile-lot-picker-open .map-container {
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    .lot-list-panel h2 {
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+        flex-shrink: 0;
+    }
+
+    #lot-list {
+        flex: 1;
+        overflow-y: auto;
+        min-height: 0;
+    }
+
+    .lot-item {
+        padding: 0.65rem 0.75rem;
+        margin-bottom: 0.45rem;
+        min-height: 44px;
+    }
+
+    .lot-item.lot-item--hidden {
+        display: none;
+    }
+
+    .map-container {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        flex: none;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        z-index: 1;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+    }
+
+    /* Leaflet zoom: clear fixed header + search + filter row (was ~148px; chrome is taller) */
+    .map-container .leaflet-top.leaflet-left {
+        top: calc(env(safe-area-inset-top, 0px) + 12.75rem);
+        margin-top: 0;
+    }
+
+    .map-container .leaflet-bottom.leaflet-right {
+        bottom: calc(54px + env(safe-area-inset-bottom, 0px));
+        margin-right: 4px;
+    }
+
+    .close-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .report-btn {
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    .report-modal-body textarea,
+    .report-modal-body input[type="datetime-local"] {
+        font-size: 16px;
+        min-height: 44px;
+    }
+
+    .details-content p {
+        overflow-wrap: anywhere;
+        margin-bottom: 0.35rem;
+        line-height: 1.45;
+    }
+
+    .details-panel {
+        max-height: min(28vh, 200px);
+        padding: 0.5rem 0.85rem;
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+        z-index: 1200;
+    }
+
+    .details-header {
+        margin-bottom: 0.3rem;
+    }
+
+    .details-header h3 {
+        font-size: 1rem;
+        line-height: 1.15;
+    }
+
+    .details-content p:last-child {
+        margin-bottom: 0.25rem;
+    }
+
+    .details-panel .report-btn {
+        margin-top: 0.45rem;
+        padding: 0.45rem 0.85rem;
+        min-height: 40px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .report-modal-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .report-cancel-btn,
+    .report-submit-btn {
+        width: 100%;
+        min-height: 44px;
+        font-size: 16px;
     }
 }
 
@@ -392,14 +838,15 @@ header h1 {
     background-color: #003f9a;
 }
 
-/*Permit Description link */
+/* Permit description link */
 .permit-desc-link {
-  margin-left: auto; 
-  text-decoration: none;
-  font-weight: bold;
-  color: #0051ba;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #0051ba;
 }
 
 .permit-desc-link:hover {
-  opacity: 0.8;
+    opacity: 0.85;
+    text-decoration: underline;
 }
