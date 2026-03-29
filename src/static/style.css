@@ -746,9 +746,9 @@ body.report-modal-active .details-panel:not(.hidden) {
         min-height: 100%;
     }
 
-    /* Leaflet controls above map tiles but below top chrome; attribution above bottom bar */
+    /* Leaflet zoom: clear fixed header + search + filter row (was ~148px; chrome is taller) */
     .map-container .leaflet-top.leaflet-left {
-        top: 148px;
+        top: calc(env(safe-area-inset-top, 0px) + 12.75rem);
         margin-top: 0;
     }
 
@@ -775,11 +775,35 @@ body.report-modal-active .details-panel:not(.hidden) {
 
     .details-content p {
         overflow-wrap: anywhere;
+        margin-bottom: 0.35rem;
+        line-height: 1.45;
     }
 
     .details-panel {
-        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        max-height: min(28vh, 200px);
+        padding: 0.5rem 0.85rem;
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
         z-index: 1200;
+    }
+
+    .details-header {
+        margin-bottom: 0.3rem;
+    }
+
+    .details-header h3 {
+        font-size: 1rem;
+        line-height: 1.15;
+    }
+
+    .details-content p:last-child {
+        margin-bottom: 0.25rem;
+    }
+
+    .details-panel .report-btn {
+        margin-top: 0.45rem;
+        padding: 0.45rem 0.85rem;
+        min-height: 40px;
+        font-size: 0.9rem;
     }
 }
 
