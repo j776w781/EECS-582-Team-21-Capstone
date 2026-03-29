@@ -19,8 +19,8 @@ let selectedLot = null;
 let selectedMarker = null;
 
 let lotSearchBlurTimer = null;
-//let filteredLots = [];
-//filteredLots = getSortedLots(lots);
+let filteredLots = [];
+filteredLots = getSortedLots(lots);
 
 const KU_CENTER = [38.9581, -95.2464];
 const MAP_ZOOM = 15;
@@ -458,7 +458,7 @@ function renderLotList() {
 /**
  * Search function
  */
-searchInput.addEventListener('input', () => {
+document.getElementById('lot-search').addEventListener('input', () => {
     const query = searchInput.value.toLowerCase();
 
     filteredLots = getSortedLots(lots).filter(lot =>
