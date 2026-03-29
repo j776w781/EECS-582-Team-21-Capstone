@@ -17,7 +17,10 @@ let markers = [];
 let lotToMarkerMap = {};
 let selectedLot = null;
 let selectedMarker = null;
+
 let lotSearchBlurTimer = null;
+//let filteredLots = [];
+//filteredLots = getSortedLots(lots);
 
 const KU_CENTER = [38.9581, -95.2464];
 const MAP_ZOOM = 15;
@@ -415,7 +418,14 @@ async function submitReport() {
         document.getElementById('report-status').textContent = 'Failed to submit report. Try again.';
     }
 }
-
+/**
+ * Sort lot list
+ */
+function getSortedLots(lotsArray) {
+    return [...lotsArray].sort((a, b) => 
+        a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+    );
+}
 /**
  * Render lot list
  */
@@ -423,7 +433,8 @@ function renderLotList() {
     const lotList = document.getElementById('lot-list');
     lotList.innerHTML = '';
 
-    lots.forEach(lot => {
+    filteredLots = getSortedLots(lots);
+    filteredLots.forEach(lot => {
         const listItem = document.createElement('li');
         listItem.className = 'lot-item';
         listItem.dataset.lotId = lot.id;
@@ -444,9 +455,19 @@ function renderLotList() {
 
     applyLotSearchFilter();
 }
+/**
+ * Search function
+ */
+searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
 
+    filteredLots = getSortedLots(lots).filter(lot =>
+        lot.name.toLowerCase().includes(query) ||
+        lot.type.toLowerCase().includes(query)
+    );
 
-
+    renderLotList();
+});
 /**
  * Initialize app
  */
