@@ -8,6 +8,7 @@
  * No known errors or crashes
  * Most of the logic done in this file will be moved to a python based backend in the next sprint
  * RELIES ON Leaflet.js library.
+ * Revised 3/29/2026: Mobile map-first UI — search opens lot list, hides map until pick.
  */
 // Global state
 let map;
@@ -16,6 +17,7 @@ let markers = [];
 let lotToMarkerMap = {};
 let selectedLot = null;
 let selectedMarker = null;
+let lotSearchBlurTimer = null;
 
 const KU_CENTER = [38.9581, -95.2464];
 const MAP_ZOOM = 15;
@@ -24,6 +26,42 @@ const ENABLE_COORDINATE_PICKER = false;
 /**
  * Initialize map
  */
+function isMobileLayout() {
+    return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function openMobileLotPicker() {
+    if (!isMobileLayout()) return;
+    const container = document.querySelector('.container');
+    if (container) container.classList.add('mobile-lot-picker-open');
+    applyLotSearchFilter();
+}
+
+function closeMobileLotPicker() {
+    const container = document.querySelector('.container');
+    if (!container || !container.classList.contains('mobile-lot-picker-open')) return;
+    container.classList.remove('mobile-lot-picker-open');
+    const search = document.getElementById('lot-search');
+    if (search) search.blur();
+    requestAnimationFrame(function () {
+        if (map) map.invalidateSize();
+    });
+}
+
+function applyLotSearchFilter() {
+    const search = document.getElementById('lot-search');
+    if (!search) return;
+    const q = (search.value || '').trim().toLowerCase();
+    document.querySelectorAll('#lot-list .lot-item').forEach(function (li) {
+        const name = (li.dataset.lotName || '').toLowerCase();
+        if (!q || name.indexOf(q) !== -1) {
+            li.classList.remove('lot-item--hidden');
+        } else {
+            li.classList.add('lot-item--hidden');
+        }
+    });
+}
+
 function initMap() {
     map = L.map('map').setView(KU_CENTER, MAP_ZOOM);
 
@@ -228,6 +266,9 @@ function restoreMarkerColor(lot, marker) {
  * Show lot details
  */
 function showLotDetails(lot) {
+    clearTimeout(lotSearchBlurTimer);
+    closeMobileLotPicker();
+
     if (selectedMarker) {
         unhighlightMarker(selectedMarker);
     }
@@ -302,6 +343,7 @@ function hideDetails() {
  */
 function openReportModal() {
     if (!selectedLot) return;
+    document.body.classList.add('report-modal-active');
     document.getElementById('report-modal-overlay').classList.remove('hidden');
     document.getElementById('report-description').value = '';
     document.getElementById('report-start').value = '';
@@ -313,6 +355,7 @@ function openReportModal() {
  * Hide report modal and clear form
  */
 function closeReportModal() {
+    document.body.classList.remove('report-modal-active');
     document.getElementById('report-modal-overlay').classList.add('hidden');
     document.getElementById('report-description').value = '';
     document.getElementById('report-start').value = '';
@@ -384,6 +427,7 @@ function renderLotList() {
         const listItem = document.createElement('li');
         listItem.className = 'lot-item';
         listItem.dataset.lotId = lot.id;
+        listItem.dataset.lotName = lot.name;
 
         listItem.innerHTML = `
             <div class="lot-name">${lot.name}</div>
@@ -391,11 +435,14 @@ function renderLotList() {
         `;
 
         listItem.addEventListener('click', () => {
+            clearTimeout(lotSearchBlurTimer);
             showLotDetails(lot);
         });
 
         lotList.appendChild(listItem);
     });
+
+    applyLotSearchFilter();
 }
 
 
@@ -425,29 +472,61 @@ function init() {
         if (e.target === this) closeReportModal();
     });
 
+    const lotSearch = document.getElementById('lot-search');
+    const lotListPanel = document.querySelector('.lot-list-panel');
+    if (lotSearch) {
+        lotSearch.addEventListener('focus', function () {
+            clearTimeout(lotSearchBlurTimer);
+            openMobileLotPicker();
+        });
+        lotSearch.addEventListener('blur', function () {
+            lotSearchBlurTimer = setTimeout(function () {
+                const ae = document.activeElement;
+                if (ae === lotSearch || (lotListPanel && lotListPanel.contains(ae))) return;
+                closeMobileLotPicker();
+            }, 220);
+        });
+        lotSearch.addEventListener('input', applyLotSearchFilter);
+    }
+    if (lotListPanel) {
+        lotListPanel.addEventListener('mousedown', function () {
+            clearTimeout(lotSearchBlurTimer);
+        });
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeMobileLotPicker();
+        }
+    });
+
+    window.addEventListener('resize', function () {
+        if (!isMobileLayout()) {
+            document.querySelector('.container').classList.remove('mobile-lot-picker-open');
+            if (map) map.invalidateSize();
+        } else if (map) {
+            map.invalidateSize();
+        }
+    });
 
     /*
     This makes it possible to actually close the disclaimer.
     */
-    window.addEventListener("load", function () {
-        //This if statement stops the disclaimer for repeatedly being displayed after refreshes.
-        if (!localStorage.getItem("disclaimerShown")) {
-                const modal = document.getElementById("intro-modal");
-                const closeBtn = document.getElementById("intro-close");
+    window.addEventListener('load', function () {
+        if (!localStorage.getItem('disclaimerShown')) {
+            const modal = document.getElementById('intro-modal');
+            const closeBtn = document.getElementById('intro-close');
 
-                // Show disclaimer
-                setTimeout(() => {
-                    modal.classList.remove("hidden");
-                }, 500);
+            setTimeout(function () {
+                modal.classList.remove('hidden');
+            }, 500);
 
-                // Remove disclaimer on button click
-                closeBtn.addEventListener("click", () => {
-                    modal.classList.add("hidden");
-                });
-                
-                //After seeing it once, the browser can "remember" not to show it again.
-                localStorage.setItem("disclaimerShown", "true");
-            }  
+            closeBtn.addEventListener('click', function () {
+                modal.classList.add('hidden');
+            });
+
+            localStorage.setItem('disclaimerShown', 'true');
+        }
     });
 
     console.log('[DEBUG] Event listeners attached');
