@@ -16,6 +16,7 @@ let markers = [];
 let lotToMarkerMap = {};
 let selectedLot = null;
 let selectedMarker = null;
+let filteredLots = [];
 
 const KU_CENTER = [38.9581, -95.2464];
 const MAP_ZOOM = 15;
@@ -137,7 +138,7 @@ async function loadLots() {
         if (!Array.isArray(lots)) {
             throw new Error('Expected lots to be an array, got: ' + typeof lots);
         }
-
+        filteredLots = getSortedLots(lots);
         renderLotList();
 
         // Remove old markers
@@ -372,7 +373,14 @@ async function submitReport() {
         document.getElementById('report-status').textContent = 'Failed to submit report. Try again.';
     }
 }
-
+/**
+ * Sort lot list
+ */
+function getSortedLots(lotsArray) {
+    return [...lotsArray].sort((a, b) => 
+        a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+    );
+}
 /**
  * Render lot list
  */
@@ -380,7 +388,8 @@ function renderLotList() {
     const lotList = document.getElementById('lot-list');
     lotList.innerHTML = '';
 
-    lots.forEach(lot => {
+    filteredLots = getSortedLots(lots);
+    filteredLots.forEach(lot => {
         const listItem = document.createElement('li');
         listItem.className = 'lot-item';
         listItem.dataset.lotId = lot.id;
@@ -397,9 +406,19 @@ function renderLotList() {
         lotList.appendChild(listItem);
     });
 }
+/**
+ * Search function
+ */
+searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
 
+    filteredLots = getSortedLots(lots).filter(lot =>
+        lot.name.toLowerCase().includes(query) ||
+        lot.type.toLowerCase().includes(query)
+    );
 
-
+    renderLotList();
+});
 /**
  * Initialize app
  */
