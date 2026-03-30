@@ -8,6 +8,7 @@
  * No known errors or crashes
  * Most of the logic done in this file will be moved to a python based backend in the next sprint
  * RELIES ON Leaflet.js library.
+ * Revised 3/28/2026: Disclaimer functionality added.
  * Revised 3/29/2026: Mobile map-first UI — search opens lot list, hides map until pick.
  */
 // Global state
@@ -561,18 +562,21 @@ function init() {
     This makes it possible to actually close the disclaimer.
     */
     window.addEventListener('load', function () {
+        //Store an indicator in local storage so the user isn't shown disclaimer after every refresh.
         if (!localStorage.getItem('disclaimerShown')) {
             const modal = document.getElementById('intro-modal');
             const closeBtn = document.getElementById('intro-close');
 
+            //Show disclaimer
             setTimeout(function () {
                 modal.classList.remove('hidden');
             }, 500);
 
+            //enable close button.
             closeBtn.addEventListener('click', function () {
                 modal.classList.add('hidden');
             });
-
+            //Add indicator to local storage.
             localStorage.setItem('disclaimerShown', 'true');
         }
     });
