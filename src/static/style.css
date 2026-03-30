@@ -850,3 +850,32 @@ body.report-modal-active .details-panel:not(.hidden) {
     opacity: 0.85;
     text-decoration: underline;
 }
+
+/*Prevent layout shift from long text */
+#lot-search,
+#lot-search-sidebar {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* CRITICAL FIX: allow flex items to shrink properly */
+.control-group {
+    min-width: 0;
+}
+
+/* Prevent input from forcing container growth */
+.lot-search-row {
+    min-width: 0;
+}
+
+/*Ensure inputs don't overflow flex containers */
+.lot-search-row input,
+#lot-search,
+#lot-search-sidebar {
+    min-width: 0;
+}

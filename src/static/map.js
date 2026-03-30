@@ -454,7 +454,7 @@ function renderLotList() {
 /**
  * Search function
  */
-document.getElementById('lot-search').addEventListener('keydown', (event) => {
+/*document.getElementById('lot-search').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
         const query = event.target.value.toLowerCase();
 
@@ -466,6 +466,20 @@ document.getElementById('lot-search').addEventListener('keydown', (event) => {
         renderLotList();
     }
 });
+*/
+
+// Unified search handler
+function handleSearchInput(query) {
+    query = (query || '').toLowerCase();
+
+    filteredLots = getSortedLots(lots).filter(lot =>
+        lot.name.toLowerCase().includes(query) ||
+        lot.type.toLowerCase().includes(query)
+    );
+
+    renderLotList();
+}
+
 /**
  * Initial`ize app
  */
@@ -492,12 +506,16 @@ function init() {
     });
 
     const lotSearch = document.getElementById('lot-search');
+    const lotSearchSidebar = document.getElementById('lot-search-sidebar');
     const lotListPanel = document.querySelector('.lot-list-panel');
+
+    // Top search
     if (lotSearch) {
         lotSearch.addEventListener('focus', function () {
             clearTimeout(lotSearchBlurTimer);
             openMobileLotPicker();
         });
+
         lotSearch.addEventListener('blur', function () {
             lotSearchBlurTimer = setTimeout(function () {
                 const ae = document.activeElement;
@@ -505,12 +523,19 @@ function init() {
                 closeMobileLotPicker();
             }, 220);
         });
-        lotSearch.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                applyLotSearchFilter();
-            }
+
+        lotSearch.addEventListener('input', function (event) {
+            handleSearchInput(event.target.value);
         });
     }
+
+    // Sidebar search 
+    if (lotSearchSidebar) {
+        lotSearchSidebar.addEventListener('input', function (event) {
+            handleSearchInput(event.target.value);
+        });
+    }
+    
     if (lotListPanel) {
         lotListPanel.addEventListener('mousedown', function () {
             clearTimeout(lotSearchBlurTimer);
