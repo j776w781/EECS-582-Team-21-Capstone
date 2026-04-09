@@ -25,6 +25,10 @@ const KU_CENTER = [38.9581, -95.2464];
 const MAP_ZOOM = 15;
 const ENABLE_COORDINATE_PICKER = false;
 
+let basketballMode = false;
+const GAME_LOTS = ["20", "31", "54", "70", "71", "72", "90", "93","117", "118", "125", "127"];
+const GAME_GARAGES = ["AFPK","CDPG","MSPK"];
+
 /**
  * Initialize map
  */
@@ -120,7 +124,12 @@ function enableCoordinatePicker() {
  */
 function getLotColor(lot) {
     //This method is very simplified now that the backend decides the color, not JavaScript.
-   return lot.color;
+    const lotId = String(lot.id);
+    const lotNumber = String(lot.id).replace(/\D/g, ""); 
+    if (basketballMode && (GAME_LOTS.includes(lotNumber) || GAME_GARAGES.includes(lotId))) {
+        return "#FF0000";
+    }
+    return lot.color;
 }
 
 /**
@@ -294,7 +303,16 @@ function showLotDetails(lot) {
 
     document.getElementById('details-name').textContent = lot.name;
     document.getElementById('details-type').textContent = lot.type;
-    document.getElementById('details-restrictions').textContent = lot.description;
+
+    let description = lot.description; 
+    const lotId = String(lot.id);
+    const lotNumber = String(lot.id).replace(/\D/g, "");
+
+    if (basketballMode && (GAME_LOTS.includes(lotNumber) || GAME_GARAGES.includes(lotId))) {
+        description = "GAME DAY RESTRICTION:\n\nThis lot is reserved for basketball game parking.";
+    }
+  
+    document.getElementById('details-restrictions').textContent = description;
 
     // Reset report form and status on selecting lot
     document.getElementById('report-description').value = '';
@@ -501,6 +519,23 @@ function init() {
     document.getElementById('report-modal-close').addEventListener('click', closeReportModal);
     document.getElementById('report-cancel').addEventListener('click', closeReportModal);
     document.getElementById('submit-report').addEventListener('click', submitReport);
+
+    const toggle = document.getElementById("basketball-toggle");
+    const label = document.getElementById("basketball-label");
+
+    if (toggle) {
+        toggle.addEventListener("change", () => {
+            basketballMode = toggle.checked;
+
+            if (basketballMode) {
+                label.classList.add("basketball-active");
+            } else {
+                label.classList.remove("basketball-active");
+            }
+
+            updateMarkers(); // refresh map
+        });
+    }
 
     document.getElementById('report-modal-overlay').addEventListener('click', function (e) {
         if (e.target === this) closeReportModal();
