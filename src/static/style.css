@@ -884,56 +884,63 @@ body.report-modal-active .details-panel:not(.hidden) {
     min-width: 0;
 }
 
+/* Basketball Toggle Container */
 .basketball-toggle-card {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     background: #f3f3f3;
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
+/* Toggle Switch Container */
 .basketball-switch {
     position: relative;
-    width: 50px;
-    height: 26px;
+    width: 40px;
+    height: 20px;
 }
 
+/* Hide default checkbox */
 .basketball-switch input {
     display: none;
 }
 
+/* Toggle Background (Track) */
 .basketball-switch .slider {
     position: absolute;
     inset: 0;
     background: #ccc;
     border-radius: 20px;
-    transition: 0.3s;
+    transition: 0.10s;
 }
 
+/* Toggle Knob (Circle) */
 .basketball-switch .slider::before {
     content: "";
     position: absolute;
-    width: 20px;
-    height: 20px;
-    left: 3px;
-    top: 3px;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    top: 2px;
     background: white;
     border-radius: 50%;
     transition: 0.3s;
 }
 
+/* ON State (Checked) */
 .basketball-switch input:checked + .slider {
     background: #5ec2a8;
 }
 
 .basketball-switch input:checked + .slider::before {
-    transform: translateX(24px);
+    transform: translateX(20px);
 }
 
+/* Label Text */
 #basketball-label {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     color: #666;
 }
