@@ -30,13 +30,18 @@ from zoneinfo import ZoneInfo
 # Support both: run from repo root (e.g. deploy) or from src/ (local: cd src && python app.py)
 try:
     from src.services.LotController import LotController
+    from src.services.censor import Censor
 except ModuleNotFoundError:
     from services.LotController import LotController
+    from services.censor import Censor
 
 app = Flask(__name__)
 
 # Initialize AvailabilityService for centralized decision making
 lot_control = LotController()
+
+# Initialize profanity-censoring module.
+censor  = Censor()
 
 # Get the absolute path to the app directory
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -84,6 +89,9 @@ def report_special_restriction(lot_id):
     try:
         data = request.get_json(force=True)
         description = data.get('description', '').strip()
+
+        #censor the description immediately.
+        description = censor.censor(description)
 
         '''
         DESCRIPTION OPTIONAL
