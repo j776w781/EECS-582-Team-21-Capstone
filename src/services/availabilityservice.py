@@ -9,6 +9,8 @@ Revised: February 28th, 2026 (K Li: Complete availability logic, methods; Josh: 
          March 14 (Josh: Tweaked the _create_datetime_from_params to something more sustainable)
 Revised: 3/24/2026
     -- Added permit hierarchy: Jenna Luong
+Revised: 4/10/2026
+    -- Fixed other lot availability: Jenna Luong
 
 Preconditions: Restriction/LotService available, lot dict has 'type' key, valid day string, HH:MM format.
 
@@ -47,8 +49,8 @@ GARAGE_ENFORCE_END = time(17, 0)
 # Maps each permit type to the lot types it's allowed to park in
 # Garage permits are lot-specific, only valid at its own garage
 PERMIT_HIERARCHY = {
-    "GOLD":     ["GOLD", "BLUE", "RED", "YELLOW"],
-    "BLUE":     ["BLUE", "RED", "YELLOW"],
+    "GOLD":     ["GOLD", "GOLD2", "BLUE", "BLUE2", "RED", "YELLOW"],
+    "BLUE":     ["BLUE", "BLUE2", "RED", "YELLOW"],
     "RED":      ["RED", "YELLOW"],
     "YELLOW":   ["YELLOW"],
     # Housing: GREEN permit valid in all housing lots (DH, GC, JT, CH)
@@ -62,7 +64,7 @@ PERMIT_HIERARCHY = {
     # Garage permits are lot-specific
     "AFPK":     ["AFPK"],
     "CDPG":     ["CDPG"],
-    "MSPK":     ["MSPK"],
+    "MSPK":     ["MSPK"]
 }
 
 GARAGE_TYPES = {"AFPK", "CDPG", "MSPK"}
@@ -81,11 +83,11 @@ class AvailabilityService:
         # Note: Original logic uses 480 <= time_in_minutes < 1020, which is 8:00 to 16:59
         self.std_restricts["YELLOW"] = Restriction("YELLOW", 0, 4, time(8,0), time(17,0))
 
-        # Blue: Mon-Fri (0-4), 7AM-7:30PM
-        self.std_restricts["BLUE"] = Restriction("BLUE", 0, 4, time(7,0), time(19,30))
+        # Blue (normal): Mon-Fri (0-4), 7AM-5PM
+        self.std_restricts["BLUE"] = Restriction("BLUE", 0, 4, time(7,0), time(17,0))
 
-        # Gold: Mon-Fri (0-4), 7AM-7:30PM
-        self.std_restricts["GOLD"] = Restriction("GOLD", 0, 4, time(7,0), time(19,30))
+        # Gold (normal): Mon-Fri (0-4), 7AM-5PM
+        self.std_restricts["GOLD"] = Restriction("BLUE", 0, 4, time(7,0), time(17,0))
 
         # Red: Mon-Fri (0-4), 7AM-5PM
         self.std_restricts["RED"] = Restriction("RED", 0, 4, time(7,0), time(17,0))
@@ -101,6 +103,9 @@ class AvailabilityService:
 
         # Fuschia: Mon 7AM - Fri 5PM (continuous enforcement (i think, descriptions unclear?))
         self.std_restricts["FUCHSIA"] = Restriction("FUCHSIA", 0, 4, time(7,0), time(17,0), is_continuous=True)
+
+        # Other: 24 hours
+        self.std_restricts["OTHER"] = Restriction("OTHER", None, None, time(0,0), time(23,59))
 
         # Garage: 24/7 enforcement (using None for start_day to indicate always enforced)
         # Note: Garage lots require special permits or pay-per-space
@@ -199,6 +204,7 @@ class AvailabilityService:
             bool: True if available, False otherwise
         """
         lot_type = lot.get("type", "").upper()
+        lot_name = lot.get("name", "").upper()
         permit = permit.upper()
         current_dt = self._create_datetime_from_params(day, time_hhmm)
 
@@ -213,6 +219,10 @@ class AvailabilityService:
             # During enforcement hours only matching garage permit is valid
             allowed_zones = PERMIT_HIERARCHY.get(permit, [])
             return lot_type in allowed_zones
+        
+        
+        # --- Per-lot restriciton overrides ---
+        # gold staff permits required 5-730 mon-fri: 13, 18, 21, 35, 37, 129
 
         # --- All other lots ---
 
