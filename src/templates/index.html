@@ -71,8 +71,9 @@ Faults: None identified.
                 </div>
 
                 <div class="control-group">
-                    <label for="day-select">Day of Week:</label>
-                    <select id="day-select">
+                    <label for="date-input">Date:</label>
+                    <input type="date" id="date-input" name="view-date" value="{{ current_date }}">
+                    <select id="day-select" hidden aria-hidden="true" tabindex="-1">
                         <option value="Mon" {% if current_day == 'Mon' %}selected{% endif %}>Monday</option>
                         <option value="Tue" {% if current_day == 'Tue' %}selected{% endif %}>Tuesday</option>
                         <option value="Wed" {% if current_day == 'Wed' %}selected{% endif %}>Wednesday</option>

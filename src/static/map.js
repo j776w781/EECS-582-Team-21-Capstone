@@ -10,6 +10,7 @@
  * RELIES ON Leaflet.js library.
  * Revised 3/28/2026: Disclaimer functionality added.
  * Revised 3/29/2026: Mobile map-first UI — search opens lot list, hides map until pick.
+ * Revised 4/12/2026: Date picker UI; weekday synced to #day-select; API uses date + time.
  */
 // Global state
 let map;
@@ -28,6 +29,21 @@ const ENABLE_COORDINATE_PICKER = false;
 let basketballMode = false;
 const GAME_LOTS = ["20", "31", "54", "70", "71", "72", "90", "93","117", "118", "125", "127"];
 const GAME_GARAGES = ["AFPK","CDPG","MSPK"];
+
+/** JS weekday 0=Sun … 6=Sat → Mon/Tue/… value for #day-select */
+const WEEKDAY_TO_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function syncDaySelectFromDate() {
+    const dateInput = document.getElementById('date-input');
+    const daySelect = document.getElementById('day-select');
+    if (!dateInput || !daySelect) return;
+    if (!dateInput.value) {
+        const t = new Date();
+        dateInput.value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+    }
+    const d = new Date(dateInput.value + 'T12:00:00');
+    daySelect.value = WEEKDAY_TO_ABBR[d.getDay()];
+}
 
 /**
  * Initialize map
@@ -166,15 +182,15 @@ function createLotMarker(lot) {
  */
 async function loadLots() {
     try {
+        syncDaySelectFromDate();
         const permit = document.getElementById('permit-select').value;
         const day = document.getElementById('day-select').value;
         const time = document.getElementById('time-input').value;
-
-        console.log('Fetching lots with params:', { permit, day, time });
-
-        const response = await fetch(
-            `/api/lots?permit=${permit}&day=${day}&time=${time}`
-        );
+        const dateEl = document.getElementById('date-input');
+        const viewDate = dateEl && dateEl.value ? dateEl.value : '';
+        const params = new URLSearchParams({ permit, day, time, ...(viewDate ? { date: viewDate } : {}) });
+        console.log('Fetching lots with params:', params.toString());
+        const response = await fetch(`/api/lots?${params}`);
 
         if (!response.ok) {
             throw new Error(`API returned status ${response.status}: ${response.statusText}`);
@@ -512,7 +528,7 @@ function init() {
     console.log('[DEBUG] Lots loading initiated');
 
     document.getElementById('permit-select').addEventListener('change', updateMarkers);
-    document.getElementById('day-select').addEventListener('change', updateMarkers);
+    document.getElementById('date-input').addEventListener('change', updateMarkers);
     document.getElementById('time-input').addEventListener('change', updateMarkers);
     document.getElementById('close-details').addEventListener('click', hideDetails);
     document.getElementById('report-btn').addEventListener('click', openReportModal);
