@@ -17,9 +17,6 @@ Revision: 3/28/2026
 Revision: 3/29/2026
     -- Mobile UI: viewport-fit=cover; mobile-top-chrome; #lot-search; filter-card layout;
        desktop vs mobile-bottom-bar for permit link + buy; buy uses type="button".
-Revision: 4/7/2026
-    -- Added table of contents: Jenna Luong
-    -- Added link to athletics calendar: Jenna Luong
 Preconditions: Requires access to Leaflet.js stylesheet and JavaScript libraries.
                Requries access to styles.css and map.js to function properly.
 Postconditions: Renders the interactive webpage for the map.
@@ -34,7 +31,7 @@ Faults: None identified.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/jaypark_icon.png') }}">
-    <title>JayPark ― KU Parking</title>
+    <title>JayPark -- KU Parking</title>
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -46,7 +43,7 @@ Faults: None identified.
     <div class="container">
         <div class="mobile-top-chrome">
         <header>
-            <h1>Jay<span class="highlight">Park</span> ― KU Parking</h1>
+            <h1>KU Parking Map</h1>
         </header>
 
         <!-- Controls: mobile = search + 3 filters + fixed bottom bar; desktop = classic bar -->
@@ -90,7 +87,7 @@ Faults: None identified.
                     <label for="time-input">Time (HH:MM):</label>
                     <input type="time" id="time-input" value="{{ current_time }}">
                 </div>
-
+                
                 <div class="basketball-toggle-card">
                     <label class="basketball-switch">
                         <input type="checkbox" id="basketball-toggle">
@@ -98,7 +95,8 @@ Faults: None identified.
                     </label>
                     <span id="basketball-label">Basketball Mode</span>
                 </div>
-
+            </div>
+            <div class="filter-card__secondary filter-card__secondary--desktop">
                 <!-- Table of Contents -->
                 <button
                     id="tocBtn"
@@ -110,7 +108,7 @@ Faults: None identified.
                     <span></span>
                     <span></span>
                 </button>
-
+                
                 <!-- Dropdown -->
                 <div id="tocMenu" class="toc-menu hidden">
                     <a href="https://parking.ku.edu/rules-regulations" target="_blank" class="permit-desc-link" rel="noopener">Parking Rules & Regulations</a>
@@ -118,17 +116,32 @@ Faults: None identified.
                     <a href="https://parking.ku.edu/student-permits" target="_blank" class="permit-desc-link" rel="noopener">Buy Parking Permit</a>
                     <a href="https://kuathletics.com/calendar" target="_blank" class="permit-desc-link" rel="noopener">KU Athletics Calendar</a>
                 </div>
+
+
             </div>
-            <!-- <div class="filter-card__secondary filter-card__secondary--desktop">
-                <button type="button" class="permit-buy-btn" onclick="window.open('https://parking.ku.edu/student-permits', '_blank')">Buy Parking Permit</button>
-                <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description →</a>
-            </div> -->
-            
+        </div>
         </div>
 
         <div class="mobile-bottom-bar" aria-label="Permit links">
-            <a href="{{ url_for('permit_description') }}" class="permit-desc-link mobile-bottom-bar__link">Permit Description →</a>
-            <button type="button" class="permit-buy-btn mobile-bottom-bar__buy" onclick="window.open('https://parking.ku.edu/student-permits', '_blank')">Buy Parking Permit</button>
+            <!-- Table of Contents -->
+                <button
+                    id="tocBtnMob"
+                    class="hamburger-inline"
+                    aria-label="TOC actions"
+                    aria-expanded="false"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                
+                <!-- Dropdown -->
+                <div id="tocMenuMob" class="toc-menu hidden">
+                    <a href="https://parking.ku.edu/rules-regulations" target="_blank" class="permit-desc-link" rel="noopener">Parking Rules & Regulations</a>
+                    <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description</a>
+                    <a href="https://parking.ku.edu/student-permits" target="_blank" class="permit-desc-link" rel="noopener">Buy Parking Permit</a>
+                    <a href="https://kuathletics.com/calendar" target="_blank" class="permit-desc-link" rel="noopener">KU Athletics Calendar</a>
+                </div>
         </div>
 
         <div class="main-content">
@@ -213,13 +226,23 @@ Faults: None identified.
 
      <!-- TOC toggle -->
     <script>
-        const tocBtn = document.getElementById('tocBtn');
-        const tocMenu = document.getElementById('tocMenu');
+        let tocBtn;
+        let tocMenu;
+
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) {
+            tocBtn = document.getElementById('tocBtn');
+            tocMenu = document.getElementById('tocMenu');
+        } else {
+            tocBtn = document.getElementById('tocBtnMob');
+            tocMenu = document.getElementById('tocMenuMob');
+        }
+
+        
 
         tocBtn.addEventListener('click', (e) => {
             e.stopPropagation();
 
-            const isMobile = window.innerWidth <= 768;
 
             if (!isMobile) {
                 const rect = tocBtn.getBoundingClientRect();
@@ -240,6 +263,8 @@ Faults: None identified.
         tocMenu.addEventListener('click', (e) => {
             e.stopPropagation();
         });
+
     </script>
+    
 </body>
 </html>
