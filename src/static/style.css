@@ -1034,3 +1034,16 @@ body.report-modal-active .details-panel:not(.hidden) {
 .toc-menu a:hover {
     background-color: #f5f5f5;
 }
+
+
+@media (max-width: 768px) {
+    .toc-menu {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        border-radius: 0;
+        z-index: 1300;
+    }
+}
