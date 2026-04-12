@@ -58,10 +58,6 @@ header h1 {
     font-weight: 600;
 }
 
-.highlight {
-  color: #ffd700;
-}
-
 /* Controls Panel + filter card shell */
 .controls-panel.filter-card {
     display: flex;
@@ -884,6 +880,8 @@ body.report-modal-active .details-panel:not(.hidden) {
     min-width: 0;
 }
 
+
+
 /* Basketball Toggle Container */
 .basketball-toggle-card {
     display: flex;
@@ -950,6 +948,16 @@ body.report-modal-active .details-panel:not(.hidden) {
     font-weight: 600;
 
 }
+
+
+
+
+
+
+
+
+
+
 /* Inline hamburger */
 .hamburger-inline {
     position: relative;
@@ -980,15 +988,14 @@ body.report-modal-active .details-panel:not(.hidden) {
 
 /* Open (X) state */
 .hamburger-inline.active span:nth-child(1) {
-  transform: translateY(8px) rotate(45deg);
-}
+    transform: translateY(8px) rotate(45deg);
+    }
 
 .hamburger-inline.active span:nth-child(2) {
-  opacity: 0;
+    opacity: 0;
 }
-
 .hamburger-inline.active span:nth-child(3) {
-  transform: translateY(-8px) rotate(-45deg);
+    transform: translateY(-8px) rotate(-45deg);
 }
 
 
@@ -1035,17 +1042,12 @@ body.report-modal-active .details-panel:not(.hidden) {
     background-color: #f5f5f5;
 }
 
-
 @media (max-width: 768px) {
-    .hamburger-inline {
-        display: none !important;
-    }
-
     .toc-menu {
-        display: none !important;
-    }
-
-    .basketball-toggle-card {
-        display: none !important;
+        left: 12px;
+        right: 12px;
+        bottom: 70px;
+        top: auto;
+        width: auto;
     }
 }
