@@ -14,6 +14,8 @@ Revision: 3/29/2026
      -- Req 15 mobile: filter card, touch targets, map height, no horizontal scroll;
         map-first UI (search, lot picker hides map, fixed permit/buy bar); full-bleed map
         under fixed top chrome + bottom bar (Google Maps–style)
+Revision: 3/30/2026
+     -- Desktop: 3-row grid shell (100dvh); left #lot-list scroll only; simplified scroll CSS.
 Preconditions: No required inputs.
 Postconditions: Altered styles for index.html and map.js elements.
 Errors/Exceptions: No known errors.
@@ -149,17 +151,20 @@ header h1 {
 /* Main Content Layout */
 .main-content {
     display: flex;
-    flex: 1;
     min-height: 0;
     overflow: hidden;
 }
 
-/* Lot List Panel */
+/* Lot list: column flex + scroll inside #lot-list only */
 .lot-list-panel {
     width: 300px;
+    flex-shrink: 0;
+    min-height: 0;
     background-color: white;
     border-right: 1px solid #ddd;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     padding: 1rem;
 }
 
@@ -167,10 +172,19 @@ header h1 {
     font-size: 1.2rem;
     margin-bottom: 1rem;
     color: #333;
+    flex-shrink: 0;
+}
+
+.lot-list-panel #lot-search-sidebar {
+    flex-shrink: 0;
+    margin-bottom: 0.75rem;
 }
 
 #lot-list {
     list-style: none;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .lot-item {
@@ -454,6 +468,15 @@ body.report-modal-active .details-panel:not(.hidden) {
 
 /* Desktop: no mobile search row / bottom duplicate bar */
 @media (min-width: 769px) {
+    /* 3-row shell: header, controls, main — gives .main-content a real height so #lot-list can scroll */
+    .container {
+        display: grid;
+        grid-template-rows: auto auto minmax(0, 1fr);
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+    }
+
     .lot-search-row {
         display: none !important;
     }
@@ -464,12 +487,6 @@ body.report-modal-active .details-panel:not(.hidden) {
 
     .main-content {
         position: relative;
-        left: auto;
-        right: auto;
-        top: auto;
-        bottom: auto;
-        z-index: auto;
-        flex: 1;
         min-height: 0;
     }
 
@@ -484,14 +501,6 @@ body.report-modal-active .details-panel:not(.hidden) {
 
     #map {
         min-height: 200px;
-    }
-
-    .lot-list-panel {
-        position: relative;
-        left: auto;
-        right: auto;
-        top: auto;
-        bottom: auto;
     }
 
     .map-container .leaflet-top.leaflet-left {
@@ -692,7 +701,6 @@ body.report-modal-active .details-panel:not(.hidden) {
         padding: 0.5rem 0.75rem;
         padding-bottom: calc(0.5rem + 52px + env(safe-area-inset-bottom));
         background: #f5f5f7;
-        -webkit-overflow-scrolling: touch;
     }
 
     .container.mobile-lot-picker-open .lot-list-panel {
@@ -709,12 +717,6 @@ body.report-modal-active .details-panel:not(.hidden) {
         font-size: 0.95rem;
         margin-bottom: 0.4rem;
         flex-shrink: 0;
-    }
-
-    #lot-list {
-        flex: 1;
-        overflow-y: auto;
-        min-height: 0;
     }
 
     .lot-item {
