@@ -34,7 +34,7 @@ Invariants: std_restricts contains YELLOW/RED/BLUE/GREEN/GOLD/GARAGE. All Restri
 Known faults: Garage pay-per-space not implemented. Other lots default unavailable.
 """
 
-from datetime import date as date_type, datetime, time, timedelta
+from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
 from .restriction import Restriction
 
@@ -160,13 +160,7 @@ class AvailabilityService:
             second=0,
             microsecond=0
         )
-
-    def _datetime_from_view_date(self, date_str: str, time_hhmm: str) -> datetime:
-        """Calendar YYYY-MM-DD + HH:MM (wall clock; same basis as Chicago-local queries)."""
-        d = date_type.fromisoformat(date_str)
-        time_obj = self._time_string_to_time(time_hhmm)
-        return datetime(d.year, d.month, d.day, time_obj.hour, time_obj.minute, 0, 0)
-
+    
     def _is_summer(self, current_dt: datetime) -> bool:
         """Returns true if datetime falls in the summer semester (May-August)"""
         return current_dt.month in SUMMER_MONTHS
@@ -188,12 +182,9 @@ class AvailabilityService:
         # Weekday: open between 5PM - 7AM
         return current_t < GARAGE_ENFORCE_START or current_t >= GARAGE_ENFORCE_END
 
-    def is_lot_available(self, lot: dict, permit: str, day: str, time_hhmm: str, view_date: str | None = None):
+    def is_lot_available(self, lot: dict, permit: str, day: str, time_hhmm: str) -> bool:
         """
         Determine if a parking lot is available based on permit type, day, and time.
-
-        If view_date (YYYY-MM-DD) is set, availability uses that calendar date + time_hhmm;
-        day is ignored for datetime construction 
 
         Garage rules:
             - Any permit may use any garage during open hours listed in _is_garage_open_hours
@@ -208,7 +199,6 @@ class AvailabilityService:
             permit: Permit type (NONE, YELLOW, RED, BLUE, GREEN, GOLD, AFPK, CDPG, MSPK)
             day: Day string (Mon-Sun)
             time_hhmm: Time in HH:MM format
-            view_date: Optional YYYY-MM-DD; when set, takes precedence over day for the query instant.
         
         Returns:
             bool: True if available, False otherwise
@@ -216,10 +206,7 @@ class AvailabilityService:
         lot_type = lot.get("type", "").upper()
         lot_name = lot.get("name", "").upper()
         permit = permit.upper()
-        if view_date:
-            current_dt = self._datetime_from_view_date(view_date, time_hhmm)
-        else:
-            current_dt = self._create_datetime_from_params(day, time_hhmm)
+        current_dt = self._create_datetime_from_params(day, time_hhmm)
 
         # --- Garage logic ---
         if lot_type in GARAGE_TYPES:
