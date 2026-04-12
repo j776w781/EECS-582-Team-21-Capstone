@@ -17,6 +17,11 @@ Revision: 3/28/2026
 Revision: 3/29/2026
     -- Mobile UI: viewport-fit=cover; mobile-top-chrome; #lot-search; filter-card layout;
        desktop vs mobile-bottom-bar for permit link + buy; buy uses type="button".
+Revision: 4/7/2026
+    -- Added table of contents: Jenna Luong
+    -- Added link to athletics calendar: Jenna Luong
+Revision: 4/7/2026
+    -- Added the Basketball mode: Evans Chigweshe
 Preconditions: Requires access to Leaflet.js stylesheet and JavaScript libraries.
                Requries access to styles.css and map.js to function properly.
 Postconditions: Renders the interactive webpage for the map.
@@ -124,14 +129,26 @@ Faults: None identified.
                     <input type="time" id="time-input" value="{{ current_time }}">
                 </div>
 
-                <div class="basketball-toggle-card basketball-toggle-card--desktop">
-                    <label for="basketball-toggle" class="basketball-switch">
+                <!-- Basketball mode-->          
+                <div class="basketball-toggle-card">
+                    <label class="basketball-switch">
+                        <input type="checkbox" id="basketball-toggle">
                         <span class="slider"></span>
                     </label>
                     <span id="basketball-label">Basketball Mode</span>
                 </div>
             </div>
             <div class="filter-card__secondary filter-card__secondary--desktop">
+                <!-- Info Button -->
+                <button
+                    id="infoBtn"
+                    class="info-button"
+                    aria-label="Parking color legend"
+                    title="Parking Lot Legend"
+                >
+                    ℹ️
+                </button>
+                
                 <!-- Table of Contents -->
                 <button
                     id="tocBtn"
@@ -156,6 +173,38 @@ Faults: None identified.
             </div>
         </div>
         </div>
+
+
+        <div class="mobile-bottom-bar" aria-label="Permit links">
+            <!-- Info Button -->
+            <button
+                id="infoBtnMob"
+                class="info-button"
+                aria-label="Parking color legend"
+                title="Parking Lot Legend"
+            >
+                ℹ️
+            </button>
+            
+            <!-- Table of Contents -->
+                <button
+                    id="tocBtnMob"
+                    class="hamburger-inline"
+                    aria-label="TOC actions"
+                    aria-expanded="false"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                
+                <!-- Dropdown -->
+                <div id="tocMenuMob" class="toc-menu hidden">
+                    <a href="https://parking.ku.edu/rules-regulations" target="_blank" class="permit-desc-link" rel="noopener">Parking Rules & Regulations</a>
+                    <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description</a>
+                    <a href="https://parking.ku.edu/student-permits" target="_blank" class="permit-desc-link" rel="noopener">Buy Parking Permit</a>
+                    <a href="https://kuathletics.com/calendar" target="_blank" class="permit-desc-link" rel="noopener">KU Athletics Calendar</a>
+                </div>
         </div>
 
         <div class="main-content">
@@ -232,6 +281,45 @@ Faults: None identified.
             </div>
         </div>
 
+        <!-- Info popup with color legend -->
+        <div id="info-modal" class="report-modal-overlay hidden">
+            <div class="report-modal">
+                <div class="report-modal-header">
+                    <h3>About JayPark</h3>
+                    <button id="info-close" class="close-btn">&times;</button>
+                </div>
+                <div class="report-modal-body">
+                    <p><strong>JayPark is an intuitive parking authentication service</strong> designed to help you find available parking spots at KU with real-time lot status information.
+                    
+                    Lot availability is determined based on the permit information and time that you select.</p>
+                    
+                    <p style="margin-top: 1.5rem; margin-bottom: 0.5rem;"><strong>Lot Color Legend:</strong></p>
+                    <div class="legend-container">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #4CAF50;"></div>
+                            <span class="legend-text"><strong>Green:</strong> Lot is available</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #FFEB3B;"></div>
+                            <span class="legend-text"><strong>Yellow:</strong> Lot will be unavailable in under an hour</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #F44336;"></div>
+                            <span class="legend-text"><strong>Red:</strong> Lot is unavailable</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #FF9800;"></div>
+                            <span class="legend-text"><strong>Orange:</strong> Special restriction reported for this lot</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-text"><strong>Basketball Mode:</strong> Adjusts lot availability based on game-day restrictions</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
@@ -261,6 +349,35 @@ Faults: None identified.
                 e.stopPropagation();
             });
         })();
+
+        // Info button and modal functionality
+        const infoBtn = document.getElementById('infoBtn') || document.getElementById('infoBtnMob');
+        const infoModal = document.getElementById('info-modal');
+        const infoClose = document.getElementById('info-close');
+
+        if (infoBtn) {
+            infoBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                infoModal.classList.remove('hidden');
+            });
+        }
+
+        if (infoClose) {
+            infoClose.addEventListener('click', (e) => {
+                e.stopPropagation();
+                infoModal.classList.add('hidden');
+            });
+        }
+
+        if (infoModal) {
+            infoModal.addEventListener('click', (e) => {
+                if (e.target === infoModal) {
+                    infoModal.classList.add('hidden');
+                }
+            });
+        }
+
+
     </script>
     
 </body>

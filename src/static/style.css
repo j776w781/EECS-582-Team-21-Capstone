@@ -1298,13 +1298,6 @@ body.report-modal-active .details-panel:not(.hidden) {
 
 
 
-
-
-
-
-
-
-
 /* Inline hamburger */
 .hamburger-inline {
     position: relative;
@@ -1413,5 +1406,69 @@ body.report-modal-active .details-panel:not(.hidden) {
         bottom: 70px;
         top: auto;
         width: auto;
+    }
+}
+
+/* Info button styling */
+.info-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    height: 32px;
+    width: 32px;
+}
+
+.info-button:hover {
+    background-color: #f0f0f0;
+}
+
+.info-button:active {
+    background-color: #e0e0e0;
+}
+
+/* Legend container styling */
+.legend-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+}
+
+.legend-color {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid #333;
+}
+
+.legend-text {
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .info-button {
+        font-size: 1.3rem;
+        height: 28px;
+        width: 28px;
     }
 }
