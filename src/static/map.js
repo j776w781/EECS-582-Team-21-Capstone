@@ -49,24 +49,119 @@ function syncDaySelectFromDate() {
  * Initialize map
  */
 function isMobileLayout() {
-    return window.matchMedia('(max-width: 768px)').matches;
+    return window.matchMedia('(max-width: 1023px)').matches;
+}
+
+function closeMobileTocDrawer() {
+    const tocMenu = document.getElementById('tocMenuMob');
+    const backdrop = document.getElementById('tocDrawerBackdrop');
+    const tocBtn = document.getElementById('tocBtnMob');
+    if (tocMenu) tocMenu.classList.remove('toc-menu--drawer-open');
+    if (backdrop) {
+        backdrop.classList.remove('toc-drawer-backdrop--visible');
+        backdrop.setAttribute('aria-hidden', 'true');
+    }
+    if (tocBtn) {
+        tocBtn.classList.remove('active');
+        tocBtn.setAttribute('aria-expanded', 'false');
+    }
+}
+
+function toggleMobileTocDrawer() {
+    const tocMenu = document.getElementById('tocMenuMob');
+    const backdrop = document.getElementById('tocDrawerBackdrop');
+    const tocBtn = document.getElementById('tocBtnMob');
+    if (!tocMenu || !backdrop || !tocBtn) return;
+    const opening = !tocMenu.classList.contains('toc-menu--drawer-open');
+    if (opening) {
+        closeMobileLotPicker();
+        tocMenu.classList.add('toc-menu--drawer-open');
+        backdrop.classList.add('toc-drawer-backdrop--visible');
+        backdrop.setAttribute('aria-hidden', 'false');
+    } else {
+        closeMobileTocDrawer();
+    }
+    tocBtn.classList.toggle('active', opening);
+    tocBtn.setAttribute('aria-expanded', opening);
+}
+
+function setMobileLotPickerScrollLock(on) {
+    if (!isMobileLayout()) return;
+    const root = document.documentElement;
+    if (on) {
+        root.classList.add('mobile-lot-picker-active');
+        document.body.classList.add('mobile-lot-picker-active');
+    } else {
+        root.classList.remove('mobile-lot-picker-active');
+        document.body.classList.remove('mobile-lot-picker-active');
+    }
+}
+
+/** iOS keyboard / viewport: extra bottom inset so list items aren’t under the keyboard */
+function updateMobileKeyboardInset() {
+    if (!window.visualViewport || !isMobileLayout()) {
+        document.documentElement.style.setProperty('--mobile-keyboard-inset', '0px');
+        return;
+    }
+    const vv = window.visualViewport;
+    const hidden = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    document.documentElement.style.setProperty('--mobile-keyboard-inset', hidden + 'px');
+}
+
+/** Row 1 height + fixed search/chip stack height for CSS (position fixed rows 2–3 below flowing row 1) */
+function updateMobileChromeMetrics() {
+    if (!isMobileLayout()) {
+        document.documentElement.style.removeProperty('--jaypark-mobile-row1-bottom');
+        document.documentElement.style.removeProperty('--jaypark-mobile-fixed-stack-h');
+        if (map) map.invalidateSize();
+        return;
+    }
+    const row1 = document.querySelector('.mobile-floating-topbar');
+    const fixedEl = document.querySelector('.mobile-fixed-controls');
+    if (row1) {
+        const r = row1.getBoundingClientRect();
+        /* Round: subpixel r.bottom jitter + avoid reflow loops from visualViewport scroll */
+        document.documentElement.style.setProperty('--jaypark-mobile-row1-bottom', Math.round(r.bottom) + 'px');
+    }
+    if (fixedEl) {
+        document.documentElement.style.setProperty(
+            '--jaypark-mobile-fixed-stack-h',
+            Math.round(fixedEl.getBoundingClientRect().height) + 'px'
+        );
+    }
+    if (map) map.invalidateSize();
 }
 
 function openMobileLotPicker() {
     if (!isMobileLayout()) return;
+    closeMobileTocDrawer();
     const container = document.querySelector('.container');
     if (container) container.classList.add('mobile-lot-picker-open');
+    setMobileLotPickerScrollLock(true);
+    updateMobileKeyboardInset();
+    const navBtn = document.getElementById('tocBtnMob');
+    if (navBtn) {
+        navBtn.classList.add('lot-search-nav--back');
+        navBtn.classList.remove('active');
+    }
     applyLotSearchFilter();
+    requestAnimationFrame(function () {
+        requestAnimationFrame(updateMobileChromeMetrics);
+    });
 }
 
 function closeMobileLotPicker() {
     const container = document.querySelector('.container');
     if (!container || !container.classList.contains('mobile-lot-picker-open')) return;
     container.classList.remove('mobile-lot-picker-open');
+    setMobileLotPickerScrollLock(false);
+    document.documentElement.style.setProperty('--mobile-keyboard-inset', '0px');
+    const navBtn = document.getElementById('tocBtnMob');
+    if (navBtn) navBtn.classList.remove('lot-search-nav--back');
     const search = document.getElementById('lot-search');
     if (search) search.blur();
     requestAnimationFrame(function () {
-        if (map) map.invalidateSize();
+        updateMobileChromeMetrics();
     });
 }
 
@@ -528,7 +623,8 @@ function init() {
     console.log('[DEBUG] Lots loading initiated');
 
     document.getElementById('permit-select').addEventListener('change', updateMarkers);
-    document.getElementById('date-input').addEventListener('change', updateMarkers);
+    const dateInputInit = document.getElementById('date-input');
+    if (dateInputInit) dateInputInit.addEventListener('change', updateMarkers);
     document.getElementById('time-input').addEventListener('change', updateMarkers);
     document.getElementById('close-details').addEventListener('click', hideDetails);
     document.getElementById('report-btn').addEventListener('click', openReportModal);
@@ -543,10 +639,12 @@ function init() {
         toggle.addEventListener("change", () => {
             basketballMode = toggle.checked;
 
-            if (basketballMode) {
-                label.classList.add("basketball-active");
-            } else {
-                label.classList.remove("basketball-active");
+            if (label) {
+                if (basketballMode) {
+                    label.classList.add("basketball-active");
+                } else {
+                    label.classList.remove("basketball-active");
+                }
             }
 
             updateMarkers(); // refresh map
@@ -561,6 +659,36 @@ function init() {
     const lotSearchSidebar = document.getElementById('lot-search-sidebar');
     const lotListPanel = document.querySelector('.lot-list-panel');
 
+    const tocBtnMob = document.getElementById('tocBtnMob');
+    const tocDrawerBackdrop = document.getElementById('tocDrawerBackdrop');
+    const tocMenuMob = document.getElementById('tocMenuMob');
+
+    if (tocDrawerBackdrop) {
+        tocDrawerBackdrop.addEventListener('click', closeMobileTocDrawer);
+    }
+    if (tocMenuMob) {
+        tocMenuMob.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+        tocMenuMob.querySelectorAll('a').forEach(function (a) {
+            a.addEventListener('click', closeMobileTocDrawer);
+        });
+    }
+
+    if (tocBtnMob) {
+        tocBtnMob.addEventListener('click', function (e) {
+            if (!isMobileLayout()) return;
+            e.stopPropagation();
+            const c = document.querySelector('.container');
+            if (c && c.classList.contains('mobile-lot-picker-open')) {
+                closeMobileLotPicker();
+                closeMobileTocDrawer();
+                return;
+            }
+            toggleMobileTocDrawer();
+        });
+    }
+
     // Top search
     if (lotSearch) {
         lotSearch.addEventListener('focus', function () {
@@ -568,13 +696,7 @@ function init() {
             openMobileLotPicker();
         });
 
-        lotSearch.addEventListener('blur', function () {
-            lotSearchBlurTimer = setTimeout(function () {
-                const ae = document.activeElement;
-                if (ae === lotSearch || (lotListPanel && lotListPanel.contains(ae))) return;
-                closeMobileLotPicker();
-            }, 220);
-        });
+        /* Do not close on blur: iOS keyboard ✓/Done blurs input but list should stay open. */
 
         lotSearch.addEventListener('input', function (event) {
             handleSearchInput(event.target.value);
@@ -601,13 +723,40 @@ function init() {
     });
 
     window.addEventListener('resize', function () {
+        const c = document.querySelector('.container');
         if (!isMobileLayout()) {
-            document.querySelector('.container').classList.remove('mobile-lot-picker-open');
+            if (c) c.classList.remove('mobile-lot-picker-open');
+            setMobileLotPickerScrollLock(false);
             if (map) map.invalidateSize();
+            updateMobileChromeMetrics();
         } else if (map) {
             map.invalidateSize();
+            updateMobileKeyboardInset();
+            updateMobileChromeMetrics();
         }
     });
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function () {
+            updateMobileKeyboardInset();
+            updateMobileChromeMetrics();
+        });
+        /* scroll fires on many taps (e.g. map) without real chrome size change — remeasuring row1.bottom jitters the row1–2 gap */
+        window.visualViewport.addEventListener('scroll', function () {
+            updateMobileKeyboardInset();
+        });
+    }
+
+    if (typeof ResizeObserver !== 'undefined') {
+        const row1El = document.querySelector('.mobile-floating-topbar');
+        const fixedStackEl = document.querySelector('.mobile-fixed-controls');
+        const ro = new ResizeObserver(function () {
+            updateMobileChromeMetrics();
+        });
+        if (row1El) ro.observe(row1El);
+        if (fixedStackEl) ro.observe(fixedStackEl);
+    }
+    updateMobileChromeMetrics();
 
     /*
     This makes it possible to actually close the disclaimer.
