@@ -111,20 +111,19 @@ Faults: None identified.
                     <span></span>
                 </button>
 
+                <!-- Dropdown -->
+                <div id="tocMenu" class="toc-menu hidden">
+                    <a href="https://parking.ku.edu/rules-regulations" target="_blank" class="permit-desc-link" rel="noopener">Parking Rules & Regulations</a>
+                    <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description</a>
+                    <a href="https://parking.ku.edu/student-permits" target="_blank" class="permit-desc-link" rel="noopener">Buy Parking Permit</a>
+                    <a href="https://kuathletics.com/calendar" target="_blank" class="permit-desc-link" rel="noopener">KU Athletics Calendar</a>
+                </div>
             </div>
             <!-- <div class="filter-card__secondary filter-card__secondary--desktop">
                 <button type="button" class="permit-buy-btn" onclick="window.open('https://parking.ku.edu/student-permits', '_blank')">Buy Parking Permit</button>
                 <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description →</a>
             </div> -->
             
-        </div>
-
-        <!-- Dropdown -->
-        <div id="tocMenu" class="toc-menu hidden">
-            <a href="https://parking.ku.edu/rules-regulations" target="_blank" class="permit-desc-link" rel="noopener">Parking Rules & Regulations</a>
-            <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description</a>
-            <a href="https://parking.ku.edu/student-permits" target="_blank" class="permit-desc-link" rel="noopener">Buy Parking Permit</a>
-            <a href="https://kuathletics.com/calendar" target="_blank" class="permit-desc-link" rel="noopener">KU Athletics Calendar</a>
         </div>
 
         <div class="mobile-bottom-bar" aria-label="Permit links">

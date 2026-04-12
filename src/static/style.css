@@ -1037,13 +1037,11 @@ body.report-modal-active .details-panel:not(.hidden) {
 
 
 @media (max-width: 768px) {
+    .hamburger-inline {
+        display: none !important;
+    }
+
     .toc-menu {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        border-radius: 0;
-        z-index: 1300;
+        display: none !important;
     }
 }
