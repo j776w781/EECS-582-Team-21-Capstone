@@ -47,15 +47,50 @@ Faults: None identified.
 <body>
     <div class="container">
         <div class="mobile-top-chrome">
-        <header>
+        <header class="site-header-desktop">
             <h1>KU Parking Map</h1>
         </header>
 
-        <!-- Controls: mobile = search + 3 filters + fixed bottom bar; desktop = classic bar -->
+        <!-- Controls: desktop = classic bar; mobile = floating search + chips (map underneath) -->
         <div class="controls-panel filter-card">
+        <!-- First child: checkbox + mobile top row (sibling ~ selectors for pill + chip styles) -->
+        <input type="checkbox" id="basketball-toggle" class="basketball-toggle-input-hidden">
+
+        <div class="mobile-floating-topbar" aria-hidden="false">
+            <span class="mobile-floating-brand">KU Parking</span>
+            <label for="basketball-toggle" class="basketball-pill-mobile">
+                <span class="basketball-pill-mobile__text">Basketball</span>
+                <span class="basketball-pill-mobile__track" aria-hidden="true"><span class="basketball-pill-mobile__knob"></span></span>
+            </label>
+        </div>
+
+        <!-- Mobile: rows 2–3 float over map; row 1 stays document flow. Desktop: display:contents. -->
+        <div class="mobile-fixed-controls">
             <div class="lot-search-row">
-                <input type="search" id="lot-search" name="lot-search" placeholder="Search lots…" autocomplete="off" aria-label="Search parking lots by name">
+                <div class="lot-search-floating">
+                    <button
+                        type="button"
+                        id="tocBtnMob"
+                        class="lot-search-menu-btn hamburger-inline"
+                        aria-label="Open menu"
+                        aria-expanded="false"
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <input type="search" id="lot-search" name="lot-search" placeholder="Search lots…" autocomplete="off" aria-label="Search parking lots by name">
+                </div>
             </div>
+
+            <div id="tocDrawerBackdrop" class="toc-drawer-backdrop" aria-hidden="true"></div>
+            <div id="tocMenuMob" class="toc-menu toc-menu--mobile-drawer">
+                <a href="https://parking.ku.edu/rules-regulations" target="_blank" class="permit-desc-link" rel="noopener">Parking Rules & Regulations</a>
+                <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description</a>
+                <a href="https://parking.ku.edu/student-permits" target="_blank" class="permit-desc-link" rel="noopener">Buy Parking Permit</a>
+                <a href="https://kuathletics.com/calendar" target="_blank" class="permit-desc-link" rel="noopener">KU Athletics Calendar</a>
+            </div>
+
             <div class="filter-card__fields">
                 <div class="control-group">
                     <label for="permit-select">Parking Permit:</label>
@@ -76,8 +111,9 @@ Faults: None identified.
                 </div>
 
                 <div class="control-group">
-                    <label for="day-select">Day of Week:</label>
-                    <select id="day-select">
+                    <label for="date-input">Date:</label>
+                    <input type="date" id="date-input" name="view-date" value="{{ current_date }}">
+                    <select id="day-select" hidden aria-hidden="true" tabindex="-1">
                         <option value="Mon" {% if current_day == 'Mon' %}selected{% endif %}>Monday</option>
                         <option value="Tue" {% if current_day == 'Tue' %}selected{% endif %}>Tuesday</option>
                         <option value="Wed" {% if current_day == 'Wed' %}selected{% endif %}>Wednesday</option>
@@ -92,10 +128,9 @@ Faults: None identified.
                     <label for="time-input">Time (HH:MM):</label>
                     <input type="time" id="time-input" value="{{ current_time }}">
                 </div>
-                <!-- Basketball mode-->          
-                <div class="basketball-toggle-card">
-                    <label class="basketball-switch">
-                        <input type="checkbox" id="basketball-toggle">
+
+                <div class="basketball-toggle-card basketball-toggle-card--desktop">
+                    <label for="basketball-toggle" class="basketball-switch">
                         <span class="slider"></span>
                     </label>
                     <span id="basketball-label">Basketball Mode</span>
@@ -136,37 +171,6 @@ Faults: None identified.
             </div>
         </div>
         </div>
-
-        <div class="mobile-bottom-bar" aria-label="Permit links">
-            <!-- Info Button -->
-            <button
-                id="infoBtnMob"
-                class="info-button"
-                aria-label="Parking color legend"
-                title="Parking Lot Legend"
-            >
-                ℹ️
-            </button>
-            
-            <!-- Table of Contents -->
-                <button
-                    id="tocBtnMob"
-                    class="hamburger-inline"
-                    aria-label="TOC actions"
-                    aria-expanded="false"
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                
-                <!-- Dropdown -->
-                <div id="tocMenuMob" class="toc-menu hidden">
-                    <a href="https://parking.ku.edu/rules-regulations" target="_blank" class="permit-desc-link" rel="noopener">Parking Rules & Regulations</a>
-                    <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description</a>
-                    <a href="https://parking.ku.edu/student-permits" target="_blank" class="permit-desc-link" rel="noopener">Buy Parking Permit</a>
-                    <a href="https://kuathletics.com/calendar" target="_blank" class="permit-desc-link" rel="noopener">KU Athletics Calendar</a>
-                </div>
         </div>
 
         <div class="main-content">
@@ -288,46 +292,29 @@ Faults: None identified.
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='map.js') }}"></script>
 
-     <!-- TOC toggle -->
+     <!-- TOC: desktop only; mobile hamburger + drawer handled in map.js (search back vs menu) -->
     <script>
-        let tocBtn;
-        let tocMenu;
+        (function () {
+            if (window.matchMedia('(max-width: 1023px)').matches) return;
 
-        const isMobile = window.innerWidth <= 768;
-        if (!isMobile) {
-            tocBtn = document.getElementById('tocBtn');
-            tocMenu = document.getElementById('tocMenu');
-        } else {
-            tocBtn = document.getElementById('tocBtnMob');
-            tocMenu = document.getElementById('tocMenuMob');
-        }
+            const tocBtn = document.getElementById('tocBtn');
+            const tocMenu = document.getElementById('tocMenu');
+            if (!tocBtn || !tocMenu) return;
 
-        
-
-        tocBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-
-
-            if (!isMobile) {
+            tocBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const rect = tocBtn.getBoundingClientRect();
                 tocMenu.style.top = `${rect.bottom + 6}px`;
                 tocMenu.style.right = `${window.innerWidth - rect.right}px`;
-            } else {
-                // CRITICAL: remove inline positioning so CSS can take over
-                tocMenu.style.top = '';
-                tocMenu.style.right = '';
-            }
+                const isOpening = tocMenu.classList.toggle('hidden') === false;
+                tocBtn.classList.toggle('active', isOpening);
+                tocBtn.setAttribute('aria-expanded', isOpening);
+            });
 
-            const isOpening = tocMenu.classList.toggle('hidden') === false;
-
-            tocBtn.classList.toggle('active', isOpening);
-            tocBtn.setAttribute('aria-expanded', isOpening);
-        });
-
-        tocMenu.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-
+            tocMenu.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        })();
         // Info button and modal functionality
         const infoBtn = document.getElementById('infoBtn') || document.getElementById('infoBtnMob');
         const infoModal = document.getElementById('info-modal');

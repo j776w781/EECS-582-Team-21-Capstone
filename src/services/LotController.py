@@ -66,6 +66,13 @@ class LotController:
         return datetime(year=target_date.year, month=target_date.month, day=target_date.day,
                         hour=hour, minute=minute, second=0, microsecond=0, tzinfo=self.CHICAGO)
 
+    def _selected_datetime_from_calendar(self, date_str: str, time_hhmm: str):
+        """Authoritative query instant when client sends YYYY-MM-DD + time (America/Chicago)."""
+        d = datetime.strptime(date_str.strip(), '%Y-%m-%d').date()
+        hour, minute = map(int, time_hhmm.split(':'))
+        return datetime(d.year, d.month, d.day, hour, minute, second=0, microsecond=0,
+                        tzinfo=self.CHICAGO)
+
     '''
     Obtains parameters from the web request. Obtains a list of lots from the LotService
     and assigns colors to each lot using the AvailabilityService, returning the result to the
@@ -116,25 +123,38 @@ class LotController:
         lot.descript = lot.base_description
         return False
 
-    def get_lots(self, user_permit: str, day: str, time_hhmm: str):
-        # compute availability at current time and in 1 hour for normal logic
-        time_in_one_hour = self.add_minutes_to_time(time_hhmm, 60)
-
+    def get_lots(self, user_permit: str, day: str, time_hhmm: str, view_date: str | None = None):
         lots = self.lot_service.get_all()
 
         now = self._local_now()
         self._purge_expired_special_restrictions(now)
 
-        # For special restrictions, evaluate against selected query time to show users what they choose.
-        selected_time = self._selected_datetime(day, time_hhmm)
+        if view_date:
+            selected_time = self._selected_datetime_from_calendar(view_date, time_hhmm)
+        else:
+            selected_time = self._selected_datetime(day, time_hhmm)
 
         for lot in lots:
             #This line will automatically color the lot orange if there is an active special restriction.
             if self._apply_special_restriction_to_lot(lot, selected_time):
                 continue
 
-            available = self.availability_service.is_lot_available(lot, user_permit, day, time_hhmm)
-            available_in_hour = self.availability_service.is_lot_available(lot, user_permit, day, time_in_one_hour)
+            if view_date:
+                available = self.availability_service.is_lot_available(
+                    lot, user_permit, day, time_hhmm, view_date=view_date
+                )
+                next_moment = selected_time + timedelta(hours=1)
+                nd = next_moment.strftime('%Y-%m-%d')
+                nt = next_moment.strftime('%H:%M')
+                available_in_hour = self.availability_service.is_lot_available(
+                    lot, user_permit, day, nt, view_date=nd
+                )
+            else:
+                time_in_one_hour = self.add_minutes_to_time(time_hhmm, 60)
+                available = self.availability_service.is_lot_available(lot, user_permit, day, time_hhmm)
+                available_in_hour = self.availability_service.is_lot_available(
+                    lot, user_permit, day, time_in_one_hour
+                )
 
             if available_in_hour and not available:
                 lot.color = '#ffc107'
