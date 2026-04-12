@@ -14,7 +14,7 @@ Revision: 3/29/2026
      -- Req 15 mobile: filter card, touch targets, map height, no horizontal scroll;
         map-first UI (search, lot picker hides map, fixed permit/buy bar); full-bleed map
         under fixed top chrome + bottom bar (Google Maps–style)
-Revision: 4/12/2026
+Revision: 3/30/2026
      -- Desktop: 3-row grid shell (100dvh); left #lot-list scroll only; simplified scroll CSS.
 Preconditions: No required inputs.
 Postconditions: Altered styles for index.html and map.js elements.
@@ -32,11 +32,6 @@ Faults: None identified.
 
 html {
     -webkit-text-size-adjust: 100%;
-    --mobile-keyboard-inset: 0px;
-    /* Mobile: --jaypark-mobile-row1-bottom = viewport Y of blue bar bottom (px, from map.js) */
-    --jaypark-mobile-row1-bottom: calc(env(safe-area-inset-top, 0px) + 2.85rem);
-    --jaypark-row1-row2-gap: 14px;
-    --jaypark-mobile-fixed-stack-h: 7.25rem;
 }
 
 body {
@@ -91,7 +86,6 @@ header h1 {
 }
 
 .controls-panel {
-    position: relative;
     background-color: white;
     padding: 1rem 2rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -157,7 +151,6 @@ header h1 {
 /* Main Content Layout */
 .main-content {
     display: flex;
-    flex: 1;
     min-height: 0;
     overflow: hidden;
 }
@@ -342,12 +335,10 @@ header h1 {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    max-width: min(420px, calc(100vw - 2rem));
+    max-width: 420px;
     width: 100%;
-    min-width: 0;
-    max-height: min(90vh, 100dvh - 2rem);
+    max-height: 90vh;
     overflow-y: auto;
-    overflow-x: hidden;
 }
 
 .report-modal-header {
@@ -366,8 +357,6 @@ header h1 {
 
 .report-modal-body {
     padding: 1.25rem;
-    min-width: 0;
-    overflow-x: hidden;
 }
 
 .report-modal-body label {
@@ -385,18 +374,13 @@ header h1 {
 
 .report-modal-body textarea,
 .report-modal-body input[type="datetime-local"] {
-    display: block;
     width: 100%;
-    max-width: 100%;
-    min-width: 0;
     padding: 0.5rem 0.65rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 0.9rem;
     font-family: inherit;
     margin-top: 0.2rem;
-    margin-left: 0;
-    margin-right: 0;
     background-color: #fff;
     color: #333;
     box-sizing: border-box;
@@ -411,12 +395,6 @@ header h1 {
 .report-modal-body textarea {
     resize: vertical;
     min-height: 60px;
-}
-
-/* WebKit: keep datetime fields from growing wider than Description */
-.report-modal-body input[type="datetime-local"]::-webkit-datetime-edit,
-.report-modal-body input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
-    max-width: 100%;
 }
 
 .report-status {
@@ -473,8 +451,9 @@ body.report-modal-active .details-panel:not(.hidden) {
     pointer-events: none;
 }
 
-@media (max-width: 1023px) {
-    body.report-modal-active .mobile-top-chrome {
+@media (max-width: 768px) {
+    body.report-modal-active .mobile-top-chrome,
+    body.report-modal-active .mobile-bottom-bar {
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
@@ -482,18 +461,13 @@ body.report-modal-active .details-panel:not(.hidden) {
     }
 }
 
-/* Wrapper: desktop grid uses display:contents; mobile uses flex column (flowing top stack) */
+/* Wrapper: on desktop children flow in .container; on mobile becomes fixed top stack */
 .mobile-top-chrome {
     display: contents;
 }
 
-/* Desktop / wide: unwrap so .controls-panel grid matches original; mobile overridden below */
-.mobile-fixed-controls {
-    display: contents;
-}
-
 /* Desktop: no mobile search row / bottom duplicate bar */
-@media (min-width: 1024px) {
+@media (min-width: 769px) {
     /* 3-row shell: header, controls, main — gives .main-content a real height so #lot-list can scroll */
     .container {
         display: grid;
@@ -541,56 +515,30 @@ body.report-modal-active .details-panel:not(.hidden) {
 }
 
 /* Responsive adjustments — Req 15 + map-first mobile (full-bleed map under UI) */
-@media (max-width: 1023px) {
-    /* Document-flow shell: top chrome + map stack (no fixed overlay gap vs body) */
+@media (max-width: 768px) {
     .container {
-        display: flex;
-        flex-direction: column;
         min-height: 100dvh;
         min-height: 100vh;
-        max-height: 100dvh;
-        overflow: hidden;
+        display: block;
         position: relative;
     }
 
     .mobile-top-chrome {
         display: flex;
         flex-direction: column;
-        position: relative;
-        flex-shrink: 0;
-        width: 100%;
-        z-index: 500;
-        pointer-events: auto;
-        box-shadow: none;
-        background: transparent;
-    }
-
-    /* Row 2 + 3: fixed below row-1 bottom + explicit gap (map shows in the gap; margin was unreliable) */
-    .mobile-fixed-controls {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.6rem;
         position: fixed;
+        top: 0;
         left: 0;
         right: 0;
-        top: calc(var(--jaypark-mobile-row1-bottom) + var(--jaypark-row1-row2-gap));
-        width: 100%;
-        max-width: 100vw;
         z-index: 500;
-        padding: 0.25rem 0 0.35rem;
-        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
         pointer-events: none;
-        background: transparent;
+        box-shadow: 0 2px 14px rgba(0, 0, 0, 0.12);
     }
 
-    .mobile-fixed-controls > * {
+    .mobile-top-chrome > header,
+    .mobile-top-chrome > .controls-panel {
         pointer-events: auto;
-    }
-
-    /* Desktop blue header must not appear on phone / narrow tablet */
-    header.site-header-desktop {
-        display: none !important;
     }
 
     header {
@@ -603,112 +551,137 @@ body.report-modal-active .details-panel:not(.hidden) {
 
     .lot-search-row {
         display: block;
-        padding-left: max(0.65rem, env(safe-area-inset-left));
-        padding-right: max(0.65rem, env(safe-area-inset-right));
+        order: -1;
     }
 
     .filter-card__secondary--desktop {
         display: none !important;
     }
 
-    /* Horizontal padding only on search + chips; blue bar is full viewport width */
+    .mobile-bottom-bar {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 600;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-top: 1px solid #e0e0e0;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .mobile-bottom-bar__link {
+        flex: 1;
+        text-align: center;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #0051ba;
+    }
+
+    .mobile-bottom-bar__buy {
+        flex: 1;
+        min-height: 44px;
+        font-size: 0.85rem;
+        white-space: normal;
+    }
+
     .controls-panel {
-        padding: 0.25rem 0 0.35rem;
-        width: 100%;
-        max-width: 100%;
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        overflow: visible;
+        padding: 0.5rem 0.75rem 0.6rem;
+        padding-left: max(0.75rem, env(safe-area-inset-left));
+        padding-right: max(0.75rem, env(safe-area-inset-right));
+        background: #eef1f5;
     }
 
     .controls-panel.filter-card {
         flex-direction: column;
         align-items: stretch;
-        gap: 0.6rem;
-        background: transparent !important;
+        gap: 0.5rem;
     }
 
     .filter-card__fields {
         flex-direction: row;
         flex-wrap: nowrap;
-        align-items: center;
-        gap: 0.45rem;
-        background: transparent !important;
-        border: none !important;
-        padding: 0 max(0.65rem, env(safe-area-inset-right)) 0 max(0.65rem, env(safe-area-inset-left));
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-    }
-
-    .filter-card__fields::-webkit-scrollbar {
-        display: none;
+        align-items: flex-end;
+        gap: 0.35rem;
+        background: #fff;
+        border: 1px solid #e0e4ea;
+        border-radius: 10px;
+        padding: 0.5rem 0.45rem;
     }
 
     .filter-card__fields .control-group {
-        flex: 1 1 auto;
+        flex: 1 1 0;
         min-width: 0;
         flex-direction: column;
         align-items: stretch;
-        gap: 0;
+        gap: 0.2rem;
     }
 
     .filter-card__fields .control-group label {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
+        font-size: 0.62rem;
+        font-weight: 600;
+        color: #555;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
         white-space: nowrap;
-        border: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .filter-card__fields .control-group select,
-    .filter-card__fields .control-group input[type="time"],
-    .filter-card__fields .control-group input[type="date"] {
+    .filter-card__fields .control-group input[type="time"] {
         width: 100%;
-        min-height: 34px;
-        font-size: 13px;
-        font-weight: 500;
-        padding: 0.32rem 0.55rem;
-        border: none;
-        border-radius: 999px;
+        min-height: 40px;
+        font-size: 14px;
+        padding: 0.35rem 0.35rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
         background-color: #fff;
-        color: #3c4043;
+        color: #333;
         box-sizing: border-box;
-        box-shadow: 0 1px 3px rgba(60, 64, 67, 0.28);
         -webkit-appearance: none;
         appearance: none;
     }
 
     .filter-card__fields .control-group select {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235f6368' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
-        background-position: right 0.45rem center;
-        padding-right: 1.35rem;
+        background-position: right 0.35rem center;
+        padding-right: 1.5rem;
     }
 
-    .filter-card__fields .control-group input[type="time"],
-    .filter-card__fields .control-group input[type="date"] {
-        padding-right: 0.4rem;
+    .filter-card__fields .control-group input[type="time"] {
+        padding-right: 0.35rem;
     }
 
-    .filter-card__fields .control-group input[type="time"]::-webkit-calendar-picker-indicator,
-    .filter-card__fields .control-group input[type="date"]::-webkit-calendar-picker-indicator {
-        opacity: 0.75;
+    .filter-card__fields .control-group input[type="time"]::-webkit-calendar-picker-indicator {
+        opacity: 0.85;
         cursor: pointer;
     }
 
-    /* Map fills remaining column below flowing top chrome */
+    /* Full-viewport map layer under fixed top/bottom UI (Google Maps–style) */
     .main-content {
-        position: relative;
-        flex: 1;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+        flex-direction: column;
+        flex: none;
         min-height: 0;
         overflow: hidden;
-        z-index: 100;
     }
 
     .lot-list-panel {
@@ -726,68 +699,18 @@ body.report-modal-active .details-panel:not(.hidden) {
         border-right: none;
         border-bottom: none;
         padding: 0.5rem 0.75rem;
-        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+        padding-bottom: calc(0.5rem + 52px + env(safe-area-inset-bottom));
         background: #f5f5f7;
+    }
+
+    .container.mobile-lot-picker-open .lot-list-panel {
+        display: flex !important;
+        flex-direction: column;
     }
 
     .container.mobile-lot-picker-open .map-container {
         visibility: hidden !important;
         pointer-events: none !important;
-    }
-
-    /* Hide permit/date/time chips while searching */
-    .container.mobile-lot-picker-open .filter-card__fields {
-        display: none !important;
-    }
-
-    /* Full-screen lot list; top/bottom padding clears fixed chrome + home indicator + keyboard */
-    .container.mobile-lot-picker-open .lot-list-panel {
-        display: flex !important;
-        flex-direction: column;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 40;
-        width: 100%;
-        max-width: 100%;
-        border-radius: 0;
-        box-shadow: none;
-        background: #f5f5f7;
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-        /* List sits under row 1; rows 2–3 float over map — pad for fixed search + chips (or search-only when chips hidden) */
-        padding-top: calc(var(--jaypark-row1-row2-gap) + var(--jaypark-mobile-fixed-stack-h, 7.25rem) + 0.35rem);
-        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--mobile-keyboard-inset, 0px) + 1.25rem);
-        overflow: hidden;
-        flex: none;
-        min-height: 0;
-    }
-
-    .container.mobile-lot-picker-open .lot-list-panel h2,
-    .container.mobile-lot-picker-open .lot-list-panel #lot-search-sidebar {
-        display: none !important;
-    }
-
-    .container.mobile-lot-picker-open #lot-list {
-        flex: 1 1 0;
-        min-height: 0;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-        touch-action: pan-y;
-        scroll-padding-top: 0.5rem;
-        scroll-padding-bottom: 1rem;
-    }
-
-    /* Lock page scroll while list is open (list itself still scrolls) */
-    html.mobile-lot-picker-active,
-    body.mobile-lot-picker-active {
-        overflow: hidden;
-        height: 100%;
-        overscroll-behavior: none;
-        touch-action: manipulation;
     }
 
     .lot-list-panel h2 {
@@ -825,14 +748,14 @@ body.report-modal-active .details-panel:not(.hidden) {
         min-height: 100%;
     }
 
-    /* Zoom sits below fixed search + chip row (within map area, below row 1) */
+    /* Leaflet zoom: clear fixed header + search + filter row (was ~148px; chrome is taller) */
     .map-container .leaflet-top.leaflet-left {
-        top: calc(var(--jaypark-row1-row2-gap) + var(--jaypark-mobile-fixed-stack-h, 7.25rem) + 10px);
+        top: calc(env(safe-area-inset-top, 0px) + 12.75rem);
         margin-top: 0;
     }
 
     .map-container .leaflet-bottom.leaflet-right {
-        bottom: max(8px, env(safe-area-inset-bottom, 0px));
+        bottom: calc(54px + env(safe-area-inset-bottom, 0px));
         margin-right: 4px;
     }
 
@@ -850,9 +773,6 @@ body.report-modal-active .details-panel:not(.hidden) {
     .report-modal-body input[type="datetime-local"] {
         font-size: 16px;
         min-height: 44px;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
     }
 
     .details-content p {
@@ -982,7 +902,7 @@ body.report-modal-active .details-panel:not(.hidden) {
     height: 20px;
 }
 
-/* Checkbox lives at top of .mobile-top-chrome; desktop uses label[for] only */
+/* Hide default checkbox */
 .basketball-switch input {
     display: none;
 }
@@ -1009,12 +929,12 @@ body.report-modal-active .details-panel:not(.hidden) {
     transition: 0.3s;
 }
 
-/* ON State (Checked) — .filter-card__fields may sit inside .mobile-fixed-controls */
-#basketball-toggle:checked ~ .mobile-fixed-controls .filter-card__fields .basketball-switch .slider {
+/* ON State (Checked) */
+.basketball-switch input:checked + .slider {
     background: #5ec2a8;
 }
 
-#basketball-toggle:checked ~ .mobile-fixed-controls .filter-card__fields .basketball-switch .slider::before {
+.basketball-switch input:checked + .slider::before {
     transform: translateX(20px);
 }
 
@@ -1029,271 +949,6 @@ body.report-modal-active .details-panel:not(.hidden) {
     color: #5ec2a8;
     font-weight: 600;
 
-}
-
-/* Single checkbox for mobile + desktop basketball UI */
-.basketball-toggle-input-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/* Desktop: show switch row; mobile uses floating pill */
-.basketball-toggle-card--desktop {
-    display: flex;
-}
-
-@media (max-width: 1023px) {
-    .basketball-toggle-card--desktop {
-        display: none !important;
-    }
-}
-
-/* Mobile row 1 — Google Maps–style slim top strip */
-.mobile-floating-topbar {
-    display: none;
-}
-
-@media (max-width: 1023px) {
-    /* Row 1: document-flow KU blue; safe-area pads first row (replaces removed ::before strip) */
-    .mobile-floating-topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
-        align-self: stretch;
-        position: relative;
-        width: 100%;
-        max-width: 100%;
-        left: auto;
-        transform: none;
-        margin: 0;
-        box-sizing: border-box;
-        padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
-        padding-bottom: 0.32rem;
-        padding-left: max(0.75rem, env(safe-area-inset-left));
-        padding-right: max(0.75rem, env(safe-area-inset-right));
-        background: #0051ba;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-        border-radius: 0;
-        pointer-events: auto;
-    }
-
-    .mobile-floating-brand {
-        display: inline-block;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #fff;
-        letter-spacing: -0.02em;
-        background: none;
-        padding: 0;
-        box-shadow: none;
-    }
-
-    .basketball-pill-mobile {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.45rem;
-        padding: 0.3rem 0.7rem 0.3rem 0.8rem;
-        background: rgba(255, 255, 255, 0.18);
-        border-radius: 999px;
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: #fff;
-        cursor: pointer;
-        flex-shrink: 0;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    .basketball-pill-mobile__text {
-        color: #fff;
-    }
-
-    .basketball-pill-mobile__track {
-        position: relative;
-        width: 36px;
-        height: 20px;
-        background: rgba(255, 255, 255, 0.35);
-        border-radius: 20px;
-        transition: background 0.15s ease;
-    }
-
-    .basketball-pill-mobile__knob {
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        left: 2px;
-        top: 2px;
-        background: #fff;
-        border-radius: 50%;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s ease;
-    }
-
-    #basketball-toggle:checked ~ .mobile-floating-topbar .basketball-pill-mobile__track {
-        background: rgba(255, 255, 255, 0.55);
-    }
-
-    #basketball-toggle:checked ~ .mobile-floating-topbar .basketball-pill-mobile__knob {
-        transform: translateX(16px);
-    }
-
-    /* Row 2: slightly shorter pill + hamburger; sits below margin gap under row 1 */
-    .lot-search-floating {
-        padding: 0.1rem 0.42rem 0.1rem 0.28rem;
-        box-shadow: 0 1px 3px rgba(60, 64, 67, 0.28);
-    }
-
-    .lot-search-menu-btn.hamburger-inline {
-        width: 40px;
-        height: 40px;
-        min-width: 40px;
-        min-height: 40px;
-    }
-
-    .lot-search-floating input[type="search"] {
-        padding: 0.34rem 0.3rem;
-        font-size: 0.94rem;
-    }
-}
-
-@media (min-width: 1024px) {
-    .mobile-floating-topbar {
-        display: none !important;
-    }
-}
-
-/* Search bar: menu + input (mobile layout) */
-.lot-search-floating {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    width: 100%;
-    min-width: 0;
-    background: #fff;
-    border-radius: 999px;
-    box-shadow: 0 1px 4px rgba(60, 64, 67, 0.32);
-    padding: 0.2rem 0.5rem 0.2rem 0.35rem;
-}
-
-.lot-search-menu-btn.hamburger-inline {
-    margin-left: 0;
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    padding: 0 10px;
-    border-radius: 50%;
-    position: relative;
-    z-index: 2;
-}
-
-.lot-search-menu-btn.hamburger-inline span {
-    width: 20px;
-    height: 2.5px;
-    background-color: #202124;
-    border-radius: 2px;
-    flex-shrink: 0;
-}
-
-/* Search active: Google-style back arrow (replaces ☰) */
-.lot-search-menu-btn.lot-search-nav--back span {
-    display: none !important;
-}
-
-.lot-search-menu-btn.lot-search-nav--back::after {
-    content: '\2190';
-    font-size: 1.45rem;
-    line-height: 1;
-    color: #202124;
-    font-weight: 500;
-    display: block;
-    margin-top: -2px;
-}
-
-.lot-search-floating input[type="search"] {
-    flex: 1;
-    min-width: 0;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-    padding: 0.55rem 0.35rem;
-    font-size: 1rem;
-}
-
-.lot-search-floating input[type="search"]:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-.lot-search-row .lot-search-floating input[type="search"] {
-    width: auto;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-}
-
-/* TOC drawer (mobile) */
-.toc-drawer-backdrop {
-    display: none;
-}
-
-@media (max-width: 1023px) {
-    .toc-drawer-backdrop {
-        display: block;
-        position: fixed;
-        inset: 0;
-        z-index: 1190;
-        background: rgba(0, 0, 0, 0.38);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-    }
-
-    .toc-drawer-backdrop.toc-drawer-backdrop--visible {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .toc-menu.toc-menu--mobile-drawer {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        width: min(300px, 88vw);
-        z-index: 1205;
-        margin: 0;
-        padding: calc(0.75rem + env(safe-area-inset-top, 0px)) 0 1rem;
-        border-radius: 0;
-        border: none;
-        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
-        transform: translateX(-105%);
-        transition: transform 0.22s cubic-bezier(0.2, 0, 0.2, 1);
-        transform-origin: center left;
-        opacity: 1;
-        pointer-events: auto;
-        right: auto;
-    }
-
-    .toc-menu.toc-menu--mobile-drawer.toc-menu--drawer-open {
-        transform: translateX(0);
-    }
-
-    .toc-menu.toc-menu--mobile-drawer a {
-        padding: 12px 18px;
-        font-size: 0.95rem;
-    }
 }
 
 
@@ -1363,25 +1018,9 @@ body.report-modal-active .details-panel:not(.hidden) {
 }
 
 .toc-menu.hidden {
-    display: none !important;
     opacity: 0;
     transform: translateY(-6px) scale(.96);
     pointer-events: none;
-    visibility: hidden;
-}
-
-/* Desktop: only #tocMenu toggles; hide mobile drawer DOM on wide screens */
-@media (min-width: 1024px) {
-    #tocMenu.toc-menu:not(.hidden) {
-        display: block !important;
-        visibility: visible;
-    }
-
-    #tocMenuMob.toc-menu--mobile-drawer,
-    #tocDrawerBackdrop {
-        display: none !important;
-        pointer-events: none !important;
-    }
 }
 
 .toc-menu a {
@@ -1398,9 +1037,8 @@ body.report-modal-active .details-panel:not(.hidden) {
     background-color: #f5f5f5;
 }
 
-/* Mobile: legacy dropdown only for #tocMenu (desktop chrome hidden); #tocMenuMob uses drawer rules above */
-@media (max-width: 1023px) {
-    #tocMenu.toc-menu {
+@media (max-width: 768px) {
+    .toc-menu {
         left: 12px;
         right: 12px;
         bottom: 70px;
