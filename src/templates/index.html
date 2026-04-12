@@ -111,19 +111,20 @@ Faults: None identified.
                     <span></span>
                 </button>
 
-                <!-- Dropdown -->
-                <div id="tocMenu" class="toc-menu hidden">
-                    <a href="https://parking.ku.edu/rules-regulations" target="_blank" class="permit-desc-link" rel="noopener">Parking Rules & Regulations</a>
-                    <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description</a>
-                    <a href="https://parking.ku.edu/student-permits" target="_blank" class="permit-desc-link" rel="noopener">Buy Parking Permit</a>
-                    <a href="https://kuathletics.com/calendar" target="_blank" class="permit-desc-link" rel="noopener">KU Athletics Calendar</a>
-                </div>
             </div>
             <!-- <div class="filter-card__secondary filter-card__secondary--desktop">
                 <button type="button" class="permit-buy-btn" onclick="window.open('https://parking.ku.edu/student-permits', '_blank')">Buy Parking Permit</button>
                 <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description →</a>
             </div> -->
             
+        </div>
+
+        <!-- Dropdown -->
+        <div id="tocMenu" class="toc-menu hidden">
+            <a href="https://parking.ku.edu/rules-regulations" target="_blank" class="permit-desc-link" rel="noopener">Parking Rules & Regulations</a>
+            <a href="{{ url_for('permit_description') }}" class="permit-desc-link">Permit Description</a>
+            <a href="https://parking.ku.edu/student-permits" target="_blank" class="permit-desc-link" rel="noopener">Buy Parking Permit</a>
+            <a href="https://kuathletics.com/calendar" target="_blank" class="permit-desc-link" rel="noopener">KU Athletics Calendar</a>
         </div>
 
         <div class="mobile-bottom-bar" aria-label="Permit links">
@@ -219,23 +220,26 @@ Faults: None identified.
         tocBtn.addEventListener('click', (e) => {
             e.stopPropagation();
 
-            const rect = tocBtn.getBoundingClientRect();
+            const isMobile = window.innerWidth <= 768;
 
-            tocMenu.style.top = `${rect.bottom+6}px`;
-            tocMenu.style.right = `${window.innerWidth - rect.right}px`;
+            if (!isMobile) {
+                const rect = tocBtn.getBoundingClientRect();
+                tocMenu.style.top = `${rect.bottom + 6}px`;
+                tocMenu.style.right = `${window.innerWidth - rect.right}px`;
+            } else {
+                // CRITICAL: remove inline positioning so CSS can take over
+                tocMenu.style.top = '';
+                tocMenu.style.right = '';
+            }
 
-            
             const isOpening = tocMenu.classList.toggle('hidden') === false;
 
             tocBtn.classList.toggle('active', isOpening);
             tocBtn.setAttribute('aria-expanded', isOpening);
-
         });
 
-        document.addEventListener('click', () => {
-            tocMenu.classList.add('hidden');
-            tocBtn.classList.remove('active')
-            tocBtn.setAttribute('aria-expanded', 'false');
+        tocMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
         });
     </script>
 </body>
