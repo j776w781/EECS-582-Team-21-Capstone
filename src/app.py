@@ -50,11 +50,11 @@ DATA_FILE = os.path.join(APP_DIR, 'data', 'lots.json')
 
 @app.route('/')
 def index():
-    now_chi = datetime.now(ZoneInfo("America/Chicago"))
-    current_time = now_chi.strftime('%H:%M')
-    current_day = now_chi.strftime('%a')  # Returns Mon, Tue, Wed, etc.
-    current_date = now_chi.strftime('%Y-%m-%d')
-    return render_template('index.html', current_time=current_time, current_day=current_day, current_date=current_date)
+    # Get current time in HH:MM format
+    current_time = datetime.now(ZoneInfo("America/Chicago")).strftime('%H:%M')
+    # Get current day of week (Mon, Tue, Wed, etc.)
+    current_day = datetime.now().strftime('%a')  # Returns Mon, Tue, Wed, etc.
+    return render_template('index.html', current_time=current_time, current_day=current_day)
 
 # Route to display the parking permit description page
 @app.route('/permit_description')
@@ -70,17 +70,9 @@ def get_lots():
         permit = request.args.get("permit", "NONE")
         day = request.args.get("day", "Mon")
         time = request.args.get("time", "09:00")
-        date_raw = request.args.get("date", "").strip()
-        view_date = None
-        if date_raw:
-            try:
-                datetime.strptime(date_raw, "%Y-%m-%d")
-                view_date = date_raw
-            except ValueError:
-                view_date = None
 
         #Let the Backend do the work.
-        lots = lot_control.get_lots(permit, day, time, view_date=view_date)
+        lots = lot_control.get_lots(permit, day, time)
         
         #JSONIFY works best if the Lot instances are actually dictionaries.
         return jsonify([lot.json_dictionary() for lot in lots])
