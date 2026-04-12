@@ -1044,4 +1044,8 @@ body.report-modal-active .details-panel:not(.hidden) {
     .toc-menu {
         display: none !important;
     }
+
+    .basketball-toggle-card {
+        display: none !important;
+    }
 }
