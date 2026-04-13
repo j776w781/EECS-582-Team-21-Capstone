@@ -62,6 +62,16 @@ Faults: None identified.
                 <span class="basketball-pill-mobile__text">Basketball</span>
                 <span class="basketball-pill-mobile__track" aria-hidden="true"><span class="basketball-pill-mobile__knob"></span></span>
             </label>
+
+            <!-- Info Button -->
+            <button
+                id="infoBtnMob"
+                class="info-button"
+                aria-label="Parking color legend"
+                title="Parking Lot Legend"
+            >
+                ℹ️
+            </button>
         </div>
 
         <!-- Mobile: rows 2–3 float over map; row 1 stays document flow. Desktop: display:contents. -->
@@ -315,17 +325,25 @@ Faults: None identified.
                 e.stopPropagation();
             });
         })();
-        // Info button and modal functionality
-        const infoBtn = document.getElementById('infoBtn') || document.getElementById('infoBtnMob');
+
+        //This ensures that the mobile's infoBtn is actually found.
+        const infoBtns = [
+            document.getElementById('infoBtn'),
+            document.getElementById('infoBtnMob')
+        ];
+
         const infoModal = document.getElementById('info-modal');
         const infoClose = document.getElementById('info-close');
 
-        if (infoBtn) {
-            infoBtn.addEventListener('click', (e) => {
+        //Add a listener for each button. The other is hidden anyways, so it doesn't hurt anything.
+        infoBtns.forEach(btn => {
+            if (!btn) return;
+
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 infoModal.classList.remove('hidden');
             });
-        }
+        });
 
         if (infoClose) {
             infoClose.addEventListener('click', (e) => {
