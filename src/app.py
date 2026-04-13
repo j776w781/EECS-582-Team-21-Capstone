@@ -8,6 +8,7 @@ Sprint 2: Decision logic moved to AvailabilityService for centralized availabili
 Sprint 2: Strip down server app to leverage the new Python backend. This listens for requests, passes parameters to the LotController, and sends the results.
 Sprint 3: Add functionality to receive special reports (Mark). Tweak to suit the requirements(Josh).
 sprint 4: added permit_description route to handle the  nativation to the Permit Description page(Evans).
+sprint 5: added censoring to special restriction reports. 4/11 (Josh)
 Run instructions (Local):
     0. CHECK THE IN-LINE COMMENTS(import statement AND the if __name__ == 'main' segment)
     1. Install Flask: pip install flask
