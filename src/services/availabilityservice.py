@@ -49,8 +49,8 @@ GARAGE_ENFORCE_END = time(17, 0)
 # Maps each permit type to the lot types it's allowed to park in
 # Garage permits are lot-specific, only valid at its own garage
 PERMIT_HIERARCHY = {
-    "GOLD":     ["GOLD", "GOLD2", "BLUE", "BLUE2", "RED", "YELLOW"],
-    "BLUE":     ["BLUE", "BLUE2", "RED", "YELLOW"],
+    "GOLD":     ["GOLD", "BLUE", "RED", "YELLOW"],
+    "BLUE":     ["BLUE", "RED", "YELLOW"],
     "RED":      ["RED", "YELLOW"],
     "YELLOW":   ["YELLOW"],
     # Housing: GREEN permit valid in all housing lots (DH, GC, JT, CH)
