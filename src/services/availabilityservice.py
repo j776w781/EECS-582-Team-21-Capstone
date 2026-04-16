@@ -11,6 +11,8 @@ Revised: 3/24/2026
     -- Added permit hierarchy: Jenna Luong
 Revised: 4/10/2026
     -- Fixed other lot availability: Jenna Luong
+Revised: 4/16/2026
+    -- Fixed Blue/Gold staff permit lot restrictions: Jenna Luong
 
 Preconditions: Restriction/LotService available, lot dict has 'type' key, valid day string, HH:MM format.
 
@@ -45,6 +47,12 @@ SUMMER_MONTHS = {5, 6, 7, 8} # May-Aug
 # Outside of these hours any valid permit may park; pay to park if no permit
 GARAGE_ENFORCE_START = time(7, 0)
 GARAGE_ENFORCE_END = time(17, 0)
+
+# Staff permit required for blue and gold lots
+# Enforcement window: 5-730PM mon-fri in lots 13, 18, 21, 35, 37, 129
+STAFF_PERMIT_REQ_BG = {"Lot 13", "Lot 18", "Lot 21", "Lot 35", "Lot 37", "Lot 129"}
+BG_STAFF_PERMIT_ENFORCE_START = time(7, 0)
+BG_STAFF_PERMIT_ENFORCE_END = time(19, 30)
 
 # Maps each permit type to the lot types it's allowed to park in
 # Garage permits are lot-specific, only valid at its own garage
@@ -187,6 +195,22 @@ class AvailabilityService:
         
         # Weekday: open between 5PM - 7AM
         return current_t < GARAGE_ENFORCE_START or current_t >= GARAGE_ENFORCE_END
+    
+    def _bg_staff_permit_lot_open_hours(self, current_dt: datetime) -> bool:
+        """
+        Returns true if lot is open
+            - Mon-Fri: 7:30 PM - 7 AM (outside of enforcement 7am-730pm)
+            - Sat-Sun: all day
+        """
+        weekday = current_dt.weekday()
+        current_t = current_dt.time()
+
+        # Weekend: always open
+        if weekday >= 5:
+            return True
+        
+        # Weekday: open between 730PM - 7AM
+        return current_t < BG_STAFF_PERMIT_ENFORCE_START or current_t >= BG_STAFF_PERMIT_ENFORCE_END
 
     def is_lot_available(self, lot: dict, permit: str, day: str, time_hhmm: str, view_date: str | None = None):
         """
@@ -202,6 +226,10 @@ class AvailabilityService:
         Housing rules:
             - All housing lots use GREEN lot type and GREEN permit
             - Housing permits valid in YELLOW zones during Summer
+
+        Staff permit lots:
+            - Gold & Blue lots: 13, 18, 21, 35, 37, 129, 12
+            - Enforced Monday-Friday 5-7:30PM
         
         Args:
             lot: Dictionary with 'type' key
@@ -235,7 +263,13 @@ class AvailabilityService:
         
         
         # --- Per-lot restriciton overrides ---
-        # gold staff permits required 5-730 mon-fri: 13, 18, 21, 35, 37, 129
+        # gold/blue staff permits required 5-730 mon-fri: 13, 18, 21, 35, 37, 129, 12
+        if lot_name in STAFF_PERMIT_REQ_BG:
+            # open hours
+            if self._bg_staff_permit_lot_open_hours(current_dt):
+                return True
+            allowed_zones = PERMIT_HIERARCHY.get(permit, [])
+            return lot_type in allowed_zones
 
         # --- All other lots ---
 
