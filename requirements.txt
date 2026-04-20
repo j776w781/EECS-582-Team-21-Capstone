@@ -2,3 +2,4 @@ flask
 gunicorn
 tzdata
 better-profanity
+psycopg2-binary

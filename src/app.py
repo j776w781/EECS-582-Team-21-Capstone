@@ -28,6 +28,7 @@ import json
 import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from psycopg2.pool import ThreadedConnectionPool
 # Support both: run from repo root (e.g. deploy) or from src/ (local: cd src && python app.py)
 try:
     from src.services.LotController import LotController
@@ -38,8 +39,18 @@ except ModuleNotFoundError:
 
 app = Flask(__name__)
 
+
+# Connect to the database
+CONN_STR = "postgresql://neondb_owner:npg_Te8KnPXpq9Yr@ep-lingering-lab-aevc8697-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+
+db_pool = ThreadedConnectionPool(
+    minconn = 1,
+    maxconn=10,
+    dsn=CONN_STR
+)
+
 # Initialize AvailabilityService for centralized decision making
-lot_control = LotController()
+lot_control = LotController(db_pool)
 
 # Initialize profanity-censoring module.
 censor  = Censor()

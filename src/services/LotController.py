@@ -23,19 +23,22 @@ Errors/exceptions: N/A
 Side effects: None
 """
 
-
-
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from .lotservice import LotService
 from .availabilityservice import AvailabilityService
 
+
+
+
+
 class LotController:
     CHICAGO = ZoneInfo('America/Chicago')
 
-    def __init__(self):
+    def __init__(self, pool):
         self.lot_service = LotService()
         self.availability_service = AvailabilityService()
+        self.db_pool = pool
 
 
     # 🔹 Helper function to add minutes to a time string
@@ -79,6 +82,20 @@ class LotController:
     server to distribute.
     '''
     def _purge_expired_special_restrictions(self, now):
+        '''
+        INSERT SQL CODE HERE!!!!!!!
+        '''
+        conn = self.db_pool.getconn()
+        try:
+            delete_query = "DELETE FROM specs WHERE end_date < NOW();"
+            with conn.cursor() as cur:
+                cur.execute(delete_query)
+                # Commit the transaction
+                conn.commit()
+        finally:
+            self.db_pool.putconn(conn)
+
+        '''
         for lot in self.lot_service.get_all():
             sr = lot.special_restriction
             if sr is None:
@@ -91,12 +108,44 @@ class LotController:
             if end <= now:
                 lot.special_restriction = None
                 lot.descript = lot.base_description
+        '''
 
 
     '''
     Updates lot instances based on if a special restriction is currently active.
     '''
-    def _apply_special_restriction_to_lot(self, lot, compare_time):
+    def _apply_special_restriction_to_lot(self, lot, compare_time, restrictions):
+        lot.descript = lot.base_description
+        if len(restrictions) == 0:
+            return False
+        
+
+        for row in restrictions:
+            #start = self._to_chicago(row[3])
+            #end = self._to_chicago(row[4])
+            start = row[3]
+            end = row[4]
+            if start is None or end is None:
+                lot.special_restriction = None
+                return False
+            active_text = f"Special restriction (reported): {row[2]}\nFrom {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
+            lot.color = '#FFA500'
+            lot.descript += f"\n\n{active_text} (active now)"
+        
+        return True
+        '''
+        if len(rows) == 0:
+            lot.descript = lot.base_description
+            return False
+        
+        start = self._to_chicago(rows[0][3])
+        end = self._to_chicago(rows[0][4])
+        if start is None or end is None:
+            lot.special_restriction = None
+            lot.descript = lot.base_description
+            return False
+
+        
         sr = lot.special_restriction
         if sr is None:
             lot.descript = lot.base_description
@@ -108,9 +157,13 @@ class LotController:
             lot.special_restriction = None
             lot.descript = lot.base_description
             return False
+        
 
-        active_text = f"Special restriction (reported): {sr.get('description')}\nFrom {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
+        active_text = f"Special restriction (reported): {rows[0][2]}\nFrom {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
 
+        
+        Currently obsolete, as we only look at ACTIVE special restrictions right now.
+        
         if compare_time < start:
             lot.descript = f"{lot.base_description}\n\n{active_text} (scheduled, starts {start.strftime('%Y-%m-%d %H:%M')})"
             return False
@@ -119,9 +172,14 @@ class LotController:
             lot.color = '#FFA500'
             lot.descript = f"{lot.base_description}\n\n{active_text} (active now)"
             return True
+        '''
 
-        lot.descript = lot.base_description
-        return False
+
+
+
+
+
+
 
     def get_lots(self, user_permit: str, day: str, time_hhmm: str, view_date: str | None = None):
         lots = self.lot_service.get_all()
@@ -134,9 +192,28 @@ class LotController:
         else:
             selected_time = self._selected_datetime(day, time_hhmm)
 
+
+        conn = self.db_pool.getconn()
+        try:
+            #GRAB ALL ACTIVE RESTRICTIONS FOR ALL LOTS NOW, NOT ONE AT A TIME.
+            select_query = "SELECT * FROM specs WHERE start_date <= %s and end_date > %s;"
+            with conn.cursor() as cur:
+                cur.execute(select_query, (selected_time, selected_time))
+                rows = cur.fetchall()
+        finally:
+            self.db_pool.putconn(conn)
+        
+        active_by_lot = {}
+        for r in rows:
+            lot_id = r[1]
+            active_by_lot.setdefault(lot_id, []).append(r)
+        
+
         for lot in lots:
+            restrictions = active_by_lot.get(lot.id, [])
+            
             #This line will automatically color the lot orange if there is an active special restriction.
-            if self._apply_special_restriction_to_lot(lot, selected_time):
+            if self._apply_special_restriction_to_lot(lot, selected_time, restrictions):
                 continue
 
             if view_date:
@@ -201,6 +278,47 @@ class LotController:
         if end_datetime <= start_datetime:
             end_datetime = start_datetime + timedelta(minutes=1)
 
+        
+        # strip tzinfo before storing
+        start_datetime = start_datetime.replace(tzinfo=None)
+        end_datetime = end_datetime.replace(tzinfo=None)
+
+        '''
+        ADD SQL CODE HERE!!!
+        '''
+
+        conn = self.db_pool.getconn()
+        try:
+            # Insert a sample record
+            insert_query = """
+            INSERT INTO specs (lot_id, description, start_date, end_date, creation_date, disputes)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id;
+            """
+
+            data = (
+                lot_id,
+                description.strip(),
+                start_datetime,
+                end_datetime,
+                now,
+                0
+            )
+
+            with conn.cursor() as cur:
+                cur.execute(insert_query, data)
+                new_id = cur.fetchone()[0]
+                print(f"Inserted row with id: {new_id}")
+
+                # Commit the transaction
+                conn.commit()
+
+        except Exception as e:
+            print(f"[WARN] Could not save special report: {e}")
+
+        finally:
+            self.db_pool.putconn(conn)
+        '''
         lot.special_restriction = {
             'description': description.strip(),
             'start': start_datetime,
@@ -219,6 +337,7 @@ class LotController:
             )
         except Exception as e:
             print(f"[WARN] Could not save special report: {e}")
+        '''
 
         return lot
 
