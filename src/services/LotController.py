@@ -67,14 +67,14 @@ class LotController:
         target_date = now + timedelta(days=days_offset)
         hour, minute = map(int, time_hhmm.split(':'))
         return datetime(year=target_date.year, month=target_date.month, day=target_date.day,
-                        hour=hour, minute=minute, second=0, microsecond=0, tzinfo=self.CHICAGO)
+                        hour=hour, minute=minute, second=0, microsecond=0, tzinfo=None)
 
     def _selected_datetime_from_calendar(self, date_str: str, time_hhmm: str):
         """Authoritative query instant when client sends YYYY-MM-DD + time (America/Chicago)."""
         d = datetime.strptime(date_str.strip(), '%Y-%m-%d').date()
         hour, minute = map(int, time_hhmm.split(':'))
         return datetime(d.year, d.month, d.day, hour, minute, second=0, microsecond=0,
-                        tzinfo=self.CHICAGO)
+                        tzinfo=None)
 
     '''
     Obtains parameters from the web request. Obtains a list of lots from the LotService
@@ -95,89 +95,30 @@ class LotController:
         finally:
             self.db_pool.putconn(conn)
 
-        '''
-        for lot in self.lot_service.get_all():
-            sr = lot.special_restriction
-            if sr is None:
-                continue
-
-            end = self._to_chicago(sr.get('end'))
-            if end is None:
-                continue
-
-            if end <= now:
-                lot.special_restriction = None
-                lot.descript = lot.base_description
-        '''
 
 
     '''
     Updates lot instances based on if a special restriction is currently active.
     '''
-    def _apply_special_restriction_to_lot(self, lot, compare_time, restrictions):
+    def _apply_special_restriction_to_lot(self, lot, restrictions):
         lot.descript = lot.base_description
         if len(restrictions) == 0:
             return False
         
 
         for row in restrictions:
-            #start = self._to_chicago(row[3])
-            #end = self._to_chicago(row[4])
             start = row[3]
             end = row[4]
             if start is None or end is None:
                 lot.special_restriction = None
                 return False
             active_text = f"Special restriction (reported): {row[2]}\nFrom {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
-            lot.color = '#FFA500'
+            print(f"Coloring lot {lot.id} orange because of {active_text}")
+            lot.color = '#fc8403'
             lot.descript += f"\n\n{active_text} (active now)"
         
         return True
-        '''
-        if len(rows) == 0:
-            lot.descript = lot.base_description
-            return False
         
-        start = self._to_chicago(rows[0][3])
-        end = self._to_chicago(rows[0][4])
-        if start is None or end is None:
-            lot.special_restriction = None
-            lot.descript = lot.base_description
-            return False
-
-        
-        sr = lot.special_restriction
-        if sr is None:
-            lot.descript = lot.base_description
-            return False
-
-        start = self._to_chicago(sr.get('start'))
-        end = self._to_chicago(sr.get('end'))
-        if start is None or end is None:
-            lot.special_restriction = None
-            lot.descript = lot.base_description
-            return False
-        
-
-        active_text = f"Special restriction (reported): {rows[0][2]}\nFrom {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
-
-        
-        Currently obsolete, as we only look at ACTIVE special restrictions right now.
-        
-        if compare_time < start:
-            lot.descript = f"{lot.base_description}\n\n{active_text} (scheduled, starts {start.strftime('%Y-%m-%d %H:%M')})"
-            return False
-
-        if start <= compare_time < end:
-            lot.color = '#FFA500'
-            lot.descript = f"{lot.base_description}\n\n{active_text} (active now)"
-            return True
-        '''
-
-
-
-
-
 
 
 
@@ -192,6 +133,8 @@ class LotController:
         else:
             selected_time = self._selected_datetime(day, time_hhmm)
 
+        selected_time.replace(tzinfo=None)
+        print(f"Viewing for TIME {selected_time}")
 
         conn = self.db_pool.getconn()
         try:
@@ -205,17 +148,18 @@ class LotController:
         
         active_by_lot = {}
         for r in rows:
+            print(r)
             lot_id = r[1]
             active_by_lot.setdefault(lot_id, []).append(r)
         
 
         for lot in lots:
             restrictions = active_by_lot.get(lot.id, [])
-            
-            #This line will automatically color the lot orange if there is an active special restriction.
-            if self._apply_special_restriction_to_lot(lot, selected_time, restrictions):
-                continue
 
+            #This line will automatically color the lot orange if there is an active special restriction.
+            if self._apply_special_restriction_to_lot(lot, restrictions):
+                continue
+            
             if view_date:
                 available = self.availability_service.is_lot_available(
                     lot, user_permit, day, time_hhmm, view_date=view_date
@@ -239,8 +183,12 @@ class LotController:
                 lot.color = "#00FF00"
             else:
                 lot.color = "#FF0000"
+            
+            
 
         return lots
+    
+
     
     '''
     Handles creating a special restriction. Also applies some business rules (no restriction over 48 hours, etc).
@@ -318,36 +266,11 @@ class LotController:
 
         finally:
             self.db_pool.putconn(conn)
-        '''
-        lot.special_restriction = {
-            'description': description.strip(),
-            'start': start_datetime,
-            'end': end_datetime,
-            'reported_at': now
-        }
-
-        # Persist to disk for live deployment to show across server restarts
-        try:
-            self.lot_service.save_special_report(
-                lot_id=lot_id,
-                description=lot.special_restriction['description'],
-                start=start_datetime,
-                end=end_datetime,
-                reported_at=now
-            )
-        except Exception as e:
-            print(f"[WARN] Could not save special report: {e}")
-        '''
 
         return lot
 
 
 '''''
-    def report(self, lot_id: int, description: str, start_datetime: datetime = None, end_datetime: datetime = None):
-
-        self.availability_service.report(lot_id, description, start_datetime, end_datetime)
-
-
     def dispute(self, report_id: int):
 
         self. availability_service(report_id)

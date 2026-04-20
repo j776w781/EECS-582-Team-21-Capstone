@@ -162,12 +162,12 @@ if __name__ == '__main__':
     Fly.io demands port 8080 by default (no need to configure another).
     Doesn't want 127.0.0.1
     '''
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host="0.0.0.0", port=port)
+    #port = int(os.environ.get("PORT", 8080))
+    #app.run(host="0.0.0.0", port=port)
     '''
     FOR LOCAL TESTING/DEPLOYMENT: 
     Comment out the two lines above and uncomment
     the line below.
     Access using http://127.0.0.1:5000]
     '''
-    #app.run(debug=True, host='127.0.0.1', port=5000)
+    app.run(debug=True, host='127.0.0.1', port=5000)
