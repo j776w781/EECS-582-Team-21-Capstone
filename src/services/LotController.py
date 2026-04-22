@@ -104,10 +104,15 @@ class LotController:
         lot.descript = lot.base_description
         if len(restrictions) == 0:
             return False
+        else:
+            lot.color = '#fc8403'
+            lot.special_restriction = True
+            lot.descript += f"        Special restriction(s) reported."
+            return True
         
-
+        '''
         for row in restrictions:
-            start = row[3]
+            #start = row[3]
             end = row[4]
             if start is None or end is None:
                 lot.special_restriction = None
@@ -119,6 +124,7 @@ class LotController:
             lot.descript += f"\n\n{active_text} (active now)"
         
         return True
+        '''
         
 
 
@@ -271,6 +277,9 @@ class LotController:
         return lot
     
 
+    '''
+    Fancy new special restriction viewing functionality.
+    '''
     def lookup_restrictions(self, lot_id, time, view_date):
         selected_time = self._selected_datetime_from_calendar(view_date, time)
 
@@ -290,10 +299,11 @@ class LotController:
             addition = {"id": item[0],
                         "lot_id":item[1],
                         "description":item[2],
-                        "start_date": item[3],
-                        "end_date": item[4],
-                        "creation_date": item[5],
+                        "start_date": item[3].strftime("%Y-%m-%d %H:%M"),
+                        "end_date": item[4].strftime("%Y-%m-%d %H:%M"),
+                        "creation_date": item[5].strftime("%Y-%m-%d %H:%M"),
                         }
+                        #K! -- Don't forget that there is an item[6]. (hint hint)
             results.append(addition)
         
         return results

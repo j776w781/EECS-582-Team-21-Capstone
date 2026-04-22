@@ -666,6 +666,7 @@ async function viewRestrictions() {
                 <p><strong>Start:</strong> ${spec.start_date || 'N/A'}</p>
                 <p><strong>End:</strong> ${spec.end_date || 'N/A'}</p>
                 <button>MAAAAAAAAAAAAAAAAARRRRRRRRRRRRRRRRRRRKKK!!!!!</button>
+                <p><strong>Could add disputes here</strong></p>
             `;
 
             //MARK!!!!! PUT BUTTON HANDLER HERE!!!!!!
