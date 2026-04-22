@@ -154,6 +154,31 @@ def report_special_restriction(lot_id):
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+    
+
+
+
+@app.route('/api/restrictions')
+def get_special_restrictions():
+    try:
+        id = request.args.get("lot_id", "NONE")
+        time = request.args.get("time", "09:00")
+        date_raw = request.args.get("date", "").strip()
+        view_date = None
+        if date_raw:
+            try:
+                datetime.strptime(date_raw, "%Y-%m-%d")
+                view_date = date_raw
+            except ValueError:
+                view_date = None
+
+        specs = lot_control.lookup_restrictions(id, time, view_date)
+        return jsonify(specs)
+    except Exception as e:
+        print(f"[ERROR] Failed to get restrictions: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':

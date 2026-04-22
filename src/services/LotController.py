@@ -115,6 +115,7 @@ class LotController:
             active_text = f"Special restriction (reported): {row[2]}\nFrom {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
             print(f"Coloring lot {lot.id} orange because of {active_text}")
             lot.color = '#fc8403'
+            lot.special_restriction = True
             lot.descript += f"\n\n{active_text} (active now)"
         
         return True
@@ -268,6 +269,38 @@ class LotController:
             self.db_pool.putconn(conn)
 
         return lot
+    
+
+    def lookup_restrictions(self, lot_id, time, view_date):
+        selected_time = self._selected_datetime_from_calendar(view_date, time)
+
+        conn = self.db_pool.getconn()
+        try:
+            #GRAB ALL ACTIVE RESTRICTIONS FOR ALL LOTS NOW, NOT ONE AT A TIME.
+            select_query = "SELECT * FROM specs WHERE start_date <= %s and end_date > %s and lot_id = %s;"
+            with conn.cursor() as cur:
+                cur.execute(select_query, (selected_time, selected_time, lot_id))
+                rows = cur.fetchall()
+        finally:
+            self.db_pool.putconn(conn)
+        
+        results = []
+        for item in rows:
+            print(item)
+            addition = {"id": item[0],
+                        "lot_id":item[1],
+                        "description":item[2],
+                        "start_date": item[3],
+                        "end_date": item[4],
+                        "creation_date": item[5],
+                        }
+            results.append(addition)
+        
+        return results
+
+
+        
+
 
 
 '''''

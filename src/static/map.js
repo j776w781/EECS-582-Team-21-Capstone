@@ -15,6 +15,7 @@
 // Global state
 let map;
 let lots = [];
+let specRestricts = [];
 let markers = [];
 let lotToMarkerMap = {};
 let selectedLot = null;
@@ -431,7 +432,15 @@ function showLotDetails(lot) {
     document.getElementById('report-end').value = '';
     document.getElementById('report-status').textContent = '';
 
+
+    //VIEW SPECIAL RESTRICTIONS
     document.getElementById('details-panel').classList.remove('hidden');
+    if (selectedLot.specRestrict) {
+        document.getElementById('spec-btn').hidden = false;
+    } else {
+        document.getElementById('spec-btn').hidden = true;
+    }
+
 
     document.querySelectorAll('.lot-item').forEach(item => {
         item.classList.remove('selected');
@@ -445,6 +454,7 @@ function showLotDetails(lot) {
  * Hide details
  */
 function hideDetails() {
+    document.getElementById('spec-btn').hidden = true;
     document.getElementById('details-panel').classList.add('hidden');
 
     if (selectedMarker) {
@@ -610,6 +620,114 @@ function handleSearchInput(query) {
     renderLotList();
 }
 
+
+
+//New restriction viewing feature!
+async function viewRestrictions() {
+    //Open up the form.
+    if (!selectedLot) return;
+    document.body.classList.add('report-modal-active');
+    document.getElementById('spec-overlay').classList.remove('hidden');
+    document.getElementById('spec-modal-header').innerText = 'Active Special Restrictions for ' + selectedLot.name;
+
+    
+    try {
+        //Retrieve relevant restrictions from database.
+        syncDaySelectFromDate();
+        const lot_id = selectedLot.id;
+        const time = document.getElementById('time-input').value;
+        const dateEl = document.getElementById('date-input');
+        const viewDate = dateEl && dateEl.value ? dateEl.value : '';
+        const params = new URLSearchParams({ lot_id, time, ...(viewDate ? { date: viewDate } : {}) });
+        console.log('Fetching restrictions with params:', params.toString());
+        const response = await fetch(`/api/restrictions?${params}`);
+
+        if (!response.ok) {
+            throw new Error(`API returned status ${response.status}: ${response.statusText}`);
+        }
+
+        specs = await response.json();
+        console.log('We got them!', specs);
+
+        if (!Array.isArray(specs)) {
+            throw new Error('Expected restrictions to be an array, got: ' + typeof lots);
+        }
+
+        const list = document.getElementById('spec-list');
+        list.innerHTML = ''; // clear old content
+
+        //Add HTML elements for each special restriction.
+        specs.forEach(spec => {
+            const section = document.createElement('div');
+            section.className = 'spec-item';
+
+            section.innerHTML = `
+                <p><strong>Description:</strong> ${spec.description}</p>
+                <p><strong>Start:</strong> ${spec.start_date || 'N/A'}</p>
+                <p><strong>End:</strong> ${spec.end_date || 'N/A'}</p>
+                <button>MAAAAAAAAAAAAAAAAARRRRRRRRRRRRRRRRRRRKKK!!!!!</button>
+            `;
+
+            //MARK!!!!! PUT BUTTON HANDLER HERE!!!!!!
+
+            list.appendChild(section);
+        });
+
+
+    } catch (error) {
+        console.error('Error loading restrictions:', error);
+        alert('Failed to load special restrictions.');
+    }
+
+
+}
+
+
+function closeRestrictions() {
+    document.body.classList.remove('report-modal-active');
+    document.getElementById('spec-overlay').classList.add('hidden');
+    document.getElementById('spec-modal-header').innerText = 'Active Special Restrictions for ' + selectedLot.name;
+    const list = document.getElementById('spec-list');
+    //VERY VERY VERY VERY IMPORTANT. Don't want unaccounted for HTML elements.
+    if (list) list.innerHTML = '';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Initial`ize app
  */
@@ -631,6 +749,8 @@ function init() {
     document.getElementById('report-modal-close').addEventListener('click', closeReportModal);
     document.getElementById('report-cancel').addEventListener('click', closeReportModal);
     document.getElementById('submit-report').addEventListener('click', submitReport);
+    document.getElementById('spec-btn').addEventListener('click', viewRestrictions);
+    document.getElementById('spec-close').addEventListener('click', closeRestrictions);
 
     const toggle = document.getElementById("basketball-toggle");
     const label = document.getElementById("basketball-label");

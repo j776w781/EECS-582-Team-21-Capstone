@@ -39,7 +39,7 @@ class Lot:
         self.color = "#808080"                          # Current display color of the the lot on the map                      
         self.base_description = descript                  # Original standard restriction text
         self.descript = descript                           # Current description (may include active special restriction)
-        self.special_restriction = None                    # Active reported special restriction data (or None)
+        self.special_restriction = False                    
 
 
     def get(self, key, default=None):
@@ -51,7 +51,8 @@ class Lot:
             "type": self.permit_type, 
             "position": self.loc,
             "description": self.descript,
-            "color": self.color
+            "color": self.color,
+            "specRestrict": self.special_restriction
         }
 
         return mapping.get(key, default)
@@ -64,5 +65,6 @@ class Lot:
                 "type": self.permit_type, 
                 "position": self.loc,
                 "description": self.descript, 
-                "color": self.color}
+                "color": self.color,
+                "specRestrict": self.special_restriction}
 

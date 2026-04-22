@@ -212,6 +212,7 @@ Faults: None identified.
                 <p><strong>Restrictions:</strong></p>
                 <p id="details-restrictions"></p>
                 <button type="button" id="report-btn" class="report-btn">Report</button>
+                <button type="button" id="spec-btn" class="report-btn" hidden="true">View Special Restrictions</button>
             </div>
         </div>
 
@@ -260,6 +261,40 @@ Faults: None identified.
                 </div>
             </div>
         </div>
+
+
+        <div id="spec-overlay" class="report-modal-overlay hidden">
+            <div class="report-modal">
+                <div class="report-modal-header">
+                    <h3 id="spec-modal-header"></h3>
+                    <button type="button" id="spec-close" class="close-btn" aria-label="Close">&times;</button>
+                </div>
+                <div class="report-modal-body">
+                    <div id="spec-list"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <!-- Info popup with color legend -->
         <div id="info-modal" class="report-modal-overlay hidden">
