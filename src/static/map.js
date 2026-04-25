@@ -665,6 +665,7 @@ async function viewRestrictions() {
                 <p><strong>Description:</strong> ${spec.description}</p>
                 <p><strong>Start:</strong> ${spec.start_date || 'N/A'}</p>
                 <p><strong>End:</strong> ${spec.end_date || 'N/A'}</p>
+                <p><strong>Disputes:</strong> ${spec.disputes || 0}</p>
                 <button class="dispute-btn" data-report-id="${spec.id}">Dispute Report</button>
             `;
             const disputeBtn = section.querySelector('.dispute-btn');
@@ -693,8 +694,13 @@ async function disputeRestriction(reportId) {
         });
 
         if (response.ok) {
-            alert('Dispute submitted successfully!');
-            // Optionally refresh the restrictions list
+            const result = await response.json();
+            if (result.status === 'deleted') {
+                alert('Dispute submitted! The restriction has been removed due to multiple disputes.');
+            } else {
+                alert('Dispute submitted successfully!');
+            }
+            // Refresh the restrictions list
             viewRestrictions();
         } else {
             const error = await response.json();

@@ -181,6 +181,33 @@ def get_special_restrictions():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/dispute', methods=['POST'])
+def dispute_restriction():
+    try:
+        data = request.get_json()
+        if not data or 'report_id' not in data:
+            return jsonify({'error': 'Missing report_id'}), 400
+        
+        report_id = data['report_id']
+        if not isinstance(report_id, int) or report_id <= 0:
+            return jsonify({'error': 'Invalid report_id'}), 400
+        
+        deleted = lot_control.dispute(report_id)
+        
+        if deleted:
+            return jsonify({'status': 'deleted', 'message': 'Restriction removed due to multiple disputes'}), 200
+        else:
+            return jsonify({'status': 'incremented', 'message': 'Dispute count increased'}), 200
+            
+    except ValueError as ve:
+        return jsonify({'error': str(ve)}), 404
+    except Exception as e:
+        print(f"[ERROR] Failed to process dispute: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Internal server error"}), 500
+
+
 if __name__ == '__main__':
     '''
     USE BOTTOM TWO LINES FOR PUBLIC DEPLOYMENT.

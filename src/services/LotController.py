@@ -302,6 +302,7 @@ class LotController:
                         "start_date": item[3].strftime("%Y-%m-%d %H:%M"),
                         "end_date": item[4].strftime("%Y-%m-%d %H:%M"),
                         "creation_date": item[5].strftime("%Y-%m-%d %H:%M"),
+                        "disputes": item[6]
                         }
                         #K! -- Don't forget that there is an item[6]. (hint hint)
             results.append(addition)
@@ -313,8 +314,45 @@ class LotController:
 
 
 
-'''''
-    def dispute(self, report_id: int):
 
-        self. availability_service(report_id)
-'''''
+    def dispute(self, report_id: int):
+        """
+        Increments the dispute count for a special restriction report.
+        If disputes >= 3, deletes the restriction entirely.
+        Returns True if deleted, False if just incremented.
+        """
+        conn = self.db_pool.getconn()
+        try:
+            # First, get current dispute count
+            select_query = "SELECT disputes FROM specs WHERE id = %s;"
+            with conn.cursor() as cur:
+                cur.execute(select_query, (report_id,))
+                result = cur.fetchone()
+                
+                if not result:
+                    raise ValueError(f"Report with id {report_id} not found")
+                
+                current_disputes = result[0]
+                new_disputes = current_disputes + 1
+                
+                if new_disputes >= 3:
+                    # Delete the restriction
+                    delete_query = "DELETE FROM specs WHERE id = %s;"
+                    cur.execute(delete_query, (report_id,))
+                    print(f"[INFO] Deleted restriction {report_id} after {new_disputes} disputes")
+                    deleted = True
+                else:
+                    # Just increment the count
+                    update_query = "UPDATE specs SET disputes = %s WHERE id = %s;"
+                    cur.execute(update_query, (new_disputes, report_id))
+                    print(f"[INFO] Incremented disputes for restriction {report_id} to {new_disputes}")
+                    deleted = False
+                
+                conn.commit()
+                return deleted
+                
+        except Exception as e:
+            print(f"[ERROR] Failed to process dispute for report {report_id}: {e}")
+            raise
+        finally:
+            self.db_pool.putconn(conn)
