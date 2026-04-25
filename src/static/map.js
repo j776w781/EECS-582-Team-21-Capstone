@@ -665,11 +665,10 @@ async function viewRestrictions() {
                 <p><strong>Description:</strong> ${spec.description}</p>
                 <p><strong>Start:</strong> ${spec.start_date || 'N/A'}</p>
                 <p><strong>End:</strong> ${spec.end_date || 'N/A'}</p>
-                <button>MAAAAAAAAAAAAAAAAARRRRRRRRRRRRRRRRRRRKKK!!!!!</button>
-                <p><strong>Could add disputes here</strong></p>
+                <button class="dispute-btn" data-report-id="${spec.id}">Dispute Report</button>
             `;
-
-            //MARK!!!!! PUT BUTTON HANDLER HERE!!!!!!
+            const disputeBtn = section.querySelector('.dispute-btn');
+            disputeBtn.addEventListener('click', () => disputeRestriction(spec.id));
 
             list.appendChild(section);
         });
@@ -683,6 +682,29 @@ async function viewRestrictions() {
 
 }
 
+async function disputeRestriction(reportId) {
+    try {
+        const response = await fetch('/api/dispute', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ report_id: reportId })
+        });
+
+        if (response.ok) {
+            alert('Dispute submitted successfully!');
+            // Optionally refresh the restrictions list
+            viewRestrictions();
+        } else {
+            const error = await response.json();
+            alert('Failed to submit dispute: ' + (error.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error submitting dispute:', error);
+        alert('Failed to submit dispute. Please try again.');
+    }
+}
 
 function closeRestrictions() {
     document.body.classList.remove('report-modal-active');
