@@ -235,6 +235,7 @@ Faults: None identified.
                 <p><strong>Restrictions:</strong></p>
                 <p id="details-restrictions"></p>
                 <button type="button" id="report-btn" class="report-btn">Report</button>
+                <button type="button" id="spec-btn" class="report-btn" hidden="true">View Special Restrictions</button>
             </div>
         </div>
 
@@ -249,9 +250,13 @@ Faults: None identified.
                     <label for="report-description">Description:</label>
                     <textarea id="report-description" name="description" rows="3" placeholder="e.g., Lot closed for construction."></textarea>
                     <label for="report-start">Start (optional):</label>
-                    <input type="datetime-local" id="report-start" name="start" />
+                    <div class="report-field-wrap">
+                        <input type="datetime-local" id="report-start" name="start" />
+                    </div>
                     <label for="report-end">End (optional):</label>
-                    <input type="datetime-local" id="report-end" name="end" />
+                    <div class="report-field-wrap">
+                        <input type="datetime-local" id="report-end" name="end" />
+                    </div>
                     <p id="report-status" class="report-status"></p>
                     <div class="report-modal-actions">
                         <button type="button" id="report-cancel" class="report-cancel-btn">Cancel</button>
@@ -284,6 +289,19 @@ Faults: None identified.
             </div>
         </div>
 
+
+        <div id="spec-overlay" class="report-modal-overlay hidden">
+            <div class="report-modal">
+                <div class="report-modal-header">
+                    <h3 id="spec-modal-header"></h3>
+                    <button type="button" id="spec-close" class="close-btn" aria-label="Close">&times;</button>
+                </div>
+                <div class="report-modal-body">
+                    <div id="spec-list"></div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Info popup with color legend -->
         <div id="info-modal" class="report-modal-overlay hidden">
             <div class="report-modal">
@@ -315,7 +333,10 @@ Faults: None identified.
                             <span class="legend-text"><strong>Orange:</strong> Special restriction reported for this lot</span>
                         </div>
                         <div class="legend-item">
-                            <span class="legend-text"><strong>Basketball Mode:</strong> Adjusts lot availability based on game-day restrictions</span>
+                            <span class="legend-text"><strong>Basketball Mode:</strong> Applies basketball game-day parking restrictions, marking affected lots as unavailable or restricted based on event rules.</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-text"><strong>Footballtball Mode:</strong> Applies football game-day parking restrictions, updating lot availability and highlighting lots reserved for game permit holders.</span>
                         </div>
 
                     </div>

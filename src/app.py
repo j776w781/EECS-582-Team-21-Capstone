@@ -143,7 +143,7 @@ def report_special_restriction(lot_id):
         # - Empty description → use e.g. default text like "Special restriction reported" or leave empty.
        
         report = lot_control.report_special_restriction(lot_id, description, start_datetime, end_datetime)
-        print(f"[INFO] special restriction reported for {lot_id}: {report.special_restriction}")
+        print(f"[INFO] special restriction reported for {lot_id}: {report}")
 
         return jsonify({'status': 'ok'}), 200
 
@@ -154,6 +154,58 @@ def report_special_restriction(lot_id):
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+    
+
+
+
+@app.route('/api/restrictions')
+def get_special_restrictions():
+    try:
+        id = request.args.get("lot_id", "NONE")
+        time = request.args.get("time", "09:00")
+        date_raw = request.args.get("date", "").strip()
+        view_date = None
+        if date_raw:
+            try:
+                datetime.strptime(date_raw, "%Y-%m-%d")
+                view_date = date_raw
+            except ValueError:
+                view_date = None
+
+        specs = lot_control.lookup_restrictions(id, time, view_date)
+        return jsonify(specs)
+    except Exception as e:
+        print(f"[ERROR] Failed to get restrictions: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/dispute', methods=['POST'])
+def dispute_restriction():
+    try:
+        data = request.get_json()
+        if not data or 'report_id' not in data:
+            return jsonify({'error': 'Missing report_id'}), 400
+        
+        report_id = data['report_id']
+        if not isinstance(report_id, int) or report_id <= 0:
+            return jsonify({'error': 'Invalid report_id'}), 400
+        
+        deleted = lot_control.dispute(report_id)
+        
+        if deleted:
+            return jsonify({'status': 'deleted', 'message': 'Restriction removed due to multiple disputes'}), 200
+        else:
+            return jsonify({'status': 'incremented', 'message': 'Dispute count increased'}), 200
+            
+    except ValueError as ve:
+        return jsonify({'error': str(ve)}), 404
+    except Exception as e:
+        print(f"[ERROR] Failed to process dispute: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Internal server error"}), 500
 
 
 if __name__ == '__main__':

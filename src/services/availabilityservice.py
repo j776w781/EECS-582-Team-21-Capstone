@@ -50,7 +50,7 @@ GARAGE_ENFORCE_END = time(17, 0)
 
 # Staff permit required for blue and gold lots
 # Enforcement window: 5-730PM mon-fri in lots 13, 18, 21, 35, 37, 129
-STAFF_PERMIT_REQ_BG = {"Lot 13", "Lot 18", "Lot 21", "Lot 35", "Lot 37", "Lot 129"}
+STAFF_PERMIT_REQ_BG = {"LOT 13", "LOT 18", "LOT 21", "LOT 35", "LOT 37", "LOT 129"}
 BG_STAFF_PERMIT_ENFORCE_START = time(7, 0)
 BG_STAFF_PERMIT_ENFORCE_END = time(19, 30)
 
@@ -95,7 +95,7 @@ class AvailabilityService:
         self.std_restricts["BLUE"] = Restriction("BLUE", 0, 4, time(7,0), time(17,0))
 
         # Gold (normal): Mon-Fri (0-4), 7AM-5PM
-        self.std_restricts["GOLD"] = Restriction("BLUE", 0, 4, time(7,0), time(17,0))
+        self.std_restricts["GOLD"] = Restriction("GOLD", 0, 4, time(7,0), time(17,0))
 
         # Red: Mon-Fri (0-4), 7AM-5PM
         self.std_restricts["RED"] = Restriction("RED", 0, 4, time(7,0), time(17,0))

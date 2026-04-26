@@ -67,14 +67,14 @@ class LotController:
         target_date = now + timedelta(days=days_offset)
         hour, minute = map(int, time_hhmm.split(':'))
         return datetime(year=target_date.year, month=target_date.month, day=target_date.day,
-                        hour=hour, minute=minute, second=0, microsecond=0, tzinfo=None)
+                        hour=hour, minute=minute, second=0, microsecond=0, tzinfo=self.CHICAGO)
 
     def _selected_datetime_from_calendar(self, date_str: str, time_hhmm: str):
         """Authoritative query instant when client sends YYYY-MM-DD + time (America/Chicago)."""
         d = datetime.strptime(date_str.strip(), '%Y-%m-%d').date()
         hour, minute = map(int, time_hhmm.split(':'))
         return datetime(d.year, d.month, d.day, hour, minute, second=0, microsecond=0,
-                        tzinfo=None)
+                        tzinfo=self.CHICAGO)
 
     '''
     Obtains parameters from the web request. Obtains a list of lots from the LotService
@@ -103,11 +103,17 @@ class LotController:
     def _apply_special_restriction_to_lot(self, lot, restrictions):
         lot.descript = lot.base_description
         if len(restrictions) == 0:
+            lot.special_restriction = False
             return False
+        else:
+            lot.color = '#fc8403'
+            lot.special_restriction = True
+            lot.descript += f"        Special restriction(s) reported."
+            return True
         
-
+        '''
         for row in restrictions:
-            start = row[3]
+            #start = row[3]
             end = row[4]
             if start is None or end is None:
                 lot.special_restriction = None
@@ -115,9 +121,11 @@ class LotController:
             active_text = f"Special restriction (reported): {row[2]}\nFrom {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
             print(f"Coloring lot {lot.id} orange because of {active_text}")
             lot.color = '#fc8403'
+            lot.special_restriction = True
             lot.descript += f"\n\n{active_text} (active now)"
         
         return True
+        '''
         
 
 
@@ -133,7 +141,6 @@ class LotController:
         else:
             selected_time = self._selected_datetime(day, time_hhmm)
 
-        selected_time.replace(tzinfo=None)
         print(f"Viewing for TIME {selected_time}")
 
         conn = self.db_pool.getconn()
@@ -177,6 +184,7 @@ class LotController:
                     lot, user_permit, day, time_in_one_hour
                 )
 
+            
             if available_in_hour and not available:
                 lot.color = '#ffc107'
             elif available:
@@ -194,6 +202,7 @@ class LotController:
     Handles creating a special restriction. Also applies some business rules (no restriction over 48 hours, etc).
     '''
     def report_special_restriction(self, lot_id: str, description: str, start_datetime: datetime = None, end_datetime: datetime = None):
+        success = False
         lot = self.lot_service.get_lot(lot_id)
         if lot is None:
             raise ValueError(f"Lot with id {lot_id} does not exist")
@@ -226,10 +235,6 @@ class LotController:
         if end_datetime <= start_datetime:
             end_datetime = start_datetime + timedelta(minutes=1)
 
-        
-        # strip tzinfo before storing
-        start_datetime = start_datetime.replace(tzinfo=None)
-        end_datetime = end_datetime.replace(tzinfo=None)
 
         '''
         ADD SQL CODE HERE!!!
@@ -260,18 +265,94 @@ class LotController:
 
                 # Commit the transaction
                 conn.commit()
+                success = True
 
         except Exception as e:
+            conn.rollback()
             print(f"[WARN] Could not save special report: {e}")
+            raise
 
         finally:
             self.db_pool.putconn(conn)
+        return success
+    
 
-        return lot
+    '''
+    Fancy new special restriction viewing functionality.
+    '''
+    def lookup_restrictions(self, lot_id, time, view_date):
+        selected_time = self._selected_datetime_from_calendar(view_date, time)
+
+        conn = self.db_pool.getconn()
+        try:
+            #GRAB ALL ACTIVE RESTRICTIONS FOR ALL LOTS NOW, NOT ONE AT A TIME.
+            select_query = "SELECT * FROM specs WHERE start_date <= %s and end_date > %s and lot_id = %s;"
+            with conn.cursor() as cur:
+                cur.execute(select_query, (selected_time, selected_time, lot_id))
+                rows = cur.fetchall()
+        finally:
+            self.db_pool.putconn(conn)
+        
+        results = []
+        for item in rows:
+            print(item)
+            addition = {"id": item[0],
+                        "lot_id":item[1],
+                        "description":item[2],
+                        "start_date": item[3].astimezone(self.CHICAGO).strftime("%Y-%m-%d %H:%M"),
+                        "end_date": item[4].astimezone(self.CHICAGO).strftime("%Y-%m-%d %H:%M"),
+                        "creation_date": item[5].astimezone(self.CHICAGO).strftime("%Y-%m-%d %H:%M"),
+                        "disputes": item[6]
+                        }
+                        #K! -- Don't forget that there is an item[6]. (hint hint)
+            results.append(addition)
+        
+        return results
 
 
-'''''
+        
+
+
+
+
     def dispute(self, report_id: int):
-
-        self. availability_service(report_id)
-'''''
+        """
+        Increments the dispute count for a special restriction report.
+        If disputes >= 3, deletes the restriction entirely.
+        Returns True if deleted, False if just incremented.
+        """
+        conn = self.db_pool.getconn()
+        try:
+            # First, get current dispute count
+            select_query = "SELECT disputes FROM specs WHERE id = %s;"
+            with conn.cursor() as cur:
+                cur.execute(select_query, (report_id,))
+                result = cur.fetchone()
+                
+                if not result:
+                    raise ValueError(f"Report with id {report_id} not found")
+                
+                current_disputes = result[0]
+                new_disputes = current_disputes + 1
+                
+                if new_disputes >= 3:
+                    # Delete the restriction
+                    delete_query = "DELETE FROM specs WHERE id = %s;"
+                    cur.execute(delete_query, (report_id,))
+                    print(f"[INFO] Deleted restriction {report_id} after {new_disputes} disputes")
+                    deleted = True
+                else:
+                    # Just increment the count
+                    update_query = "UPDATE specs SET disputes = %s WHERE id = %s;"
+                    cur.execute(update_query, (new_disputes, report_id))
+                    print(f"[INFO] Incremented disputes for restriction {report_id} to {new_disputes}")
+                    deleted = False
+                
+                conn.commit()
+                return deleted
+                
+        except Exception as e:
+            print(f"[ERROR] Failed to process dispute for report {report_id}: {e}")
+            raise
+        finally:
+            self.db_pool.putconn(conn)

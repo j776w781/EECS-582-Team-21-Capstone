@@ -16,6 +16,7 @@
 // Global state
 let map;
 let lots = [];
+let specRestricts = [];
 let markers = [];
 let lotToMarkerMap = {};
 let selectedLot = null;
@@ -37,6 +38,9 @@ const FOOTBALL_GREEN_GARAGES = ["MSPK", "AFPK"];
 
 /** JS weekday 0=Sun … 6=Sat → Mon/Tue/… value for #day-select */
 const WEEKDAY_TO_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// cooldown to dispute restriction
+const DISPUTE_COOLDOWN_MS = 5*60*1000; // 5 minutes
 
 function syncDaySelectFromDate() {
     const dateInput = document.getElementById('date-input');
@@ -118,6 +122,7 @@ function updateMobileChromeMetrics() {
     if (!isMobileLayout()) {
         document.documentElement.style.removeProperty('--jaypark-mobile-row1-bottom');
         document.documentElement.style.removeProperty('--jaypark-mobile-fixed-stack-h');
+        document.documentElement.style.removeProperty('--jaypark-mobile-controls-bottom');
         if (map) map.invalidateSize();
         return;
     }
@@ -129,10 +134,13 @@ function updateMobileChromeMetrics() {
         document.documentElement.style.setProperty('--jaypark-mobile-row1-bottom', Math.round(r.bottom) + 'px');
     }
     if (fixedEl) {
+        const fixedRect = fixedEl.getBoundingClientRect();
         document.documentElement.style.setProperty(
             '--jaypark-mobile-fixed-stack-h',
-            Math.round(fixedEl.getBoundingClientRect().height) + 'px'
+            Math.round(fixedRect.height) + 'px'
         );
+        /* Exact viewport Y under mobile controls; use this for Leaflet zoom offset */
+        document.documentElement.style.setProperty('--jaypark-mobile-controls-bottom', Math.round(fixedRect.bottom) + 'px');
     }
     if (map) map.invalidateSize();
 }
@@ -341,8 +349,12 @@ function updateMarkers() {
  * Highlight marker
  */
 function highlightMarker(marker) {
+    const lot = lots.find(l => l.id === marker.lotId);
+    const color = lot ? getLotColor(lot) : '#4CAF50';
+
     marker.setStyle({
         radius: 10,
+        fillColor: color,
         color: '#0051ba',
         weight: 3,
         fillOpacity: 0.9
@@ -447,7 +459,15 @@ function showLotDetails(lot) {
     document.getElementById('report-end').value = '';
     document.getElementById('report-status').textContent = '';
 
+
+    //VIEW SPECIAL RESTRICTIONS
     document.getElementById('details-panel').classList.remove('hidden');
+    if (selectedLot.specRestrict) {
+        document.getElementById('spec-btn').hidden = false;
+    } else {
+        document.getElementById('spec-btn').hidden = true;
+    }
+
 
     document.querySelectorAll('.lot-item').forEach(item => {
         item.classList.remove('selected');
@@ -461,6 +481,7 @@ function showLotDetails(lot) {
  * Hide details
  */
 function hideDetails() {
+    document.getElementById('spec-btn').hidden = true;
     document.getElementById('details-panel').classList.add('hidden');
 
     if (selectedMarker) {
@@ -626,6 +647,7 @@ function handleSearchInput(query) {
     renderLotList();
 }
 
+
 function openFootballModal() {
     document.body.classList.add('report-modal-active');
     document.getElementById('football-modal-overlay').classList.remove('hidden');
@@ -634,11 +656,140 @@ function openFootballModal() {
 function closeFootballModal() {
     document.body.classList.remove('report-modal-active');
     document.getElementById('football-modal-overlay').classList.add('hidden');
+
+}
+
+//New restriction viewing feature!
+async function viewRestrictions() {
+    //Open up the form.
+    if (!selectedLot) return;
+    document.body.classList.add('report-modal-active');
+    document.getElementById('spec-overlay').classList.remove('hidden');
+    document.getElementById('spec-modal-header').innerText = 'Active Special Restrictions for ' + selectedLot.name;
+
+    
+    try {
+        //Retrieve relevant restrictions from database.
+        syncDaySelectFromDate();
+        const lot_id = selectedLot.id;
+        const time = document.getElementById('time-input').value;
+        const dateEl = document.getElementById('date-input');
+        const viewDate = dateEl && dateEl.value ? dateEl.value : '';
+        const params = new URLSearchParams({ lot_id, time, ...(viewDate ? { date: viewDate } : {}) });
+        console.log('Fetching restrictions with params:', params.toString());
+        const response = await fetch(`/api/restrictions?${params}`);
+
+        if (!response.ok) {
+            throw new Error(`API returned status ${response.status}: ${response.statusText}`);
+        }
+
+        specs = await response.json();
+        console.log('We got them!', specs);
+
+        if (!Array.isArray(specs)) {
+            throw new Error('Expected restrictions to be an array, got: ' + typeof lots);
+        }
+
+        const list = document.getElementById('spec-list');
+        list.innerHTML = ''; // clear old content
+
+        //Add HTML elements for each special restriction.
+        specs.forEach(spec => {
+            const section = document.createElement('div');
+            section.className = 'spec-item';
+
+            section.innerHTML = `
+                <p><strong>Description:</strong> ${spec.description}</p>
+                <p><strong>Start:</strong> ${spec.start_date || 'N/A'}</p>
+                <p><strong>End:</strong> ${spec.end_date || 'N/A'}</p>
+                <p><strong>Disputes:</strong> ${spec.disputes || 0}</p>
+                <button class="dispute-btn" data-report-id="${spec.id}">Dispute Report</button>
+            `;
+            const disputeBtn = section.querySelector('.dispute-btn');
+            disputeBtn.addEventListener('click', () => disputeRestriction(spec.id));
+
+            list.appendChild(section);
+
+            applyDisputeCooldown(spec.id);
+        });
+
+
+    } catch (error) {
+        console.error('Error loading restrictions:', error);
+        alert('Failed to load special restrictions.');
+    }
+
+
+}
+
+// track when report was last disputed
+function disputeCooldownKey(reportId) {
+    return 'dispute_cooldown_${reportId}'
+}
+
+// disable button and show live cooldown if button for reportId is currently on cooldown
+function applyDisputeCooldown(reportId) {
+    const btn = document.querySelector('.dispute-btn[data-report-id="${reportId}"]');
+    if (!btn) return;
+
+    const stored = localStorage.getItem(disputeCooldownKey(reportId));
+    if (!stored) return;
+
+    if (Date.now() < parseInt(stored, 10)) {
+        btn.disabled = true;
+    } else {
+        localStorage.removeItem(disputeCooldownKey(reportId));
+    }
 }
 
 
+async function disputeRestriction(reportId) {
+    // block if still within cooldown window
+    const stored = localStorage.getItem(disputeCooldownKey(reportId));
+    if (stored && Date.now() < parseInt(stored, 10)) {
+        return;
+    }
 
+    try {
+        const response = await fetch('/api/dispute', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ report_id: reportId })
+        });
 
+        if (response.ok) {
+            const result = await response.json();
+
+            // record cooldown timestamp before refreshing list
+            localStorage.setItem(disputeCooldownKey(reportId), Date.now() + DISPUTE_COOLDOWN_MS);
+
+            if (result.status === 'deleted') {
+                alert('Dispute submitted! The restriction has been removed due to multiple disputes.');
+            } else {
+                alert('Dispute submitted successfully!');
+            }
+            // Refresh the restrictions list
+            viewRestrictions();
+        } else {
+            const error = await response.json();
+            alert('Failed to submit dispute: ' + (error.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error submitting dispute:', error);
+        alert('Failed to submit dispute. Please try again.');
+    }
+}
+
+function closeRestrictions() {
+    document.body.classList.remove('report-modal-active');
+    document.getElementById('spec-overlay').classList.add('hidden');
+    document.getElementById('spec-modal-header').innerText = 'Active Special Restrictions for ' + selectedLot.name;
+    const list = document.getElementById('spec-list');
+    //VERY VERY VERY VERY IMPORTANT. Don't want unaccounted for HTML elements.
+    if (list) list.innerHTML = '';
+}
 
 /**
  * Initial`ize app
@@ -666,6 +817,8 @@ function init() {
     document.getElementById('football-modal-overlay').addEventListener('click', function (e) {
         if (e.target === this) closeFootballModal();
     });
+    document.getElementById('spec-btn').addEventListener('click', viewRestrictions);
+    document.getElementById('spec-close').addEventListener('click', closeRestrictions);
 
     const toggle = document.getElementById("basketball-toggle");
     const label = document.getElementById("basketball-label");
