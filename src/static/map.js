@@ -117,6 +117,7 @@ function updateMobileChromeMetrics() {
     if (!isMobileLayout()) {
         document.documentElement.style.removeProperty('--jaypark-mobile-row1-bottom');
         document.documentElement.style.removeProperty('--jaypark-mobile-fixed-stack-h');
+        document.documentElement.style.removeProperty('--jaypark-mobile-controls-bottom');
         if (map) map.invalidateSize();
         return;
     }
@@ -128,10 +129,13 @@ function updateMobileChromeMetrics() {
         document.documentElement.style.setProperty('--jaypark-mobile-row1-bottom', Math.round(r.bottom) + 'px');
     }
     if (fixedEl) {
+        const fixedRect = fixedEl.getBoundingClientRect();
         document.documentElement.style.setProperty(
             '--jaypark-mobile-fixed-stack-h',
-            Math.round(fixedEl.getBoundingClientRect().height) + 'px'
+            Math.round(fixedRect.height) + 'px'
         );
+        /* Exact viewport Y under mobile controls; use this for Leaflet zoom offset */
+        document.documentElement.style.setProperty('--jaypark-mobile-controls-bottom', Math.round(fixedRect.bottom) + 'px');
     }
     if (map) map.invalidateSize();
 }
@@ -336,8 +340,12 @@ function updateMarkers() {
  * Highlight marker
  */
 function highlightMarker(marker) {
+    const lot = lots.find(l => l.id === marker.lotId);
+    const color = lot ? getLotColor(lot) : '#4CAF50';
+
     marker.setStyle({
         radius: 10,
+        fillColor: color,
         color: '#0051ba',
         weight: 3,
         fillOpacity: 0.9

@@ -227,9 +227,13 @@ Faults: None identified.
                     <label for="report-description">Description:</label>
                     <textarea id="report-description" name="description" rows="3" placeholder="e.g., Lot closed for construction."></textarea>
                     <label for="report-start">Start (optional):</label>
-                    <input type="datetime-local" id="report-start" name="start" />
+                    <div class="report-field-wrap">
+                        <input type="datetime-local" id="report-start" name="start" />
+                    </div>
                     <label for="report-end">End (optional):</label>
-                    <input type="datetime-local" id="report-end" name="end" />
+                    <div class="report-field-wrap">
+                        <input type="datetime-local" id="report-end" name="end" />
+                    </div>
                     <p id="report-status" class="report-status"></p>
                     <div class="report-modal-actions">
                         <button type="button" id="report-cancel" class="report-cancel-btn">Cancel</button>
