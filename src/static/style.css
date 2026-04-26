@@ -1868,6 +1868,12 @@ body.report-modal-active .details-panel:not(.hidden) {
     cursor: pointer;
 }
 
+.football-pill-mobile__text {
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
 .football-pill-mobile__track {
     position: relative;
     width: 36px;
