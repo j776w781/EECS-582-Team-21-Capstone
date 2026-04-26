@@ -141,7 +141,6 @@ class LotController:
         else:
             selected_time = self._selected_datetime(day, time_hhmm)
 
-        #selected_time.replace(tzinfo=None)
         print(f"Viewing for TIME {selected_time}")
 
         conn = self.db_pool.getconn()
@@ -189,8 +188,6 @@ class LotController:
             if available_in_hour and not available:
                 lot.color = '#ffc107'
             elif available:
-                if lot.permit_type.lower() == 'other':
-                    print(f"Lot {lot.id} is green?")
                 lot.color = "#00FF00"
             else:
                 lot.color = "#FF0000"
@@ -238,10 +235,6 @@ class LotController:
         if end_datetime <= start_datetime:
             end_datetime = start_datetime + timedelta(minutes=1)
 
-        
-        # strip tzinfo before storing
-        #start_datetime = start_datetime.replace(tzinfo=None)
-        #end_datetime = end_datetime.replace(tzinfo=None)
 
         '''
         ADD SQL CODE HERE!!!
@@ -265,7 +258,6 @@ class LotController:
                 0
             )
 
-            print(data)
             with conn.cursor() as cur:
                 cur.execute(insert_query, data)
                 new_id = cur.fetchone()[0]
