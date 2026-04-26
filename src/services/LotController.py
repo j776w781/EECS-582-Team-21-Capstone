@@ -67,14 +67,14 @@ class LotController:
         target_date = now + timedelta(days=days_offset)
         hour, minute = map(int, time_hhmm.split(':'))
         return datetime(year=target_date.year, month=target_date.month, day=target_date.day,
-                        hour=hour, minute=minute, second=0, microsecond=0, tzinfo=None)
+                        hour=hour, minute=minute, second=0, microsecond=0, tzinfo=self.CHICAGO)
 
     def _selected_datetime_from_calendar(self, date_str: str, time_hhmm: str):
         """Authoritative query instant when client sends YYYY-MM-DD + time (America/Chicago)."""
         d = datetime.strptime(date_str.strip(), '%Y-%m-%d').date()
         hour, minute = map(int, time_hhmm.split(':'))
         return datetime(d.year, d.month, d.day, hour, minute, second=0, microsecond=0,
-                        tzinfo=None)
+                        tzinfo=self.CHICAGO)
 
     '''
     Obtains parameters from the web request. Obtains a list of lots from the LotService
@@ -103,6 +103,7 @@ class LotController:
     def _apply_special_restriction_to_lot(self, lot, restrictions):
         lot.descript = lot.base_description
         if len(restrictions) == 0:
+            lot.special_restriction = False
             return False
         else:
             lot.color = '#fc8403'
@@ -140,7 +141,7 @@ class LotController:
         else:
             selected_time = self._selected_datetime(day, time_hhmm)
 
-        selected_time.replace(tzinfo=None)
+        #selected_time.replace(tzinfo=None)
         print(f"Viewing for TIME {selected_time}")
 
         conn = self.db_pool.getconn()
@@ -184,9 +185,12 @@ class LotController:
                     lot, user_permit, day, time_in_one_hour
                 )
 
+            
             if available_in_hour and not available:
                 lot.color = '#ffc107'
             elif available:
+                if lot.permit_type.lower() == 'other':
+                    print(f"Lot {lot.id} is green?")
                 lot.color = "#00FF00"
             else:
                 lot.color = "#FF0000"
@@ -201,6 +205,7 @@ class LotController:
     Handles creating a special restriction. Also applies some business rules (no restriction over 48 hours, etc).
     '''
     def report_special_restriction(self, lot_id: str, description: str, start_datetime: datetime = None, end_datetime: datetime = None):
+        success = False
         lot = self.lot_service.get_lot(lot_id)
         if lot is None:
             raise ValueError(f"Lot with id {lot_id} does not exist")
@@ -235,8 +240,8 @@ class LotController:
 
         
         # strip tzinfo before storing
-        start_datetime = start_datetime.replace(tzinfo=None)
-        end_datetime = end_datetime.replace(tzinfo=None)
+        #start_datetime = start_datetime.replace(tzinfo=None)
+        #end_datetime = end_datetime.replace(tzinfo=None)
 
         '''
         ADD SQL CODE HERE!!!
@@ -260,6 +265,7 @@ class LotController:
                 0
             )
 
+            print(data)
             with conn.cursor() as cur:
                 cur.execute(insert_query, data)
                 new_id = cur.fetchone()[0]
@@ -267,14 +273,16 @@ class LotController:
 
                 # Commit the transaction
                 conn.commit()
+                success = True
 
         except Exception as e:
+            conn.rollback()
             print(f"[WARN] Could not save special report: {e}")
+            raise
 
         finally:
             self.db_pool.putconn(conn)
-
-        return lot
+        return success
     
 
     '''
@@ -299,9 +307,9 @@ class LotController:
             addition = {"id": item[0],
                         "lot_id":item[1],
                         "description":item[2],
-                        "start_date": item[3].strftime("%Y-%m-%d %H:%M"),
-                        "end_date": item[4].strftime("%Y-%m-%d %H:%M"),
-                        "creation_date": item[5].strftime("%Y-%m-%d %H:%M"),
+                        "start_date": item[3].astimezone(self.CHICAGO).strftime("%Y-%m-%d %H:%M"),
+                        "end_date": item[4].astimezone(self.CHICAGO).strftime("%Y-%m-%d %H:%M"),
+                        "creation_date": item[5].astimezone(self.CHICAGO).strftime("%Y-%m-%d %H:%M"),
                         "disputes": item[6]
                         }
                         #K! -- Don't forget that there is an item[6]. (hint hint)

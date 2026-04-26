@@ -143,7 +143,7 @@ def report_special_restriction(lot_id):
         # - Empty description → use e.g. default text like "Special restriction reported" or leave empty.
        
         report = lot_control.report_special_restriction(lot_id, description, start_datetime, end_datetime)
-        print(f"[INFO] special restriction reported for {lot_id}: {report.special_restriction}")
+        print(f"[INFO] special restriction reported for {lot_id}: {report}")
 
         return jsonify({'status': 'ok'}), 200
 
