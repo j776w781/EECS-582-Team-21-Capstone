@@ -59,13 +59,27 @@ Faults: None identified.
         <div class="controls-panel filter-card">
         <!-- First child: checkbox + mobile top row (sibling ~ selectors for pill + chip styles) -->
         <input type="checkbox" id="basketball-toggle" class="basketball-toggle-input-hidden">
+        <input type="checkbox" id="football-toggle" class="football-toggle-input-hidden">
 
         <div class="mobile-floating-topbar" aria-hidden="false">
             <span class="mobile-floating-brand">KU Parking</span>
-            <label for="basketball-toggle" class="basketball-pill-mobile">
-                <span class="basketball-pill-mobile__text">Basketball</span>
-                <span class="basketball-pill-mobile__track" aria-hidden="true"><span class="basketball-pill-mobile__knob"></span></span>
-            </label>
+
+            <!-- Grouped toggles (shared space) -->
+            <div class="mobile-toggle-group">
+                <label for="basketball-toggle" class="basketball-pill-mobile">
+                    <span class="basketball-pill-mobile__text">Basketball</span>
+                    <span class="basketball-pill-mobile__track" aria-hidden="true">
+                        <span class="basketball-pill-mobile__knob"></span>
+                    </span>
+                </label>
+
+                <label for="football-toggle" class="football-pill-mobile">
+                    <span class="football-pill-mobile__text">Football</span>
+                    <span class="football-pill-mobile__track">
+                        <span class="football-pill-mobile__knob"></span>
+                    </span>
+                </label>
+            </div>
 
             <!-- Info Button -->
             <button
@@ -149,6 +163,15 @@ Faults: None identified.
                     </label>
                     <span id="basketball-label">Basketball Mode</span>
                 </div>
+
+                <!-- Desktop-only football mode toggle UI; lets users enable/disable football parking restrictions and updates label styling based on active state -->
+                <div class="football-toggle-card football-toggle-card--desktop">
+                    <label for="football-toggle" class="football-switch">
+                        <span class="football-slider"></span>
+                    </label>
+                    <span id="football-label">Football Mode</span>
+                </div>
+
             </div>
             <div class="filter-card__secondary filter-card__secondary--desktop">
                 <!-- Info Button -->
@@ -297,6 +320,31 @@ Faults: None identified.
 
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Modal overlay shown when football mode is first activated; displays game-day parking restrictions and permit info -->
+        <div id="football-modal-overlay" class="report-modal-overlay hidden">
+            <div class="report-modal">
+                <div class="report-modal-header">
+                    <h3>Football Game Parking Notice</h3>
+                    <button id="football-close" class="close-btn">&times;</button>
+                </div>
+                <div class="report-modal-body">
+                    <ul>
+                        <li>
+                            Lots 1, 36, 39, 50, 52, 54, 56, 57, 58, 59, 60, 91, 94, 96, 97, 98 and the Mississippi Street Garage require a <strong>GAME Permit</strong> issued by Williams Fund @williamsfund.com.
+                        </li>
+                        <li>
+                            Prepaid parking is available for those attending the game without Williams Fund permit on the Monday before to the game day at the parking portal under the <strong>"Purchase Event Permit" </strong> link for lots 11, 72, and the Allen Fieldhouse Garage.
+                        </li>
+                    </ul>
+
+                    <div class="report-modal-actions">
+                        <button id="football-ok" class="report-submit-btn">OK</button>
+                    </div>
+                </div>
+                
             </div>
         </div>
 

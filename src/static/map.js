@@ -1,7 +1,7 @@
 /**
  * KU Parking Map - Sprint 1
  * Handles map initialization, lot markers, availability logic, and interactions
- * Authors: Li K, Kitchin Mark, Welicky Joshua
+ * Authors: Li K, Kitchin Mark, Welicky Joshua, Evans Chigweshe
  * Created February 8th, 2026
  * Revised February 15th, 2026
  * Revised March 1, 2026: Tweaks to initial JavaScript to account for updated Python Backend.
@@ -11,6 +11,7 @@
  * Revised 3/28/2026: Disclaimer functionality added.
  * Revised 3/29/2026: Mobile map-first UI — search opens lot list, hides map until pick.
  * Revised 4/12/2026: Date picker UI; weekday synced to #day-select; API uses date + time.
+ * Revised 4/21/2026: Game-day modes added 
  */
 // Global state
 let map;
@@ -29,6 +30,10 @@ const ENABLE_COORDINATE_PICKER = false;
 let basketballMode = false;
 const GAME_LOTS = ["20", "31", "54", "70", "71", "72", "90", "93","117", "118", "125", "127"];
 const GAME_GARAGES = ["AFPK","CDPG","MSPK"];
+
+let footballMode = false;
+const FOOTBALL_GREEN_LOTS = ["1","36","39","50","52","54","56","57","58","59","60","91","94","96","97","98","11","72"];
+const FOOTBALL_GREEN_GARAGES = ["MSPK", "AFPK"];
 
 /** JS weekday 0=Sun … 6=Sat → Mon/Tue/… value for #day-select */
 const WEEKDAY_TO_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -233,12 +238,16 @@ function enableCoordinatePicker() {
  * @param {Object} lot - The parking lot object with available and available_in_one_hour properties
  * @returns {string} - Color code (green for available, yellow for becoming unavailable, red for unavailable)
  */
+
 function getLotColor(lot) {
-    //This method is very simplified now that the backend decides the color, not JavaScript.
+    // Return lot color, overriding backend color with game-day colors when basketball or football mode is active for matching lots/garages
     const lotId = String(lot.id);
     const lotNumber = String(lot.id).replace(/\D/g, ""); 
     if (basketballMode && (GAME_LOTS.includes(lotNumber) || GAME_GARAGES.includes(lotId))) {
         return "#FF0000";
+    }
+    if (footballMode && (FOOTBALL_GREEN_LOTS.includes(lotNumber) || FOOTBALL_GREEN_GARAGES.includes(lotId))){
+        return "#6316ac";
     }
     return lot.color;
 }
@@ -412,6 +421,8 @@ function showLotDetails(lot) {
         }
     });
 
+
+    // Populate lot details and override description with game-day restrictions based on active mode and matching lot/garage IDs
     document.getElementById('details-name').textContent = lot.name;
     document.getElementById('details-type').textContent = lot.type;
 
@@ -420,9 +431,14 @@ function showLotDetails(lot) {
     const lotNumber = String(lot.id).replace(/\D/g, "");
 
     if (basketballMode && (GAME_LOTS.includes(lotNumber) || GAME_GARAGES.includes(lotId))) {
-        description = "GAME DAY RESTRICTION:\n\nThis lot is reserved for basketball game parking.";
+        description = "GAME DAY RESTRICTION:\n\nThis lot is reserved for Basketball game parking.";
+    }
+
+    if (footballMode && (FOOTBALL_GREEN_LOTS.includes(lotNumber) || FOOTBALL_GREEN_GARAGES.includes(lotId))){
+        description = "GAME DAY RESTRICTION:\n\nThis lot is reserved for Football game parking.";   
     }
   
+
     document.getElementById('details-restrictions').textContent = description;
 
     // Reset report form and status on selecting lot
@@ -610,6 +626,20 @@ function handleSearchInput(query) {
     renderLotList();
 }
 
+function openFootballModal() {
+    document.body.classList.add('report-modal-active');
+    document.getElementById('football-modal-overlay').classList.remove('hidden');
+}
+
+function closeFootballModal() {
+    document.body.classList.remove('report-modal-active');
+    document.getElementById('football-modal-overlay').classList.add('hidden');
+}
+
+
+
+
+
 /**
  * Initial`ize app
  */
@@ -631,6 +661,11 @@ function init() {
     document.getElementById('report-modal-close').addEventListener('click', closeReportModal);
     document.getElementById('report-cancel').addEventListener('click', closeReportModal);
     document.getElementById('submit-report').addEventListener('click', submitReport);
+    document.getElementById('football-close').addEventListener('click', closeFootballModal);
+    document.getElementById('football-ok').addEventListener('click', closeFootballModal);
+    document.getElementById('football-modal-overlay').addEventListener('click', function (e) {
+        if (e.target === this) closeFootballModal();
+    });
 
     const toggle = document.getElementById("basketball-toggle");
     const label = document.getElementById("basketball-label");
@@ -641,6 +676,10 @@ function init() {
 
             if (label) {
                 if (basketballMode) {
+                    footballMode = false;
+                    const fToggle = document.getElementById("football-toggle");
+                    if (fToggle) fToggle.checked = false;
+
                     label.classList.add("basketball-active");
                 } else {
                     label.classList.remove("basketball-active");
@@ -648,6 +687,38 @@ function init() {
             }
 
             updateMarkers(); // refresh map
+        });
+    }
+
+    // Grab football toggle switch and its label element
+    const footballToggle = document.getElementById("football-toggle");
+    const footballLabel = document.getElementById("football-label");
+
+    // Only attach logic if the toggle exists in the DOM
+    if (footballToggle) {
+        footballToggle.addEventListener("change", () => {
+            footballMode = footballToggle.checked;
+
+            // Turn off basketball mode
+            if (footballMode) {
+                basketballMode = false;
+
+                // Visually uncheck the basketball toggle in the UI
+                const bToggle = document.getElementById("basketball-toggle");
+                if (bToggle) bToggle.checked = false;
+
+                // Show football disclaimer modal ONLY once per session
+                if (footballMode && !sessionStorage.getItem('footballSeen')) {
+                    openFootballModal();
+                    sessionStorage.setItem('footballSeen', 'true');
+                }
+            }
+
+            if (footballLabel) {
+                footballLabel.classList.toggle("football-active", footballMode);
+            }
+
+            updateMarkers();
         });
     }
 

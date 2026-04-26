@@ -1055,6 +1055,12 @@ body.report-modal-active .details-panel:not(.hidden) {
     }
 }
 
+@media (max-width: 1023px) {
+    .football-toggle-card--desktop {
+        display: none !important;
+    }
+}
+
 /* Mobile row 1 — Google Maps–style slim top strip */
 .mobile-floating-topbar {
     display: none;
@@ -1065,8 +1071,8 @@ body.report-modal-active .details-panel:not(.hidden) {
     .mobile-floating-topbar {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
+        justify-content: flex-start;
+        gap: 0.6rem;
         align-self: stretch;
         position: relative;
         width: 100%;
@@ -1471,4 +1477,125 @@ body.report-modal-active .details-panel:not(.hidden) {
         height: 28px;
         width: 28px;
     }
+}
+
+/* Hidden checkbox */
+.football-toggle-input-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Desktop container */
+.football-toggle-card {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f3f3f3;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+/* Switch */
+.football-switch {
+    position: relative;
+    width: 40px;
+    height: 20px;
+}
+
+.football-slider {
+    position: absolute;
+    inset: 0;
+    background: #ccc;
+    border-radius: 20px;
+    transition: 0.2s;
+}
+
+.football-slider::before {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    top: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.25s;
+}
+
+/* ON state */
+#football-toggle:checked ~ .mobile-fixed-controls .football-switch .football-slider {
+    background: #5ec2a8;
+}
+
+#football-toggle:checked ~ .mobile-fixed-controls .football-switch .football-slider::before {
+    transform: translateX(20px);
+}
+
+/* Label */
+#football-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+}
+
+.football-active {
+    color: #5ec2a8;;
+    font-weight: 600;
+}
+
+/* MOBILE PILL*/
+
+.football-pill-mobile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    cursor: pointer;
+}
+
+.football-pill-mobile__track {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background: rgba(255,255,255,0.35);
+    border-radius: 20px;
+}
+
+.football-pill-mobile__knob {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    top: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+/* ON state mobile */
+#football-toggle:checked ~ .mobile-floating-topbar .football-pill-mobile__track {
+    background: rgba(255,255,255,0.6);
+}
+
+#football-toggle:checked ~ .mobile-floating-topbar .football-pill-mobile__knob {
+    transform: translateX(16px);
+}
+
+.mobile-toggle-group {
+    display: flex;
+    gap: 0.4rem;
+    flex: 1;              
+    justify-content: center;
+}
+
+/* Make both pills equal width */
+.mobile-toggle-group label {
+    flex: 1;
+    justify-content: space-between;
+    max-width: 140px;    
 }
