@@ -34,6 +34,9 @@ const GAME_GARAGES = ["AFPK","CDPG","MSPK"];
 /** JS weekday 0=Sun … 6=Sat → Mon/Tue/… value for #day-select */
 const WEEKDAY_TO_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+// cooldown to dispute restriction
+const DISPUTE_COOLDOWN_MS = 5*60*1000; // 5 minutes
+
 function syncDaySelectFromDate() {
     const dateInput = document.getElementById('date-input');
     const daySelect = document.getElementById('day-select');
@@ -672,6 +675,8 @@ async function viewRestrictions() {
             disputeBtn.addEventListener('click', () => disputeRestriction(spec.id));
 
             list.appendChild(section);
+
+            applyDisputeCooldown(spec.id);
         });
 
 
@@ -683,7 +688,34 @@ async function viewRestrictions() {
 
 }
 
+// track when report was last disputed
+function disputeCooldownKey(reportId) {
+    return 'dispute_cooldown_${reportId}'
+}
+
+// disable button and show live cooldown if button for reportId is currently on cooldown
+function applyDisputeCooldown(reportId) {
+    const btn = document.querySelector('.dispute-btn[data-report-id="${reportId}"]');
+    if (!btn) return;
+
+    const stored = localStorage.getItem(disputeCooldownKey(reportId));
+    if (!stored) return;
+
+    if (Date.now() < parseInt(stored, 10)) {
+        btn.disabled = true;
+    } else {
+        localStorage.removeItem(disputeCooldownKey(reportId));
+    }
+}
+
+
 async function disputeRestriction(reportId) {
+    // block if still within cooldown window
+    const stored = localStorage.getItem(disputeCooldownKey(reportId));
+    if (stored && Date.now() < parseInt(stored, 10)) {
+        return;
+    }
+
     try {
         const response = await fetch('/api/dispute', {
             method: 'POST',
@@ -695,6 +727,10 @@ async function disputeRestriction(reportId) {
 
         if (response.ok) {
             const result = await response.json();
+
+            // record cooldown timestamp before refreshing list
+            localStorage.setItem(disputeCooldownKey(reportId), Date.now() + DISPUTE_COOLDOWN_MS);
+
             if (result.status === 'deleted') {
                 alert('Dispute submitted! The restriction has been removed due to multiple disputes.');
             } else {
