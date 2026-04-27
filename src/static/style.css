@@ -1584,13 +1584,14 @@ body.report-modal-active .details-panel:not(.hidden) {
 
     .toc-menu.toc-menu--mobile-drawer {
         position: fixed;
-        top: 0;
+        /* Start below the mobile blue title bar to avoid overlap */
+        top: var(--jaypark-mobile-row1-bottom, 56px);
         bottom: 0;
         left: 0;
         width: min(300px, 88vw);
         z-index: 1205;
         margin: 0;
-        padding: calc(0.75rem + env(safe-area-inset-top, 0px)) 0 1rem;
+        padding: 0.75rem 0 1rem;
         border-radius: 0;
         border: none;
         box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
