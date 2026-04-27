@@ -1034,9 +1034,8 @@ body.report-modal-active .details-panel:not(.hidden) {
         background: #f5f5f7;
         padding-left: 0.75rem;
         padding-right: 0.75rem;
-        /* List sits under row 1; rows 2–3 float over map — pad for fixed search + chips (or search-only when chips hidden) */
-        padding-top: calc(var(--jaypark-row1-row2-gap) + var(--jaypark-mobile-fixed-stack-h, 7.25rem) + 0.35rem);
-        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--mobile-keyboard-inset, 0px) + 1.25rem);
+        padding-top: calc(var(--jaypark-mobile-controls-bottom, 132px) );
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--mobile-keyboard-inset, 0px) + 4.5rem);
         overflow: hidden;
         flex: none;
         min-height: 0;
@@ -1054,8 +1053,9 @@ body.report-modal-active .details-panel:not(.hidden) {
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
         touch-action: pan-y;
-        scroll-padding-top: 0.5rem;
-        scroll-padding-bottom: 1rem;
+        scroll-padding-top: 0.95rem;
+        scroll-padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4rem);
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--mobile-keyboard-inset, 0px) + 3.5rem);
     }
 
     /* Lock page scroll while list is open (list itself still scrolls) */
@@ -1584,7 +1584,6 @@ body.report-modal-active .details-panel:not(.hidden) {
 
     .toc-menu.toc-menu--mobile-drawer {
         position: fixed;
-        /* Start below the mobile blue title bar to avoid overlap */
         top: var(--jaypark-mobile-row1-bottom, 56px);
         bottom: 0;
         left: 0;
