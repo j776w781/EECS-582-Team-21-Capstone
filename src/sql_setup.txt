@@ -1,0 +1,13 @@
+This is the SQL query used to initialize the special restriction table on the database server.
+Author: Josh
+Date last updated: 4/25
+
+CREATE TABLE specs (
+  id SERIAL PRIMARY KEY,
+  lot_id TEXT,
+  description TEXT,
+  start_date TIMESTAMP WITH TIME ZONE,
+  end_date TIMESTAMP WITH TIME ZONE,
+  creation_date TIMESTAMP WITH TIME ZONE,
+  disputes INT
+);

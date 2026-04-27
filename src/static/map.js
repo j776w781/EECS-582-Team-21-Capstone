@@ -12,6 +12,7 @@
  * Revised 3/29/2026: Mobile map-first UI — search opens lot list, hides map until pick.
  * Revised 4/12/2026: Date picker UI; weekday synced to #day-select; API uses date + time.
  * Revised 4/21/2026: Game-day modes added 
+ * Revised 4/20-4/26: Football mode, special restriction display overhaul, addition of dispute option + rate limiting to stop spam disputes. (Authors: K, Josh, Mark, Jenna, Evans)
  */
 // Global state
 let map;
@@ -618,22 +619,6 @@ function renderLotList() {
         lotList.appendChild(listItem);
     });
 }
-/**
- * Search function
- */
-/*document.getElementById('lot-search').addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-        const query = event.target.value.toLowerCase();
-
-        filteredLots = getSortedLots(lots).filter(lot =>
-            lot.name.toLowerCase().includes(query) ||
-            lot.type.toLowerCase().includes(query)
-        );
-
-        renderLotList();
-    }
-});
-*/
 
 // Unified search handler
 function handleSearchInput(query) {

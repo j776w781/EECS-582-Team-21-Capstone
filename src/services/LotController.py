@@ -8,6 +8,7 @@ Programmer: Evans Chigweshe, Joshua Welicky, Mark Kitchin
 Created: March 1, 2026
 Revised: March 1, 2026 (Tweaks by Josh)
          March 14 (Addition of special restriction reporting.)
+         April 26 (Updated special restrictions, added dispute feature, itegrated codebase with new SQL server. (Josh, Mark))
 
 Preconditions: Depends on the existence of the Lot class, Restriction class, LotService class, and AvailabilityService class.
 
@@ -83,7 +84,7 @@ class LotController:
     '''
     def _purge_expired_special_restrictions(self, now):
         '''
-        INSERT SQL CODE HERE!!!!!!!
+        SQL QUERY TO DELETE EXPIRED RECORDS
         '''
         conn = self.db_pool.getconn()
         try:
@@ -111,28 +112,11 @@ class LotController:
             lot.descript += f"        Special restriction(s) reported."
             return True
         
-        '''
-        for row in restrictions:
-            #start = row[3]
-            end = row[4]
-            if start is None or end is None:
-                lot.special_restriction = None
-                return False
-            active_text = f"Special restriction (reported): {row[2]}\nFrom {start.strftime('%Y-%m-%d %H:%M')} to {end.strftime('%Y-%m-%d %H:%M')}"
-            print(f"Coloring lot {lot.id} orange because of {active_text}")
-            lot.color = '#fc8403'
-            lot.special_restriction = True
-            lot.descript += f"\n\n{active_text} (active now)"
-        
-        return True
-        '''
-        
-
-
 
     def get_lots(self, user_permit: str, day: str, time_hhmm: str, view_date: str | None = None):
         lots = self.lot_service.get_all()
 
+        #Ensures expired restrictions are purged anytime someone tries to access the map.
         now = self._local_now()
         self._purge_expired_special_restrictions(now)
 
@@ -191,8 +175,6 @@ class LotController:
                 lot.color = "#00FF00"
             else:
                 lot.color = "#FF0000"
-            
-            
 
         return lots
     
@@ -237,9 +219,8 @@ class LotController:
 
 
         '''
-        ADD SQL CODE HERE!!!
+        SQL QUERY TO INSERT REPORT INTO DATABASE.
         '''
-
         conn = self.db_pool.getconn()
         try:
             # Insert a sample record
@@ -311,9 +292,6 @@ class LotController:
 
 
         
-
-
-
 
     def dispute(self, report_id: int):
         """

@@ -1,5 +1,5 @@
 """
-KU Parking Web App - Sprint 2
+KU Parking Web App
 Authors: K Li, Joshua Welicky, Mark Kitchin, Evans Chigweshe
 Created February 8th, 2026
 Main driver behind Parking Lot app functionality.
@@ -9,6 +9,7 @@ Sprint 2: Strip down server app to leverage the new Python backend. This listens
 Sprint 3: Add functionality to receive special reports (Mark). Tweak to suit the requirements(Josh).
 sprint 4: added permit_description route to handle the  nativation to the Permit Description page(Evans).
 sprint 5: added censoring to special restriction reports. 4/11 (Josh)
+sprint 6: Tweak to special restrictions and addition of dispute handler (Josh and Mark)
 Run instructions (Local):
     0. CHECK THE IN-LINE COMMENTS(import statement AND the if __name__ == 'main' segment)
     1. Install Flask: pip install flask
@@ -112,12 +113,6 @@ def report_special_restriction(lot_id):
 
         #censor the description immediately.
         description = censor.censor(description)
-
-        '''
-        DESCRIPTION OPTIONAL
-        if not description:
-            return jsonify({'error': 'description is required'}), 400
-        '''
 
         start_str = data.get('start')
         end_str = data.get('end')

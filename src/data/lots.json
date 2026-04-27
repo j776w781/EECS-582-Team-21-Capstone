@@ -149,7 +149,7 @@
     "restrictions": " Red permit required Monday-Friday 7:00 AM-5:00 PM. Enforced year-round."
   },
   {
-    "id": "lot-36",
+    "id": "lot-36b",
     "name": "Lot 36",
     "type": "Blue",
     "position":   [38.958988, -95.249992],
@@ -177,7 +177,7 @@
     "restrictions": "Blue permit required 7:00 AM - 5:00 PM Monday-Friday. Enforced all year long."
   },
   {
-    "id": "lot-39",
+    "id": "lot-39b",
     "name": "Lot 39",
     "type": "Blue",
     "position":   [38.958966, -95.246860],

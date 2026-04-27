@@ -8,6 +8,7 @@ Programmer: Joshua Welicky, Evans Chigweshe, Mark Kitchin
 Created: February 21st, 2026
 Revised: March 1, 2026 (Tweaks and added functions)
          March 14 (new descript attribute for special restrictions)
+         April ~26 (changed special_restriciton attribute to boolean and incorporated it in JSON translation -- Josh)
 
 Preconditions: None on its own.
 
